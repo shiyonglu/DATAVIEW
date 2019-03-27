@@ -1,0 +1,93 @@
+body {
+	margin: 0px;
+	padding: 0px;
+}
+
+#mB {
+	font: bold 11pt arial, Helvetica, sans-serif;
+	text-align: left;
+	margin-bottom: 5px;
+	position: relative;
+	top: 0px;
+	left: 0px;
+	width: 113px;
+	overflow: hidden;
+	
+	background-color: black;
+	z-index: 1000;
+}
+
+.mH {
+	color: black;
+	text-decoration: none;
+	white-space: nowrap;
+	cursor: pointer;
+	padding: 5px;
+	margin: 0px;
+	padding-right: 10px;
+	position: relative;
+}
+
+a.mL {
+	display: block;
+	padding: 1px 4px;
+	text-decoration: none
+}
+
+a.mL:link {
+	color: black;
+}
+
+a.mL:visited {
+	color: black;
+}
+
+a.mL:hover {
+	color: black;
+	background-color: #e5e5e5;
+}
+
+a.mL:active {
+	color: #e5e5e5;
+	background-color: #e5e5e5;
+}
+
+a.mO {
+	display: block;
+	padding: 1px 4px;
+	border-top: 1px solid #663300;
+	text-decoration: none
+}
+
+a.mO:link {
+	color: #cccccc;
+}
+
+a.mO:visited {
+	color: #cccccc;
+}
+
+a.mO:hover {
+	color: #e5e5e5;
+}
+
+a.mO:active {
+	color: #e5e5e5;
+}
+
+.mD {
+	color: #cc9966;
+	font: 11pt arial, Helvetica, sans-serif;
+	background-color: #c7c7c7;
+	visibility: hidden;
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	z-index: 1000;
+	/*top: 60px;*/
+	left: 0;
+	width: 220px;
+	border-style: solid;
+	border-width: 0 1px 1px;
+	border-color: black;
+}

@@ -1,0 +1,31 @@
+$(function () {
+
+    $(document).on("click", "#LoadDialogButton", function () {
+
+
+        var url = "DialogContentPage.html";
+        var divId = " #MainContentDiv";
+
+     
+        url = url + divId; 
+
+        $('<div id=DialogDiv>').dialog("destroy");
+
+        $('<div id=DialogDiv>').dialog({
+            dialogClass: 'DynamicDialogStyle',
+            modal: true,
+            open: function () {
+                $(this).load(url);
+            },
+            close: function (e) {
+                $(this).empty();
+                $(this).dialog('destroy');
+            },
+            height: 350,
+            width: 540,
+            title: 'Share Workflow'
+
+        });
+    });
+
+});    //end of main jQuery Ready method

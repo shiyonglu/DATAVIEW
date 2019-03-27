@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+   <swlSchemaURL>http://dataview.org/schema/swl40.xsd</swlSchemaURL>
+   <experimentSchemaURL>http://dataview.org/schema/experiment.xsd</experimentSchemaURL>
+   <engineRepoDBURL>jdbc:mysql://localhost:3306/</engineRepoDBURL>
+   <engineRepoDBName>viewdb</engineRepoDBName>
+   <engineRepoLogin>root</engineRepoLogin>
+   <engineRepoPasswd>dataview</engineRepoPasswd>
+   <engineRepoTableName>specs</engineRepoTableName>
+   <dataProductManagement>
+	<useLocalDPM>true</useLocalDPM>
+	<dplSchemaURL>http://dataview.org/schema/dpl43.xsd</dplSchemaURL>
+	<dplSpecsTableName>dplSpecs</dplSpecsTableName>
+   </dataProductManagement>
+   <useLocalEngine>true</useLocalEngine>
+</config>

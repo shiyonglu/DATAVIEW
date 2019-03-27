@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.2 r9819"
+   sodipodi:docname="AdditionalPannel.svg">
+  <defs
+     id="defs4">
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect3788"
+       is_visible="true" />
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath3928">
+      <rect
+         style="fill:#1e65af;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="rect3930"
+         width="1165.7142"
+         height="377.14285"
+         x="-1359.9999"
+         y="1949.5051" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.5"
+     inkscape:cx="399.74273"
+     inkscape:cy="357.47638"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1280"
+     inkscape:window-height="1000"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:#1e65af;fill-opacity:1;stroke:#165ca5;stroke-width:1.00665271;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 431.75541,81.535323 c 5.63247,0.0464 14.38974,-2.24002 16.31716,-16.35219 2.32154,-16.99767 14.0614,-18.63479 18.61132,-18.61757 l -299.78913,0 c 4.54994,-0.0172 16.2898,1.6199 18.61136,18.61757 1.92743,14.11217 10.68476,16.39853 16.31715,16.35219 z"
+       id="path3841-0"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csccscc"
+       inkscape:export-filename="/home/andrey/Dropbox/workspace2/VIEW/WebContent/images/AdditionalPanel3.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#1e65af;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="m 837.09308,1555.7885 c -6.73366,-2.1113 -9.81152,-6.3985 -12.15992,-16.9379 -2.33739,-10.4899 -5.14941,-14.9978 -11.25282,-18.0393 l -3.62293,-1.8054 157.84483,0.015 c 154.52776,0.015 157.78446,0.043 154.97346,1.3194 -3.7307,1.6943 -7.7809,5.7843 -9.3478,9.4396 -0.6845,1.5972 -1.9443,5.9748 -2.7993,9.7281 -1.9433,8.5305 -4.5072,12.6401 -9.4677,15.1755 l -3.482,1.7797 -128.84519,0.132 c -106.08194,0.1087 -129.37445,-0.034 -131.84063,-0.8071 z"
+       id="path3902"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:#1e65af;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="m 1094.3681,1555.7884 c -6.7336,-2.1112 -9.8115,-6.3985 -12.1599,-16.9378 -2.3374,-10.49 -5.1494,-14.9979 -11.2528,-18.0394 l -3.623,-1.8054 157.8449,0.015 c 154.5278,0.015 157.7845,0.043 154.9735,1.3194 -3.7307,1.6943 -7.7809,5.7843 -9.3478,9.4396 -0.6845,1.5972 -1.9443,5.9749 -2.7993,9.7281 -1.9433,8.5306 -4.5072,12.6401 -9.4677,15.1756 l -3.482,1.7797 -128.8452,0.132 c -106.082,0.1086 -129.3745,-0.034 -131.8407,-0.8072 z"
+       id="path3902-0"
+       inkscape:connector-curvature="0" />
+    <rect
+       style="fill:#165ca5;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3932"
+       width="8.5714283"
+       height="7.3214288"
+       x="345.26785"
+       y="362.63004" />
+    <rect
+       style="fill:#1e65af;fill-opacity:1;fill-rule:nonzero;stroke:#165ca5;stroke-width:0;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3953"
+       width="299.16382"
+       height="20.439245"
+       x="166.8918"
+       y="25.653721"
+       inkscape:export-filename="/home/andrey/Dropbox/workspace2/VIEW/WebContent/images/AdditionalPanel3.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
+</svg>
