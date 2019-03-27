@@ -12,7 +12,7 @@ This current project has two methods to create a workflow and execute this workf
 * A dropbox accout is necessary to store all the input data and each tasks and the final output file when a workflow execution is finished. The user needs to create some default folders 
 Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Dropbox/DATAVIEW/Workflows which stores the mxgraph file for the generated workflow; Dropbox/DATAVIEW-INPUT stores the input files for a workflow. 
 * A local account needs to be registered to show a visualized workflow.
-
+* A dropbox token should be provided in the main interface when you login in, which can be generated based on this tutorial:https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/
 
 
 Check out DATAVIEW tutorials at: https://bigdataworkflow.weebly.com/tutorials.html
