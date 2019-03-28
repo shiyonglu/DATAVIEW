@@ -81,7 +81,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		}
 		this.workflowTaskDir = workflowTaskDir;
 		this.workflowlibdir = workflowLibDir;
-		VMProvisioner.initializeProvisioner(accessKey, secretKey,"dataview1","Dataview_key","ami-01d59acc94399a7c2");
+		VMProvisioner.initializeProvisioner(accessKey, secretKey,"dataview1","Dataview_key","ami-04dc96ad82b696bde");
 		this.token = token;
 		init();
 	}
