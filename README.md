@@ -28,7 +28,7 @@ Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Drop
     <li> How to create a workflow in DATAVIEW (the word count example revisited) (https://youtu.be/U8mhL9vVXlM)</li>
     <li> How to create a workflow in DATAVIEW (the distributed K-means workflow example revisited) (https://youtu.be/QLN8q9Hg1eE)</li>
     <li> How to generate a random workflow and then visualize it (https://youtu.be/aQPIhe2ZnzU)</li>
-    <li> How to debug the functionality of a task (https://youtu.be/N4jIYbYSFd4)</li>
+    <li> How to debug the functionality of a task (not ready yet)</li>
     <li> How to use Dataview.debugger to debug your DATAVIEW applications (https://youtu.be/1d1vJRGPBYs) </li>
     <li> How to develop a new workflow planner (https://youtu.be/R0i2s-LkGV8) </li>
 </OL>
