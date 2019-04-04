@@ -40,7 +40,7 @@ Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Drop
 
 <h2>DATAVIEW Tutorials</h2>
 <OL>
-    <li>Ａn introduction to DATAVIEW （https://youtu.be/cWQ2imhUzRg) </li>
+    <li>An introduction to DATAVIEW （https://youtu.be/cWQ2imhUzRg) </li>
     <li> How to create a workflow task for DATAVIEW (the linear regression example) (https://youtu.be/BPaoR_zogPA)</li>
     <li> How to create a workflow task in Python (https://youtu.be/3vSx-g9FnZU)</li>
     <li> How to create a workflow task for DATAVIEW (the K-means example) (https://youtu.be/N4jIYbYSFd4) </li>
