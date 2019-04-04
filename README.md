@@ -25,6 +25,8 @@ Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Drop
     </li> 
     <li> The external dependecies libraries must be added to the Eclipse project from /DATAVIEW/WebContent/WEB-INF/lib </li>
     <li>The accessKey and secretKey should be updated in config.properties under /DATAVIEW/WebContent/workflowLibDir/ </li>
+    <li>/DATAVIEW/src/test.java shows the six steps to create a customized workflow and execute it in Amazon EC2.</li>
+    <li>After finishing the workflow, please terminate all the EC2 instances from your AWS account manually.</li>
 </OL>
 
 
