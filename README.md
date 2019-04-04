@@ -17,6 +17,21 @@ Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Drop
 * A local account needs to be registered to show a visualized workflow.
 * A dropbox token should be provided in the main interface when you login in, which can be generated based on this tutorial:https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/
 
+<h2>Download, configure DATAVIEW as JAVA API</h2>
+<OL>
+    <li>Download the DATAVIEW package from https://github.com/shiyonglu/DATAVIEW by clicking the "Clone or Download" button.
+    </li> 
+</OL>
+
+
+<h2>Download, configure, and deploy DATAVIEW as a Website</h2>
+<OL>
+    <li>Download the DATAVIEW package from https://github.com/shiyonglu/DATAVIEW by clicking the "Clone or Download" button.
+    </li> 
+</OL>
+
+
+
 <h2>DATAVIEW Tutorials</h2>
 <OL>
     <li>Ａn introduction to DATAVIEW （https://youtu.be/cWQ2imhUzRg) </li>
