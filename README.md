@@ -17,10 +17,14 @@ Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Drop
 * A local account needs to be registered to show a visualized workflow.
 * A dropbox token should be provided in the main interface when you login in, which can be generated based on this tutorial:https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/
 
-<h2>Download, configure DATAVIEW as JAVA API</h2>
+<h2>Download and configure DATAVIEW as JAVA API</h2>
 <OL>
     <li>Download the DATAVIEW package from https://github.com/shiyonglu/DATAVIEW by clicking the "Clone or Download" button.
     </li> 
+     <li> Unzip the DATAVIEW-master.zip file and import the DATAVIEW project into Eclipse as an "Existing Projects into Workspace"
+    </li> 
+    <li> The external dependecies libraries must be added to the Eclipse project from /DATAVIEW/WebContent/WEB-INF/lib </li>
+    <li>The accessKey and secretKey should be updated in config.properties under /DATAVIEW/WebContent/workflowLibDir/ </li>
 </OL>
 
 
@@ -28,6 +32,8 @@ Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Drop
 <OL>
     <li>Download the DATAVIEW package from https://github.com/shiyonglu/DATAVIEW by clicking the "Clone or Download" button.
     </li> 
+   
+    
 </OL>
 
 
