@@ -24,7 +24,7 @@ Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Drop
      <li> Unzip the DATAVIEW-master.zip file and import the DATAVIEW project into Eclipse as an "Existing Projects into Workspace"
     </li> 
     <li> The external dependecies libraries must be added to the Eclipse project from /DATAVIEW/WebContent/WEB-INF/lib </li>
-    <li>The accessKey and secretKey should be updated in config.properties under /DATAVIEW/WebContent/workflowLibDir/ </li>
+    <li>The accessKey and secretKey of Amazon EC2 should be updated in config.properties under /DATAVIEW/WebContent/workflowLibDir/ </li>
     <li>/DATAVIEW/src/test.java shows the six steps to create a new workflow and execute it in Amazon EC2.</li>
     <li>After the execution of a workflow completes, please terminate all the EC2 instances from your AWS account manually.</li>
 </OL>
