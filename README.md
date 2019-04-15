@@ -21,7 +21,7 @@ Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Drop
 <OL>
     <li>Download the DATAVIEW package from https://github.com/shiyonglu/DATAVIEW by clicking the "Clone or Download" button.
     </li> 
-     <li> Unzip the DATAVIEW-master.zip file and import the DATAVIEW project into Eclipse as an "Existing Projects into Workspace"
+     <li> Unzip the DATAVIEW-master.zip file and import the DATAVIEW project into Eclipse as an "Existing Projects into Workspace" by selecting "Projects from Folder or Archive".
     </li> 
     <li> The external dependecies libraries must be added to the Eclipse project from /DATAVIEW/WebContent/WEB-INF/lib </li>
     <li>The accessKey and secretKey of Amazon EC2 should be updated in config.properties under /DATAVIEW/WebContent/workflowLibDir/ </li>
