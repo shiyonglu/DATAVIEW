@@ -18,7 +18,7 @@ Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Drop
 * A dropbox token should be provided in the main interface when you login in, which can be generated based on this tutorial:https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/
 
 <h2>Download and configure DATAVIEW as JAVA API</h2>
-tutorial:https://youtu.be/R6A6jreySFc
+Tutorial:https://youtu.be/R6A6jreySFc
 <OL>
     <li>Download the DATAVIEW package from https://github.com/shiyonglu/DATAVIEW by clicking the "Clone or Download" button.
     </li> 
@@ -44,6 +44,7 @@ tutorial:https://youtu.be/R6A6jreySFc
 <h2>DATAVIEW Tutorials</h2>
 <OL>
     <li>An introduction to DATAVIEW （https://youtu.be/cWQ2imhUzRg) </li>
+    <li> How to download and import DATAVIEW into Eclipse as Java API (https://youtu.be/R6A6jreySFc)</li>
     <li> How to create a workflow task for DATAVIEW (the linear regression example) (https://youtu.be/BPaoR_zogPA)</li>
     <li> How to create a workflow task in Python (https://youtu.be/3vSx-g9FnZU)</li>
     <li> How to create a workflow task for DATAVIEW (the K-means example) (https://youtu.be/N4jIYbYSFd4) </li>
