@@ -20,6 +20,8 @@ public class MSGClient extends Thread {
 	String remoteIP;
 	int remotePort = 2004;
 	int taskId;
+		
+	private String resp = "";
 
 	MSGClient(String ip, Message msg) throws UnknownHostException, IOException {
 		remoteIP = ip;
@@ -32,7 +34,7 @@ public class MSGClient extends Thread {
 	}
 
 	public String send() {
-		String ret = "";
+		//String ret = "";
 		try {
 			// 1. creating a socket to connect to the server
 			// requestSocket = new Socket("localhost", 2004);
@@ -49,10 +51,10 @@ public class MSGClient extends Thread {
 			//Dataview.debugger.logSuccessfulMessage("send " + message);
 			// wait until recv the FIN from the remote node
 			
-			ret = (String) in.readObject();
+			resp = (String) in.readObject();
 			
 			//Dataview.debugger.logSuccessfulMessage("local recv " + ret);
-			System.out.println("local recv " + ret);
+			//System.out.println("local recv " + resp);
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -69,7 +71,7 @@ public class MSGClient extends Thread {
 				ioException.printStackTrace();
 			}
 		}
-		return ret;
+		return resp;
 	}
 
 	void sendMessage(Message msg) {
@@ -79,5 +81,9 @@ public class MSGClient extends Thread {
 		} catch (IOException ioException) {
 			ioException.printStackTrace();
 		}
+	}
+	
+	public String getResp() {
+		return resp;
 	}
 }

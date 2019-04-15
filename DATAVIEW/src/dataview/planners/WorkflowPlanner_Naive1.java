@@ -29,6 +29,7 @@ public class WorkflowPlanner_Naive1 extends WorkflowPlanner{
 			TaskSchedule tsch = w.getTaskSchedule(t);
 			LocalSchedule lsch = new LocalSchedule();
 			lsch.addTaskSchedule(tsch);
+			lsch.setVmType("VM3");
 			gsch.addLocalSchedule(lsch);
 		}
 	

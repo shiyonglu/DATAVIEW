@@ -19,8 +19,8 @@ public class ProvenanceEdge {
 	public String srcNode;
 	public String inputPort;
 	public String outputPort;
+	public double transTime;
 	
-
 	public ProvenanceEdge(String edgeType,  String destNode,  String srcNode)
 	{
 		this.edgeType = edgeType;
@@ -49,5 +49,34 @@ public class ProvenanceEdge {
 		else { // something is wrong we we enter here
 			Dataview.debugger.logErrorMessage("File: ProveannceEdge.java, method: ProvnancEdge, Line: 53, wrong edge type: "+ edgeType);			
 		}		
-	}		
+	}
+	// transfer means data movement time
+	public ProvenanceEdge(String edgeType,  String destNode, String srcNode,  int portIndex, Double transTime)
+	{
+		this.edgeType = edgeType;
+		this.destNode = destNode;
+		this.srcNode = srcNode;
+		this.transTime = transTime;
+		
+		if(edgeType.equals("Used")){
+			this.inputPort = "ins["+ portIndex+"]";
+			this.outputPort = null;
+		}
+		else if (edgeType.equals("WasGeneratedBy")){
+			this.outputPort = "outs["+ portIndex+"]";
+			this.inputPort = null;			
+		}
+		else if (edgeType.equals("Transfer")){
+			this.outputPort = "outs["+ portIndex+"]";
+			this.inputPort = null;	
+			this.transTime = transTime;
+		}
+		
+		
+		else { // something is wrong we we enter here
+			Dataview.debugger.logErrorMessage("File: ProveannceEdge.java, method: ProvnancEdge, Line: 53, wrong edge type: "+ edgeType);			
+		}		
+	}
+	
+	
 }

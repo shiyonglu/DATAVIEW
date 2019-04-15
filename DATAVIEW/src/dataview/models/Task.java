@@ -46,7 +46,7 @@ public abstract class Task {
 
 	public void write(int outputport_index, Object o)
 	{
-		if(outputport_index >= 0 && outputport_index < ins.length) {
+		if(outputport_index >= 0 && outputport_index < outs.length) {
 			outs[outputport_index].write(o);	
 		}
 		else {

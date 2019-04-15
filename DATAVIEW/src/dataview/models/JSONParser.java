@@ -48,8 +48,8 @@ public class JSONParser {
 				return true;
 			}
 			else {
-				System.out.println("Expected "+(char)chartoeat+" but found "+(char)ch);
-				//Dataview.debugger.logErrorMessage("Expected "+(char)chartoeat+" but found "+(char)ch);
+				//System.out.println("Expected "+(char)chartoeat+" but found "+(char)ch);
+				Dataview.debugger.logErrorMessage("Expected "+(char)chartoeat+" but found "+(char)ch);
 				return false;
 			}
 		}
@@ -57,7 +57,7 @@ public class JSONParser {
 		
 		/* We expect to see a string here. */
 		private String parseString() {
-			System.out.println("Parse a string now");
+			//System.out.println("Parse a string now");
 		    if(!eat('"')){
 		    	Dataview.debugger.logErrorMessage("A JSON string should start with a quote.");
 		    	return null;
@@ -74,7 +74,7 @@ public class JSONParser {
 			String result = str.substring(startPos, pos);
 			eat('"'); // skip the quote
 			
-			System.out.println("got a string: " + result);
+			//System.out.println("got a string: " + result);
 					
 		    return result;				
 		} // end parseString
@@ -86,7 +86,7 @@ public class JSONParser {
 			JSONValue value;
 			JSONObject obj = new JSONObject();
 		
-			System.out.println("parse a JSONObject");
+			//System.out.println("parse a JSONObject");
 			
 			
 		    if(!eat('{')){
@@ -98,8 +98,8 @@ public class JSONParser {
 			
 			while((key=parseString()) != null){
 				if(!eat(':')) {
-					System.out.println("okokokok");
-					System.out.println("pos:"+pos);
+					//System.out.println("okokokok");
+					//System.out.println("pos:"+pos);
 					Dataview.debugger.logErrorMessage("A key-value pair must be separated by :");;
 					break;
 				}
@@ -115,7 +115,7 @@ public class JSONParser {
 		    	return null;
 		    }
 
-			System.out.println("Got a jason object:\n" + obj);
+			//System.out.println("Got a jason object:\n" + obj);
 			return obj;				
 		} 
 
@@ -124,7 +124,7 @@ public class JSONParser {
 			JSONArray array = new JSONArray();
 			JSONValue value = null;
 		
-			System.out.println("parseJSONValueArray....");
+			//System.out.println("parseJSONValueArray....");
 		    if(!eat('[')){
 		    	Dataview.debugger.logErrorMessage("A JSON array should start with a [.");
 		    	return null;
@@ -135,7 +135,7 @@ public class JSONParser {
 		    }
 			
 			while((value = parseJSONValue()) != null){
-				System.out.println("Found a array value*********\n:"+ value);
+				//System.out.println("Found a array value*********\n:"+ value);
 			   array.add(value);
 			   if(!eat(',')) break; // do we another key-value pair?
 			}
@@ -145,7 +145,7 @@ public class JSONParser {
 		    	return null;
 		    }
 
-		    System.out.println("got an array:\n" + array);
+		    //System.out.println("got an array:\n" + array);
 			return array;				
 		} 
 
@@ -156,21 +156,21 @@ public class JSONParser {
 		 */
 		private JSONValue parseJSONValue()
 		{
-			System.out.println("333333333333333");
+			//System.out.println("333333333333333");
 			 if(lookAhead() == '"'){ // then we know it is a String
-				    System.out.println("case one:");
+				    //System.out.println("case one:");
 					return new JSONValue(parseString());
 			 }
 			 else if(lookAhead() == '{') {
-				 System.out.println("case two:");
+				 //System.out.println("case two:");
 				 return new JSONValue(parseJSONObject());
 			 }
 			 else if(lookAhead() == '[') {
-				 System.out.println("case three");
+				 //System.out.println("case three");
 			 	 return new JSONValue(parseJSONValueArray());
 			 }
 			 else {
-				 System.out.println("case four:");
+				 //System.out.println("case four:");
 				 Dataview.debugger.logErrorMessage("Invalid JSONValue, see character:" + ch);
 				 return null;
 			 }		 

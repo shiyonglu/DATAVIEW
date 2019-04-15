@@ -48,7 +48,13 @@ public class UserRegisterServlet extends HttpServlet {
      	String strTitle = (String)request.getParameter("input-title");
      	String strCountry = (String)request.getParameter("country");
      	String strPass = (String)request.getParameter("input-password");
-     	
+     	Encrypt encrypt = null;
+		try {
+			encrypt = new Encrypt();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+     	strPass = encrypt.encrypt(strPass);
      	String tableLocation = getServletContext().getRealPath(request.getServletPath()).replace("UserReg", "") + "WEB-INF" + File.separator + "systemFiles" + File.separator + "users.table";
      	
      	System.out.println(tableLocation);

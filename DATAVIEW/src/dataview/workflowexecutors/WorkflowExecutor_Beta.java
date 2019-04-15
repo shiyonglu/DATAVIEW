@@ -3,7 +3,9 @@ package dataview.workflowexecutors;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +18,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import dataview.models.GlobalSchedule;
 import dataview.models.IncomingDataChannel;
+import dataview.models.JSONArray;
+import dataview.models.JSONObject;
+import dataview.models.JSONParser;
 import dataview.models.LocalSchedule;
+import dataview.models.ProvanceNode;
+import dataview.models.ProvenanceGraph;
 import dataview.models.TaskSchedule;
 
 /**
@@ -27,16 +34,16 @@ import dataview.models.TaskSchedule;
  */
 
 public class WorkflowExecutor_Beta extends WorkflowExecutor {
-	public static  String workflowTaskDir;
-	public static String workflowlibdir;
+	public static String workflowTaskDir;
+	public static  String workflowlibdir;
 	public LocalScheduleRun[] scheduleRunners;
 	public ConcurrentHashMap<String, ConcurrentLinkedQueue<TaskRun>> relationMap = new ConcurrentHashMap<>();
-	public static int taskNum = 0; 
-	public static long starTime;
+	public  int taskNum = 0; 
+	public  long starTime;
 	public String token="";         
-	public static String accessKey;
-	public static String secretKey;
-	
+	public String accessKey;
+	public String secretKey;
+	public  List<JSONObject> taskSpecObj = new ArrayList<JSONObject>();
 	/**
 	 * The constructor is used to set the path of two folders and read the EC2 provisioning parameters from "config.properties"
 	 * 
@@ -90,7 +97,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	 * Then each VM types is provisioned ahead to make every VM available to be used.
 	 * @throws Exception
 	 */
-	public static void init() throws Exception{
+	public void init() throws Exception{
 		Map<String, Integer> VMnumbers = new HashMap<String, Integer>();
 		for(int i = 0; i < gsch.length(); i++){
 			LocalSchedule ls = gsch.getLocalSchedule(i);
@@ -244,7 +251,11 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 							}
 						}
 					}
-					taskrun.execute();
+					String taskspec = taskrun.execute();
+					System.out.println(taskspec);
+					JSONParser p = new JSONParser(taskspec);
+					JSONObject taskSpec = p.parseJSONObject();
+					taskSpecObj.add(taskSpec);
 					synchronized(this){
 						taskNum--;	
 						System.out.println("The task number is " +  taskNum);
@@ -252,6 +263,27 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 					if(taskNum == 0){
 						long endTime = System.currentTimeMillis();
 						System.out.println("The workflow execution time is " + (endTime-starTime));
+						Date now = new Date();
+						SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
+						String datetime = ft.format(now);
+						ProvenanceGraph pgraph = new ProvenanceGraph("w-1", "RunID-"+datetime);						
+						for(JSONObject tmp:taskSpecObj){
+						   String taskId = tmp.get("taskInstanceID").toString().replace("\"", "");
+						   Double exeTime = Double.parseDouble(tmp.get("execTime").toString().replace("\"", ""));
+						   pgraph.myActivities.add(new ProvanceNode(taskId,exeTime));
+						   JSONArray outdcs = tmp.get("outgoingDataChannels").toJSONArray();
+						   for(int i = 0; i < outdcs.size(); i++){
+								JSONObject outdc = outdcs.get(i).toJSONObject();
+								if(!outdc.get("destTask").isEmpty()){
+									String destTask = outdc.get("destTask").toString().replace("\"", "");
+									int portId = Integer.parseInt(outdc.get("inputPortIndex").toString().replace("\"", ""));
+									double transTime = Double.parseDouble(outdc.get("transTime").toString().replace("\"", ""));
+									pgraph.addEdge_TransTime(taskId, destTask, portId, transTime);
+								}
+								
+							}
+						}
+						pgraph.record();
 					}
 					onFinished(taskrun.taskRunID);
 				} catch (Exception e) {
@@ -284,14 +316,21 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			return predecessors == 0;
 		}
 
-		public void execute() throws Exception {
+		public String execute() throws Exception {
 			Message m = new Message(token,taskschdule.getSpecification().toString());
 			MSGClient client = new MSGClient(mLocalRunner.lsc.getIP(), m );
 			client.run();
+			return client.getResp();
 		}
 	}
 
 }
+/**
+ * 
+ * The message class will separate the token information and task specification information
+ *
+ */
+
 class Message implements Serializable {
     private static final long serialVersionUID = -5399605122490343339L;
 

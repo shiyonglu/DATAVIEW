@@ -43,6 +43,13 @@ public class UserLoginServlet extends HttpServlet {
 		
 		String emailId = (String)request.getParameter("txtEmailId");
      	String passwrd = (String)request.getParameter("txtPasswd");
+     	Encrypt encrypt = null;
+		try {
+			encrypt = new Encrypt();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		passwrd = encrypt.encrypt(passwrd);
      	String tableLocation = getServletContext().getRealPath(request.getServletPath()).replace("UserLogin", "") + "WEB-INF" + File.separator + "systemFiles" + File.separator + "users.table";
      	try{
      		//WebbenchUtility.initializeWebbenchConfig();

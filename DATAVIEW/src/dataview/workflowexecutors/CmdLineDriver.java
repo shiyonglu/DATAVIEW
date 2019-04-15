@@ -24,7 +24,6 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
 public class CmdLineDriver {
-
 	public static String prvkey = WorkflowExecutor_Beta.workflowlibdir + VMProvisioner.keyName + ".pem";	
 	public static void copyFile(String SourceDIR, String DestinationDIR,
 			String strHostName) {

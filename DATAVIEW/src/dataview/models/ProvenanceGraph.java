@@ -21,7 +21,7 @@ public class ProvenanceGraph {
 	public String workflowName;  // which workflow is executed, each workflowName is a unique identifier in the whole DATAVIEW cycle
 	public String workflowRunID; // a unique id to identify this particular workflow run, a unique identifier in the whole DATAVIEW cycle
 	public List<String> myEntities; // all data products for this workflow run, each has a unique identifier in the whole DATAVIEW cycle
-	public List<String> myActivities; // all task runs for this workflow run, each has a unique identifer3 in the whole DATAVIEW cycle
+	public List<ProvanceNode> myActivities; // all task runs for this workflow run, each has a unique identifer3 in the whole DATAVIEW cycle
 	public List<String> myAgents;     // all users for this workflow run, probably only one user unless it is a collaborative workflow
 	public List<ProvenanceEdge> myEdges;
 	private String provname;
@@ -43,7 +43,7 @@ public class ProvenanceGraph {
 	}
 
 	// a new task run is initiated
-	public void addActivity(String act)
+	public void addActivity(ProvanceNode act)
 	{
 		myActivities.add(act);
 	}
@@ -54,19 +54,26 @@ public class ProvenanceGraph {
 		myAgents.add(ag);
 	}
 
+	// transfer edge 
+	public void addEdge_Transfer(String src, String dest, double transfertime){
+		
+	}
+	
 	
 	// edge type 1:  
 	public void addEdge_Used(String dest, String src, int inputPortIndex)
 	{
 		if(getIndexOfEntity(dest) == -1) myEntities.add(dest);
-		if(getIndexOfActivity(src) == -1) myActivities.add(src);
+		if(getIndexOfActivity(src) == -1) myActivities.add(new ProvanceNode(src));
 		myEdges.add(new ProvenanceEdge("Used", dest,  src,  inputPortIndex));
 	}
+	
+	
 	
 	// edge type 2: 
 	public void addEdge_WasGeneratedBy(String dest, String src, int outputPortIndex)
 	{
-		if(getIndexOfActivity(dest) == -1) myActivities.add(dest);
+		if(getIndexOfActivity(dest) == -1) myActivities.add(new ProvanceNode(dest));
 		if(getIndexOfEntity(src) == -1) myEntities.add(src);
 
 
@@ -86,8 +93,8 @@ public class ProvenanceGraph {
 	// edge type 4:
 	public void addEdge_WasInformedBy(String dest, String src)
 	{
-		if(getIndexOfActivity(src) == -1) myActivities.add(src);
-		if(getIndexOfActivity(dest) == -1) myActivities.add(dest);
+		if(getIndexOfActivity(src) == -1) myActivities.add(new ProvanceNode(src));
+		if(getIndexOfActivity(dest) == -1) myActivities.add(new ProvanceNode(dest));
 		
 		myEdges.add(new ProvenanceEdge("WasInformedBy", dest,  src));
 	}
@@ -96,7 +103,7 @@ public class ProvenanceGraph {
 	public void addEdge_wasAssociatedWith(String dest, String src)
 	{
 		if(getIndexOfAgent(dest) == -1) myAgents.add(dest);
-		if(getIndexOfActivity(src) == -1) myActivities.add(src);
+		if(getIndexOfActivity(src) == -1) myActivities.add(new ProvanceNode(src));
 		
 		myEdges.add(new ProvenanceEdge("wasAssociatedWith", dest,  src));
 	}
@@ -118,6 +125,13 @@ public class ProvenanceGraph {
 		
 		myEdges.add(new ProvenanceEdge("ActedOnBehalfOf", dest, src));
 	}
+	// workflow edge type:
+	public void addEdge_TransTime(String src, String dest, int inputPortIndex, Double transTime)
+	{
+		myEdges.add(new ProvenanceEdge("Transfer", src, dest, inputPortIndex, transTime));
+	}
+	
+	
 	
 	public int getNumOfNodes()
 	{
@@ -152,14 +166,20 @@ public class ProvenanceGraph {
     public String toString() 
 	{
 		String str = "";
+		for(ProvanceNode n:myActivities){
+			str = str + n.activityname + " was executed within " + n.exetime +"\n";
+		}
 		
 		for(ProvenanceEdge e: myEdges) {
 			if(e.edgeType.equals("Used")) 
 				str = str + e.destNode + " <=Used " + e.srcNode + "." + e.inputPort+"\n";
 			else if(e.edgeType.equals("WasGeneratedBy")) 
 				str = str + e.destNode+"."+e.outputPort+ " <=WasGeneratedBy " + e.srcNode + "\n";
+			else if(e.edgeType.equals("Transfer"))
+				str = str + e.destNode+ "."+e.outputPort + " <=WasTransferFrom " + e.srcNode + " within " + e.transTime+ "(S)"+  "\n";
 			else				
 				str = str + e.destNode+ " <="+e.edgeType+ " " + e.srcNode + "\n";
+			
 		}				
 		return str;		
 	}
