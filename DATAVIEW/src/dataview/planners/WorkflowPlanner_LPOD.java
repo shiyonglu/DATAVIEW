@@ -18,7 +18,7 @@ import dataview.models.TaskSchedule;
 import dataview.models.Workflow;
 import dataview.models.WorkflowEdge;
 
-public class WorkflowPlanner_LocalOptimization extends WorkflowPlanner {
+public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 	/*
 	 * edgeMap: startNode ---> endNode and edge weight execTime: task :
 	 * (resource running time) taskTime: task : double[MES, EST, LST ,LFT] AST
