@@ -76,7 +76,7 @@ public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 		Double cost;
 	}
 
-	public WorkflowPlanner_LocalOptimization(Workflow w) {
+	public WorkflowPlanner_LPOD(Workflow w) {
 		super(w);
 		execTime = w.getExecutionTime();
 		System.out.println(execTime);
