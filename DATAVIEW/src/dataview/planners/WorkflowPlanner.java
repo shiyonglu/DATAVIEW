@@ -16,7 +16,8 @@ public class WorkflowPlanner {
 	public static final int WorkflowPlanner_Naive2 = 1;
 	public static final int WorkflowPlanner_T_Cluster = 2;
 	public static final int WorkflowPlanner_ICPCP = 3;
-
+	public static final int WorkflowPlanner_LPOD = 5;
+	
 	protected Workflow w;
 	
 	// this is the graph of the workflow:
