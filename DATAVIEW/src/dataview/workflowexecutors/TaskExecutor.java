@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -13,8 +14,10 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
 import com.dropbox.core.DbxDownloader;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
@@ -29,7 +32,7 @@ import dataview.models.JSONValue;
 import dataview.models.Task;
 
 
-/*	The task executor will bind the data products with input ports and output ports
+/**	The task executor will bind the data products with input ports and output ports
  *  It will call a specific task to read data from the input port, do data processing and write data to corresponding outputs.
  *  
  *  Each input port of a task is like an incoming mailbox. The task executor will put data products of all input ports,then the
@@ -42,10 +45,42 @@ public class TaskExecutor {
 	ObjectOutputStream out;
 	ObjectInputStream in;
 	Socket connection;
+	//   Change the name to datamovement.
+	public class DatamovementCallback {
+		private JSONObject outdc;
+		public DatamovementCallback(JSONObject dc) {
+			outdc = dc;
+		}
+		public void onThreadFinished(double duration) {
+			outdc.put("transTime", new JSONValue(Double.toString(duration)));
+		}
+	}
+	/** If a output will transfer to the task's children tasks, each transfer will execute in one thread. Multiple final output will transfer
+	 	to the user's dropbox folder in a parallel manner. 
+	*/
+	public class TransformThread extends Thread {
+		private DatamovementCallback threadCallback;
+		private Runnable runable;
+		/**
+		 * The constructor for each thread will take a Runnable object and callback object
+		 * @param task: has a override run() method will move data from one VM instance to another VM instance.
+		 * @param callback: has the method to record the data transfer time between different VMs. 
+		 */
+		public TransformThread(Runnable task, DatamovementCallback callback) {
+			runable = task;
+			threadCallback = callback;		
+		}
+		@Override
+		public void run() {
+			long start = System.nanoTime();
+			runable.run();
+			if (null != threadCallback) {
+				threadCallback.onThreadFinished((double)(System.nanoTime() - start) / 1_000_000_000.0);
+			}
+		}
+	}
 	
-	//List<String> updatefiles;
-	
-	TaskExecutor() throws ClassNotFoundException, SQLException {
+	public TaskExecutor() throws ClassNotFoundException, SQLException {
 		try {
 			providerSocket = new ServerSocket(2004, 10);
 			
@@ -54,7 +89,7 @@ public class TaskExecutor {
 		}
 	}
 
-	void run() {
+	public void run() {
 		try {
 			do {
 				Dataview.debugger
@@ -67,7 +102,9 @@ public class TaskExecutor {
 				in  = new ObjectInputStream(connection.getInputStream());
 				try {
 					Message message = (Message) in.readObject();
+					// the task specification will be record in p.
 					JSONParser p = new JSONParser(message.getB());
+					// the dropbox token information will be record in token.
 					String token = message.getA();
 					Dataview.debugger.logSuccessfulMessage("receive the task specification:");
 					Dataview.debugger.logSuccessfulMessage(message.getB());
@@ -75,8 +112,12 @@ public class TaskExecutor {
 					String taskName = taskSpec.get("taskName").toString().replace("\"", "");
 					String taskID = taskSpec.get("taskInstanceID").toString().replace("\"", "");
 					JSONArray indcs = taskSpec.get("incomingDataChannels").toJSONArray();
-					JSONArray outdcs = taskSpec.get("outgoingDataChannels").toJSONArray();
-					// map each port to a file name
+					final JSONArray outdcs = taskSpec.get("outgoingDataChannels").toJSONArray();
+					/** Each port will be mapped with an unique txt file storing all the data.
+					 * 	The input files names and output files names are already given.
+					 * 	The intermediate file name is created based on the taskID and the output port id in 
+					 * 	the incomingDataChannels in the task specification. 
+					 */
 					SortedMap<String, String> inputportAndFile = new TreeMap<String, String>();
 					SortedMap<String, String>  outputportAndFile = new TreeMap<String, String>();
 					for(int i = 0; i< indcs.size(); i++){
@@ -132,24 +173,34 @@ public class TaskExecutor {
 							Method method = classLoaderClass.getDeclaredMethod("addURL", new Class[] { URL.class });
 							method.setAccessible(true);
 							method.invoke(systemClassLoader, urls);
+							Class<?> taskclass = Class.forName(taskName);
+							t = (Task) taskclass.newInstance();
+						
 						} catch (Exception e) {
 							Dataview.debugger.logException(e);
 							e.printStackTrace();
 						}
+						
 					}
-					try {
-						Class<?> taskclass = Class.forName(taskName);
-						t = (Task) taskclass.newInstance();
+					else{
+						File file = new File("/home/ubuntu/"); 
 
-					} catch (ClassNotFoundException e) {
-
-						e.printStackTrace();
-					} catch (InstantiationException e) {
-
-						e.printStackTrace();
-					} catch (IllegalAccessException e) {
-
-						e.printStackTrace();
+		                //convert the file to URL format
+						URL url = file.toURI().toURL(); 
+						URL[] urls = new URL[]{url}; 
+					
+		                //load this folder into Class loader
+						ClassLoader cl = new URLClassLoader(urls); 
+						
+						try{
+							Class<?> taskclass = Class.forName(taskName,true,cl);
+							t = (Task) taskclass.newInstance();
+						}
+						catch (Exception e) {
+							Dataview.debugger.logException(e);
+							e.printStackTrace();
+						}
+						
 					}
 					for (int i = 0; i < t.ins.length; i++) {
 						t.ins[i].setLocation(inputportAndFile.get(i+""));
@@ -163,32 +214,73 @@ public class TaskExecutor {
 					long startTime = System.nanoTime();
 					t.run();
 					long endTime = System.nanoTime();
-					long duration = (endTime - startTime);
-					JSONObject json = new JSONObject();
-					json.put(taskID, new JSONValue(Long.toString(duration)));
+					double duration = (double)(endTime - startTime) / 1_000_000_000.0;	
+					taskSpec.put("execTime", new JSONValue(Double.toString(duration)));
 					Dataview.debugger.logSuccessfulMessage("Task "+t.taskName + " is finished");
 					
 					// move the output file to the crossponding VM isntances
+					ArrayList<TransformThread> threads = new ArrayList<TransformThread>();
 					for(int i = 0; i < outdcs.size(); i++){
 						JSONObject outdc = outdcs.get(i).toJSONObject();
 						if(!outdc.get("destIP").toString().replaceAll("\"", "").
 								equals(taskSpec.get("myIP").toString().replaceAll("\"", "")) && !outdc.get("destIP").isEmpty() ){
-							MoveDataToCloud.getDataReady(taskSpec.get("taskInstanceID").toString().replaceAll("\"", "")+"_"+
-									outdc.get("myOutputPortIndex").toString().replaceAll("\"", "")+".txt", outdc.get("destIP").toString().replaceAll("\"", ""));
+							final String taskInstanceID = taskSpec.get("taskInstanceID").toString();
+							final String outputPortIndex = outdc.get("myOutputPortIndex").toString();
+							final String destIP = outdc.get("destIP").toString();
+							Runnable task = new Runnable() {
+								@Override
+								public void run() {
+									try {
+										MoveDataToCloud.getDataReady(taskInstanceID.replaceAll("\"", "")+"_"+
+												outputPortIndex.replaceAll("\"", "")+".txt", 
+												destIP.replaceAll("\"", ""));
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+								}
+							};
+							DatamovementCallback callback = new DatamovementCallback(outdc);
+							TransformThread thread = new TransformThread(task, callback);
+							threads.add(thread);
+							thread.start();
 						}else if(outdc.get("destTask").isEmpty()){
 							if(!token.isEmpty()){
-								// update the final output to Dropbox 
-								DbxRequestConfig config = new DbxRequestConfig("en_US");
-								DbxClientV2 client = new DbxClientV2(config, token);
-								String localFileAbsolutePath = outdc.get("destFilename").toString().replaceAll("\"", "");
-								String dropboxPath = "/DATAVIEW-OUTPUT/" + localFileAbsolutePath;
-								InputStream in = new FileInputStream(localFileAbsolutePath);
-								client.files().uploadBuilder(dropboxPath).withMode(WriteMode.ADD).uploadAndFinish(in);
+								final String tokenForThread = token;
+								final String destFilename = outdc.get("destFilename").toString();
+								final String taskIDForThread = taskID;
+								
+								Runnable task = new Runnable() {
+									@Override
+									public void run() {
+										try {
+											// update the final output to Dropbox 
+											DbxRequestConfig config = new DbxRequestConfig("en_US");
+											DbxClientV2 client = new DbxClientV2(config, tokenForThread);
+											String localFileAbsolutePath = destFilename.replaceAll("\"", "");
+											String dropboxPath = "/DATAVIEW-OUTPUT/" + localFileAbsolutePath+taskIDForThread;
+											InputStream in = new FileInputStream(localFileAbsolutePath);
+											client.files().uploadBuilder(dropboxPath).withMode(WriteMode.ADD).uploadAndFinish(in);
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+									}
+								};
+								TransformThread thread = new TransformThread(task, null);
+								threads.add(thread);
+								thread.start();
 							}
+						}else {
+							outdc.put("transTime", new JSONValue(Double.toString(0.0)));
 						}
+						
+					}
+					// the main thread will wait until all the threads are finished.
+					for (TransformThread thread : threads) {
+						thread.join();
 					}
 					
-					out.writeObject(taskID);
+					Dataview.debugger.logSuccessfulMessage("Here is the task specification "+ taskSpec);
+					out.writeObject(taskSpec.toString());
 					out.flush();
 						
 				} catch (Exception e) {
@@ -210,12 +302,6 @@ public class TaskExecutor {
 			} 
 		}
 	}
-	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		TaskExecutor msgserver = new TaskExecutor();
-		msgserver.run();
-
-	}
+	
 
 }
-
-
