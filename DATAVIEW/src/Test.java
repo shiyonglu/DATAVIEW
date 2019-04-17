@@ -5,7 +5,7 @@ import java.io.File;
 import dataview.models.*;
 import dataview.planners.WorkflowPlanner;
 import dataview.planners.WorkflowPlanner_ICPCP;
-
+import dataview.planners.WorkflowPlanner_LPOD;
 import dataview.planners.WorkflowPlanner_Naive1;
 import dataview.planners.WorkflowPlanner_Naive2;
 import dataview.planners.WorkflowPlanner_T_Cluster;
@@ -34,7 +34,7 @@ public class Test {
 		//frame.drawWorkflowGraph(w);
 		
 		// step 3: choose a workflow planner
-		int whichplanner = WorkflowPlanner.WorkflowPlanner_T_Cluster;
+		int whichplanner = WorkflowPlanner.WorkflowPlanner_Naive2;
 		
 		WorkflowPlanner wp = null;
 		switch (whichplanner) {
@@ -50,6 +50,8 @@ public class Test {
 		case WorkflowPlanner.WorkflowPlanner_ICPCP:
 			wp = new WorkflowPlanner_ICPCP(w);
 			break;
+		case WorkflowPlanner.WorkflowPlanner_LPOD:
+			wp = new WorkflowPlanner_LPOD(w);
 		default:
 			wp = new WorkflowPlanner_T_Cluster(w);
 			break;
