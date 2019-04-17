@@ -26,7 +26,7 @@ Check out tutorial: https://youtu.be/R6A6jreySFc or follow the instructions belo
      <li> Unzip the DATAVIEW-master.zip file and import the DATAVIEW project into Eclipse as an "Existing Projects into Workspace" by selecting "Projects from Folder or Archive".
     </li> 
     <li> The external dependecies libraries must be added to the Eclipse project from /DATAVIEW/WebContent/WEB-INF/lib </li>
-    <li>The accessKey and secretKey of Amazon EC2 should be updated in config.properties under /DATAVIEW/WebContent/workflowLibDir/ </li>
+    <li>The accessKey(Access key ID) and secretKey(Secret access key) of Amazon EC2 should be updated in config.properties under /DATAVIEW/WebContent/workflowLibDir/ </li>
     <li>/DATAVIEW/src/test.java shows the six steps to create a new workflow and execute it in Amazon EC2.</li>
     <li>After the execution of a workflow completes, please terminate all the EC2 instances from your AWS account manually.</li>
 </OL>
