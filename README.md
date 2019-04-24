@@ -18,14 +18,16 @@ Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Drop
 * A dropbox token should be provided in the main interface when you login in, which can be generated based on this tutorial:https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/
 
 <h2>Download and configure DATAVIEW as JAVA API</h2>
-Tutorial:https://youtu.be/R6A6jreySFc
+Check out tutorial: https://youtu.be/R6A6jreySFc or follow the instructions below:
+
 <OL>
     <li>Download the DATAVIEW package from https://github.com/shiyonglu/DATAVIEW by clicking the "Clone or Download" button.
     </li> 
      <li> Unzip the DATAVIEW-master.zip file and import the DATAVIEW project into Eclipse as an "Existing Projects into Workspace" by selecting "Projects from Folder or Archive".
     </li> 
     <li> The external dependecies libraries must be added to the Eclipse project from /DATAVIEW/WebContent/WEB-INF/lib </li>
-    <li>The accessKey and secretKey of Amazon EC2 should be updated in config.properties under /DATAVIEW/WebContent/workflowLibDir/ </li>
+    <li> Create an Access key ID and a Secret access key in Amazon EC2 following the turotial: https://youtu.be/9741e4CubMQ </li>
+    <li>Replace the accessKey(Access key ID) and the secretKey(Secret access key) in config.properties by the Access key ID and Secret access key created in the previous step. File config.properties is under /DATAVIEW/WebContent/workflowLibDir/. </li>
     <li>/DATAVIEW/src/test.java shows the six steps to create a new workflow and execute it in Amazon EC2.</li>
     <li>After the execution of a workflow completes, please terminate all the EC2 instances from your AWS account manually.</li>
 </OL>
