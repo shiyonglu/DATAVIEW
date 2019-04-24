@@ -49,7 +49,7 @@ public class JSONParser {
 			}
 			else {
 				//System.out.println("Expected "+(char)chartoeat+" but found "+(char)ch);
-				Dataview.debugger.logErrorMessage("Expected "+(char)chartoeat+" but found "+(char)ch);
+				//Dataview.debugger.logErrorMessage("Expected "+(char)chartoeat+" but found "+(char)ch);
 				return false;
 			}
 		}

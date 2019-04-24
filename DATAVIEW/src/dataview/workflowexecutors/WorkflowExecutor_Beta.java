@@ -16,6 +16,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import dataview.models.Dataview;
 import dataview.models.GlobalSchedule;
 import dataview.models.IncomingDataChannel;
 import dataview.models.JSONArray;
@@ -255,6 +256,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 					System.out.println(taskspec);
 					JSONParser p = new JSONParser(taskspec);
 					JSONObject taskSpec = p.parseJSONObject();
+					Dataview.debugger.logSuccessfulMessage("local recv " + taskSpec.get("taskInstanceID").toString().replace("\"", ""));
 					taskSpecObj.add(taskSpec);
 					synchronized(this){
 						taskNum--;	

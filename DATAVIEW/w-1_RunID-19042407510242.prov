@@ -1,0 +1,11 @@
+T1@7629b854 was executed within 0.004766766
+T2@45d6fad7 was executed within 2.49175E-4
+T2@1d209d56 was executed within 0.002720313
+T2@24ee5d13 was executed within 0.00260168
+T3@78aea5cd was executed within 3.54774E-4
+T1@7629b854.outs[0] <=WasTransferFrom T2@45d6fad7 within 0.0(S)
+T1@7629b854.outs[0] <=WasTransferFrom T2@24ee5d13 within 1.215390594(S)
+T1@7629b854.outs[0] <=WasTransferFrom T2@1d209d56 within 1.211606073(S)
+T2@45d6fad7.outs[0] <=WasTransferFrom T3@78aea5cd within 0.0(S)
+T2@1d209d56.outs[2] <=WasTransferFrom T3@78aea5cd within 1.222353316(S)
+T2@24ee5d13.outs[1] <=WasTransferFrom T3@78aea5cd within 1.226178375(S)

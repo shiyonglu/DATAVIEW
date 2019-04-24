@@ -5,6 +5,8 @@ package dataview.workflowexecutors;
 import java.io.*;
 import java.net.*;
 
+import dataview.models.Dataview;
+
 /**
  * The client code will create a sock and connect to the server socket through port number 2004.
  * @author changxinbai
@@ -48,7 +50,7 @@ public class MSGClient extends Thread {
 
 			sendMessage(message);
 			//System.out.println("send " + message);
-			//Dataview.debugger.logSuccessfulMessage("send " + message);
+			Dataview.debugger.logSuccessfulMessage("send " + message);
 			// wait until recv the FIN from the remote node
 			
 			resp = (String) in.readObject();

@@ -25,8 +25,8 @@ public class Test {
 		//W1 w = new W1();
 		//SampleWorkflow w = new SampleWorkflow();
 		//Montage_workflow w = new Montage_workflow();
-		MR w = new MR();
-		//Diagnosis w = new Diagnosis();
+		//MR w = new MR();
+		Diagnosis w = new Diagnosis();
 		//DummyWorkflow w = new DummyWorkflow();
 		
 		// step 2: design a workflow

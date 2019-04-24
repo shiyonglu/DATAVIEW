@@ -27,7 +27,7 @@ public class MoveToCloud {
 		String destination_dir = "/home/ubuntu/";
 		for (int i = 0; i < ips.size(); i++) {
 			CmdLineDriver.copyFile(Location, destination_dir, ips.get(i).trim());
-			//Dataview.debugger.logSuccessfulMessage(Location + "file on " + ips.get(i) + " is ready!!");
+			Dataview.debugger.logSuccessfulMessage(Location + "file on " + ips.get(i) + " is ready!!");
 			System.out.println(Location + " file on " + ips.get(i) + " is ready!!");
 		}
 	}

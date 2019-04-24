@@ -50,7 +50,7 @@ public class Logger {
 		
 		
 		if (level > currentlevel) return false;  // will not log
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
 		Date now = new Date();
 		logmsg = dateFormat.format(now);
 		
