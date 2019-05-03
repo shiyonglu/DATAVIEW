@@ -45,7 +45,7 @@ Check out tutorial: https://youtu.be/R6A6jreySFc or follow the instructions belo
 
 <h2>DATAVIEW Tutorials</h2>
 <OL>
-    <li>An introduction to DATAVIEW （https://youtu.be/cWQ2imhUzRg) </li>
+    <li> Chapter 1: An gentle introduction to DATAVIEW （https://youtu.be/7S4iGKXpaAc) </li>
     <li> How to download and import DATAVIEW into Eclipse as Java API (https://youtu.be/R6A6jreySFc)</li>
     <li> How to create a workflow task for DATAVIEW (the linear regression example) (https://youtu.be/BPaoR_zogPA)</li>
     <li> How to create a workflow task in Python (https://youtu.be/3vSx-g9FnZU)</li>
