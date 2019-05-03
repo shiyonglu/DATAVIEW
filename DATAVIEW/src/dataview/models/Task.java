@@ -5,6 +5,9 @@ package dataview.models;
  * This class defines the task model, with each task has a finite number of input ports and output ports. 
  * Each port will have a predefined data type. 
  * 
+ * Subscribe to Youtube DATAVIEW channel for more information:
+ * https://www.youtube.com/channel/UCrIEBUmju-NMKFMlFbsKBYw 
+ * 
  */
 public abstract class Task {
 	public String taskName;
