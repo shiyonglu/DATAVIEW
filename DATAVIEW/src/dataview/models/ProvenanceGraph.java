@@ -21,7 +21,7 @@ public class ProvenanceGraph {
 	public String workflowName;  // which workflow is executed, each workflowName is a unique identifier in the whole DATAVIEW cycle
 	public String workflowRunID; // a unique id to identify this particular workflow run, a unique identifier in the whole DATAVIEW cycle
 	public List<String> myEntities; // all data products for this workflow run, each has a unique identifier in the whole DATAVIEW cycle
-	public List<ProvanceNode> myActivities; // all task runs for this workflow run, each has a unique identifer3 in the whole DATAVIEW cycle
+	public List<ProvenanceNode> myActivities; // all task runs for this workflow run, each has a unique identifer3 in the whole DATAVIEW cycle
 	public List<String> myAgents;     // all users for this workflow run, probably only one user unless it is a collaborative workflow
 	public List<ProvenanceEdge> myEdges;
 	private String provname;
@@ -43,7 +43,7 @@ public class ProvenanceGraph {
 	}
 
 	// a new task run is initiated
-	public void addActivity(ProvanceNode act)
+	public void addActivity(ProvenanceNode act)
 	{
 		myActivities.add(act);
 	}
@@ -64,7 +64,7 @@ public class ProvenanceGraph {
 	public void addEdge_Used(String dest, String src, int inputPortIndex)
 	{
 		if(getIndexOfEntity(dest) == -1) myEntities.add(dest);
-		if(getIndexOfActivity(src) == -1) myActivities.add(new ProvanceNode(src));
+		if(getIndexOfActivity(src) == -1) myActivities.add(new ProvenanceNode(src));
 		myEdges.add(new ProvenanceEdge("Used", dest,  src,  inputPortIndex));
 	}
 	
@@ -73,7 +73,7 @@ public class ProvenanceGraph {
 	// edge type 2: 
 	public void addEdge_WasGeneratedBy(String dest, String src, int outputPortIndex)
 	{
-		if(getIndexOfActivity(dest) == -1) myActivities.add(new ProvanceNode(dest));
+		if(getIndexOfActivity(dest) == -1) myActivities.add(new ProvenanceNode(dest));
 		if(getIndexOfEntity(src) == -1) myEntities.add(src);
 
 
@@ -93,8 +93,8 @@ public class ProvenanceGraph {
 	// edge type 4:
 	public void addEdge_WasInformedBy(String dest, String src)
 	{
-		if(getIndexOfActivity(src) == -1) myActivities.add(new ProvanceNode(src));
-		if(getIndexOfActivity(dest) == -1) myActivities.add(new ProvanceNode(dest));
+		if(getIndexOfActivity(src) == -1) myActivities.add(new ProvenanceNode(src));
+		if(getIndexOfActivity(dest) == -1) myActivities.add(new ProvenanceNode(dest));
 		
 		myEdges.add(new ProvenanceEdge("WasInformedBy", dest,  src));
 	}
@@ -103,7 +103,7 @@ public class ProvenanceGraph {
 	public void addEdge_wasAssociatedWith(String dest, String src)
 	{
 		if(getIndexOfAgent(dest) == -1) myAgents.add(dest);
-		if(getIndexOfActivity(src) == -1) myActivities.add(new ProvanceNode(src));
+		if(getIndexOfActivity(src) == -1) myActivities.add(new ProvenanceNode(src));
 		
 		myEdges.add(new ProvenanceEdge("wasAssociatedWith", dest,  src));
 	}
@@ -166,7 +166,7 @@ public class ProvenanceGraph {
     public String toString() 
 	{
 		String str = "";
-		for(ProvanceNode n:myActivities){
+		for(ProvenanceNode n:myActivities){
 			str = str + n.activityname + " was executed within " + n.exetime +"\n";
 		}
 		

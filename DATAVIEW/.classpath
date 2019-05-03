@@ -86,6 +86,5 @@
 	<classpathentry kind="lib" path="/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/WEB-INF/lib/wstx-asl-3.2.9.jar"/>
 	<classpathentry kind="lib" path="/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/WEB-INF/lib/xmlbeans-2.3.0.jar"/>
 	<classpathentry kind="lib" path="/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/WEB-INF/lib/XmlSchema-1.4.7.jar"/>
-	<classpathentry kind="lib" path="/Users/changxinbai/Downloads/jgraphx-1.10.4.2.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

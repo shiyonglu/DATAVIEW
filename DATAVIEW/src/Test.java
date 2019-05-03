@@ -21,20 +21,20 @@ public class Test {
 	public static void main(String[] args) throws Exception {
 		
 		// step 1: create a workflow
-		//WorkflowVisualization frame = new WorkflowVisualization();	
+		WorkflowVisualization frame = new WorkflowVisualization();	
 		//W1 w = new W1();
 		//SampleWorkflow w = new SampleWorkflow();
 		//Montage_workflow w = new Montage_workflow();
 		//MR w = new MR();
-		Diagnosis w = new Diagnosis();
+		//Diagnosis w = new Diagnosis();
 		//DummyWorkflow w = new DummyWorkflow();
-		
+		WordCount_workflow w = new WordCount_workflow();
 		// step 2: design a workflow
 		w.design();
-		//frame.drawWorkflowGraph(w);
+		frame.drawWorkflowGraph(w);
 		
 		// step 3: choose a workflow planner
-		int whichplanner = WorkflowPlanner.WorkflowPlanner_Naive2;
+		int whichplanner = WorkflowPlanner.WorkflowPlanner_Naive1;
 		
 		WorkflowPlanner wp = null;
 		switch (whichplanner) {

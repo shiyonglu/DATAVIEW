@@ -23,7 +23,7 @@ import dataview.models.JSONArray;
 import dataview.models.JSONObject;
 import dataview.models.JSONParser;
 import dataview.models.LocalSchedule;
-import dataview.models.ProvanceNode;
+import dataview.models.ProvenanceNode;
 import dataview.models.ProvenanceGraph;
 import dataview.models.TaskSchedule;
 
@@ -36,7 +36,7 @@ import dataview.models.TaskSchedule;
 
 public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	public static String workflowTaskDir;
-	public static  String workflowlibdir;
+	public static  String workflowLibdir;
 	public LocalScheduleRun[] scheduleRunners;
 	public ConcurrentHashMap<String, ConcurrentLinkedQueue<TaskRun>> relationMap = new ConcurrentHashMap<>();
 	public  int taskNum = 0; 
@@ -63,7 +63,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			}
 		}
 		this.workflowTaskDir = workflowTaskDir;
-		this.workflowlibdir =  workflowLibDir;
+		this.workflowLibdir =  workflowLibDir;
 		VMProvisioner.parametersetting(workflowLibDir);
 		init();
 		System.out.println("the total number of tasks are "+ taskNum);
@@ -88,8 +88,8 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			}
 		}
 		this.workflowTaskDir = workflowTaskDir;
-		this.workflowlibdir = workflowLibDir;
-		VMProvisioner.initializeProvisioner(accessKey, secretKey,"dataview1","Dataview_key","ami-04dc96ad82b696bde");
+		this.workflowLibdir = workflowLibDir;
+		VMProvisioner.initializeProvisioner(accessKey, secretKey,"dataview1","Dataview_key","ami-064ab7adf0e30b152");
 		this.token = token;
 		init();
 	}
@@ -115,15 +115,15 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		VMProvisioner m = new VMProvisioner();	
 		for(String str : VMnumbers.keySet()){
 			if(str.equals("VM1")){
-				m.provisionVMs("t2.xlarge",VMnumbers.get(str), workflowlibdir);
+				m.provisionVMs("t2.xlarge",VMnumbers.get(str), workflowLibdir);
 				Thread.sleep(90000);
 			}
 			if(str.equals("VM2")){
-				m.provisionVMs("t2.large",VMnumbers.get(str), workflowlibdir );
+				m.provisionVMs("t2.large",VMnumbers.get(str), workflowLibdir );
 				Thread.sleep(90000);
 			}
 			if(str.equals("VM3")){
-				m.provisionVMs("t2.micro",VMnumbers.get(str), workflowlibdir );
+				m.provisionVMs("t2.micro",VMnumbers.get(str), workflowLibdir );
 				Thread.sleep(90000);
 			}
 		}
@@ -134,7 +134,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		}
 		System.out.println(ipsAndType);
 		// get the pem file generated from the VM provisioning process. 
-		String pemFileLocation = workflowlibdir + VMProvisioner.keyName + ".pem";
+		String pemFileLocation = workflowLibdir + VMProvisioner.keyName + ".pem";
 		// configure each VM instance with confidential information instead of using pem 
 		MakeMachinesReady.getMachineReady(pemFileLocation, ips);
 		// move the pem file to each VM instance to send intermedidate output.
@@ -272,7 +272,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 						for(JSONObject tmp:taskSpecObj){
 						   String taskId = tmp.get("taskInstanceID").toString().replace("\"", "");
 						   Double exeTime = Double.parseDouble(tmp.get("execTime").toString().replace("\"", ""));
-						   pgraph.myActivities.add(new ProvanceNode(taskId,exeTime));
+						   pgraph.myActivities.add(new ProvenanceNode(taskId,exeTime));
 						   JSONArray outdcs = tmp.get("outgoingDataChannels").toJSONArray();
 						   for(int i = 0; i < outdcs.size(); i++){
 								JSONObject outdc = outdcs.get(i).toJSONObject();

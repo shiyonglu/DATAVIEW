@@ -181,7 +181,7 @@ public class VMProvisioner {
 		if (initialVMTypeIntances.size() < noOfInstances) {
 			VMProvisioner.justLaunchVMs(vmType, noOfInstances - initialVMTypeIntances.size(), path);
 		}
-		ArrayList<String> runningAndPendingVMs = VMProvisioner.getAvailableAndPendingInstIds();
+		//ArrayList<String> runningAndPendingVMs = VMProvisioner.getAvailableAndPendingInstIds();
 		//VMProvisioner.waitUntilAllPendingBecomeRunning(runningAndPendingVMs);
 		System.out.println("#Provisioned machines successfully....");
 	}
@@ -286,6 +286,16 @@ public class VMProvisioner {
 			Thread.sleep(1000);
 			DescribeInstancesResult r = VMProvisioner.ec2client.describeInstances();
 			Iterator<Reservation> ir = r.getReservations().iterator();
+			List<Reservation> ir1 =  r.getReservations();
+			for(Reservation reservation:ir1){
+				List<Instance> instances = reservation.getInstances();
+				for(Instance ii :instances){
+					if (ii.getState().getName().trim().equals("pending")){
+						break;
+					}
+				}
+			}
+			
 			while (ir.hasNext()) {
 				Reservation rr = ir.next();
 				List<Instance> instances = rr.getInstances();
@@ -293,7 +303,7 @@ public class VMProvisioner {
 					if (ii.getState().getName().trim().equals("pending")){
 						break;
 					}
-					else{
+					if(ii.getState().getName().trim().equals("running")){
 						noOfPending--;
 					}
 				}
@@ -481,6 +491,9 @@ public class VMProvisioner {
 		}
 		String pemFilePath = path;
 		createKeyPair(pemFilePath, keyName);
+		/*if(!checkIfKeyExists(ec2client, keyName)){
+			createKeyPair(path, keyName);
+		}*/
 		provisioner.createEC2Instance(vmType, noOfInstances);
 	}
 	

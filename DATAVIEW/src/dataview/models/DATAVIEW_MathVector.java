@@ -77,7 +77,7 @@ public class DATAVIEW_MathVector {
     }
 
     
-    public void sutract(int i, double val)
+    public void subtract(int i, double val)
     {
     	elements[i] -= val;
     }

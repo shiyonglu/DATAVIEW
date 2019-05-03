@@ -1,0 +1,8 @@
+This is not an interesting book
+because the more you read it the more you get
+bored. Of course, writing a book is a huge undertaking.
+I would rather write a manual for my DATAVIEW system.
+Previously I have written two books, but they are not so popular.
+Now, I am more interested in writing code, because you can immediately see
+some results. I hope one day, DATAVIEW will become a popular programming environment
+in which people will run parallel programs in the Cloud. 
