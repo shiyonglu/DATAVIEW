@@ -58,7 +58,12 @@ public abstract class Task {
 		}					
 	}
 	
-	
+
+	/** 
+	 * Return a JSON specification of this task
+	 * 
+	 * @return Return a JSON specification of this task
+	 */
 	public JSONObject getTaskSpecification()
 	{
 		JSONObject obj = new JSONObject();
@@ -84,5 +89,9 @@ public abstract class Task {
 		return obj;		
 	}
 	
+	/**
+	 * Each subclass of the task class needs to implement the abstract method run(), which embodies the computational or analytics code 
+	 * that implements the functionality of the task class. 
+	 */
 	public abstract void run();
 }
