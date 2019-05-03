@@ -10,15 +10,25 @@ package dataview.models;
  * 
  */
 public abstract class Task {
-	public String taskName;
-	public String taskDescription;
-	public InputPort [] ins;
-	public OutputPort [] outs;
+	public String taskName;          // the name of the task object
+	public String taskDescription;   // a description of the task object
+	public InputPort [] ins;         // an array of InputPorts
+	public OutputPort [] outs;       // an array of OutputPorts
 	
+	/**
+	 * A constructor that constructs an object of a task without any information.
+	 * 
+	 */
 	public Task()
 	{
 	}
 	
+	/**
+	 * A constructor that constructs an object of a task with a given taskName and taskDescription.
+	 * 
+	 * @param taskName the name of the task object
+	 * @param taskDescription a description of the task object
+	 */
 	public Task(String taskName, String taskDescription)
 	{
 		this.taskName = taskName;
@@ -46,7 +56,6 @@ public abstract class Task {
      * @param outputport_index the index of the given output port
      * @param o  the object that is to be written to the given output port  
      */
-
 	public void write(int outputport_index, Object o)
 	{
 		if(outputport_index >= 0 && outputport_index < outs.length) {

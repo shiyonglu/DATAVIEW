@@ -4,13 +4,15 @@ import dataview.models.Port;
 import dataview.models.Task;
 
 public class T2 extends Task{
-	/*
+	
+	/**
+	 * 
 	 * The constructor will decide how many inputports and how many outputports and the detailed information of each port.
 	 */
-	
 	public T2()
 	{
-		super("T2", "This is a task that implements add. It has two inputports and one outputport.");
+		super("T2", "This is a task that implements add. It one intputport and one outputport. It simply adds 0 to the first number"
+				+ "and then copy the result to the outputport. ");
 		ins = new InputPort[1];
 		outs = new OutputPort[1];
 		ins[0] = new InputPort("in0", Port.DATAVIEW_int, "This is the first number");

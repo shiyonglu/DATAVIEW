@@ -10,10 +10,11 @@ public class T1 extends Task{
 	
 	public T1()
 	{
-		super("T1", "This is a task that implements add. It has two inputports and one outputport.");
+		super("T1", "This is a task that implements add. It has one inputport and three outputports. It simplies add 0 to the first number "
+				+ "and then copy the result to the three outputports.");
 		ins = new InputPort[1];
 		outs = new OutputPort[3];
-		ins[0] = new InputPort("in0", Port.DATAVIEW_int, "This is the second number");
+		ins[0] = new InputPort("in0", Port.DATAVIEW_int, "This is the first number");
 		outs[0] = new OutputPort("out0", Port.DATAVIEW_int, "This is the first output");
 		outs[1] = new OutputPort("out1", Port.DATAVIEW_int, "This is the second output");	
 		outs[2] = new OutputPort("out2", Port.DATAVIEW_int, "This is the third output");	

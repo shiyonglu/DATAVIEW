@@ -7,7 +7,8 @@ public class Task1 extends Task{
 	
 	public Task1()
 	{
-		super("T1", "This is a task that implements add. It has two inputports and one outputport.");
+		super("T1", "This is a task that implements add. It has two inputports and one outputport. It addes the two numbers from the two "
+				+ "inputports and then write the result to the outputport.");
 		ins = new InputPort[2];
 		outs = new OutputPort[1];
 		ins[0] = new InputPort("in0", Port.DATAVIEW_int, "This is the first number");
