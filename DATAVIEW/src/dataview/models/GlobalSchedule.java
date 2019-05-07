@@ -9,6 +9,7 @@ import java.util.*;
  *
  */
 public class GlobalSchedule {
+	private Workflow w;
 	private List<LocalSchedule> lschs;
 	
 	/**
@@ -19,6 +20,12 @@ public class GlobalSchedule {
 	public GlobalSchedule() {
 		lschs = new ArrayList<LocalSchedule>();
 	}
+	
+	public GlobalSchedule(Workflow w)
+    {
+		lschs = new ArrayList<LocalSchedule>();
+		this.w = w;
+    }
 	
 	public void addLocalSchedule(LocalSchedule lsch)
 	{
@@ -55,6 +62,13 @@ public class GlobalSchedule {
 		return lschs.get(i);
 	}
 
+	
+	public Workflow getWorkflow()
+	{
+		return w;
+	}
+	
+	
 	public JSONObject getSpecification()
 	{
 		JSONObject obj = new JSONObject();

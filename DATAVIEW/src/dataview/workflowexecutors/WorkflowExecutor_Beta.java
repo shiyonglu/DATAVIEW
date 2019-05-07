@@ -44,7 +44,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	public ConcurrentHashMap<String, ConcurrentLinkedQueue<TaskRun>> relationMap = new ConcurrentHashMap<>();
 	public  int taskNum = 0; 
 	public  long starTime;
-	public String token="";         
+	public String dropboxToken="";         
 	public String accessKey;
 	public String secretKey;
 	public  List<JSONObject> taskSpecObj = new ArrayList<JSONObject>();
@@ -87,7 +87,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		this.workflowTaskDir = workflowTaskDir;
 		this.workflowLibdir = workflowLibDir;
 		VMProvisioner.initializeProvisioner(accessKey, secretKey,"dataview1","Dataview_key","ami-064ab7adf0e30b152");
-		this.token = token;
+		this.dropboxToken = token;
 		init();
 	}
 	/**
@@ -98,7 +98,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	 *
 	 * @throws Exception
 	 */
-	public void init() throws Exception{
+	private void init() throws Exception{
 		// We introduce the data structure VMnumbers to store how many VM instances  we need to provision for each VM type, 
 		// in this Map, VM type is the key, and the number of VM instances is the value. 
 		Map<String, Integer> VMnumbers = new HashMap<String, Integer>();
@@ -155,7 +155,12 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	
 	
 	/**
-	 * create threads based on the local schedule and start each thread.
+	 * The execute() method is implemented by all subclasses of the WorkflowExecutor class. 
+	 * In the implementation of WorkflowExecutor_Beta, we launch m LocalScheduleRun threads, where m is the number of LocalSchedules 
+	 * in the GlobalSchedule, each  LocalScheduleRun thread manages the execution of all TaskSchedules in the corresponding 
+	 * LocalSchedule on a VM that is assigned to it. 
+	 *
+	 * 
 	 */
 	public void execute() throws InterruptedException {
 		lschRuns =  new LocalScheduleRun[gsch.length()];
@@ -173,13 +178,19 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	}
 
 	/**
-	 * A LocalScheduleRun is a thread that is responsible for the scheduling of all tasks in a local schedule, which will 
-	 * be executed in one VM instance. All LocalScheduleRuns will run parallel. Each LocalScheduleRun will submit tasks 
+	 * A LocalScheduleRun is a thread that is responsible for the execution of all tasks in a local schedule, which will 
+	 * be executed in one VM instance. All LocalScheduleRuns will run in parallel. Each LocalScheduleRun will submit tasks 
 	 * in a local schedule sequentially to the correspondingly assigned VM instance. 
 	 *  
 	 * 
 	 * Each thread holds local schedule and submit those tasks in the local shcedule to VM instacne sequentially 
-	 * If the parent task and child task are submitted in different threads, signal needs to be communicated between two threads
+	 * If the parent task and child task are submitted in different threads, signal needs to be communicated between two threads.
+	 * 
+	 * To illustrate how a LocalScheduleRun interacts with other parallel LocalScheduleRun and the corresponding TaskExecutor, consider 
+	 * three tasks T1, T2 and T3, in which T1 and T2 are two consective tasks controlled by LocalScheduleRunA and are assigned to 
+	 * virtual machine VM1, and T3 is another task that is controlled by LocalScheduleRunB and assigned to VM instance VM2.
+	 * The outputs of T1 and T3 are the inputs for T2. 
+	 *  
 	 */
 	public class LocalScheduleRun extends Thread {
 		public LocalSchedule lsc;
@@ -207,19 +218,15 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			mLock = new ReentrantLock();
 			mReady = mLock.newCondition();
 		}
-		public void onParentTaskFinished() {
+		
+		// wake up this LocalScheduleRun thread so that it can execute the next TaskRun
+		// WakeupSleep point
+		public void wakeUP() {
 			mLock.lock();
 			mReady.signal();
 			mLock.unlock();
 		}
-		public void onFinished(String taskRunID) {
-			ConcurrentLinkedQueue<TaskRun> children = relationMap.get(taskRunID);
-			if (children != null) {
-				for (TaskRun runner : children) {
-					runner.onParentFinished();
-				}
-			}
-		}
+		
 		/**
 		 * wait for until the task is ready to submit to a VM instacne, then a class file or jar file is sent to
 		 * the corresponding VM instacne. If the workflow is constructed from the webbench, the input data will be 
@@ -232,10 +239,10 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		public void run() {
 			for (TaskRun taskrun : mTaskRunners) {
 				try {
-					// check if a task is ready to run, that means, all its parents have finished their execution and 
+					// Step 1: check if a task is ready to run, that means, all its parents have finished their execution and 
 					// all their output data have completed their data transfer processes. 
-					while (!taskrun.isReady()) {
-						mLock.lock();
+					while (!taskrun.isReady()) { // WakeupSleep point: The LocalScheduleRun thread will sleep here if the next TaskRun is not ready
+						mLock.lock();     // for execution
 						mReady.await();
 						mLock.unlock();
 					}
@@ -249,7 +256,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 						System.out.println("THE TASK FILE IS NOT AVAILABLE");
 					}
 					List<IncomingDataChannel> indcs = taskrun.taskschdule.getIncomingDataChannels();
-					if(token.isEmpty()){
+					if(dropboxToken.isEmpty()){
 						for(int i = 0; i < indcs.size(); i++){
 							if(indcs.get(i).srcFilename != null){
 								String	dataFileLocation = workflowTaskDir + indcs.get(i).srcFilename;
@@ -270,6 +277,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 						taskNum--;	
 						System.out.println("The task number is " +  taskNum);
 					}
+					// will refactor this to recordProvenance() 
 					if(taskNum == 0){
 						long endTime = System.currentTimeMillis();
 						System.out.println("The workflow execution time is " + (endTime-starTime));
@@ -296,8 +304,14 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 						pgraph.record();
 					}
 					
-					// 
-					onFinished(taskrun.taskRunID);
+					// when the execution of task T is completed, we need to inform all its child TaskRun, so that 
+					// each Child TaskRun can modify its NumOfParentsFinished status via the onParentFinished() method
+					ConcurrentLinkedQueue<TaskRun> children = relationMap.get(taskrun.taskRunID);
+					if (children != null) {
+						for (TaskRun tr: children) {
+							tr.onParentFinished();
+						}
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -308,35 +322,53 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	
 	/**
 	 * A TaskRun is responsible for submitting the task execution information stored in a TaskSchedule object to the 
-	 * corresponding TaskExector. 
+	 * corresponding TaskExector and waiting for the completion of the task execution. 
 	 * 
 	 * @author shiyo
 	 *
 	 */
 	public class TaskRun {
 		private String taskRunID; // 
-		private int predecessors;
+		private int numOfParentsFinished;
 		private LocalScheduleRun mLocalRunner;
 		private TaskSchedule taskschdule;
 		
 		public TaskRun(LocalScheduleRun localRunner, TaskSchedule taskschedule){
-			predecessors = taskschedule.getParents().size();
+			numOfParentsFinished = taskschedule.getParents().size();
 			mLocalRunner = localRunner;
 			this.taskschdule = taskschedule;
 			taskRunID = taskschedule.getTaskInstanceID();
 		}
 		
+		/**
+		 * The method onParentFinished() will be called by a LocalScheduleRun when one of it parent tasks finishes its execution, 
+		 * which will decrease NumOfParentsFinished by 1.
+		 */
 		public void onParentFinished() {
-			--predecessors;
-			mLocalRunner.onParentTaskFinished();
+			--numOfParentsFinished;
+			if(isReady())
+			    mLocalRunner.wakeUP();
 		}
 
+		/**
+		 * A TaskRun is ready to run when all its parents complete their execution, that is, when numOfParentsFinished = 0.
+		 * 
+		 * @return
+		 */
 		public boolean isReady() {
-			return predecessors == 0;
+			return numOfParentsFinished == 0;
 		}
 
+		/**
+		 * The execute() method remotely interacts with the remote TaskExecutor to execute a task. The method is a blocking one.
+		 * It uses an TCP/IP protocol to conduct such interaction based on port 2004.
+		 * 
+		 * 
+		 * @return
+		 * @throws Exception
+		 */
 		public String execute() throws Exception {
-			Message m = new Message(token,taskschdule.getSpecification().toString());
+			Message m = new Message(dropboxToken,taskschdule.getSpecification().toString());
 			MSGClient client = new MSGClient(mLocalRunner.lsc.getIP(), m );
 			client.run();
 			return client.getResp();

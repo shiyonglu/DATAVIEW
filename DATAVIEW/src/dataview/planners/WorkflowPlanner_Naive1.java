@@ -31,6 +31,7 @@ public class WorkflowPlanner_Naive1 extends WorkflowPlanner{
 			lsch.addTaskSchedule(tsch);
 			lsch.setVmType("t2.micro");
 			gsch.addLocalSchedule(lsch);
+		
 		}
 	
 		return gsch;	

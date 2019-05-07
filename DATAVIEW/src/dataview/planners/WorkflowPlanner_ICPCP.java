@@ -74,6 +74,7 @@ public class WorkflowPlanner_ICPCP extends WorkflowPlanner {
 		server_cost.put("t2.xlarge", 5.0);
 		server_cost.put("t2.large", 2.0);
 		server_cost.put("t2.micro", 1.0);
+	
 	}
 
 	class ServerandCost {

@@ -41,6 +41,7 @@ public class WorkflowPlanner_T_Cluster extends WorkflowPlanner{
 				TaskSchedule tsch = w.getTaskSchedule(w.getTask(t));
 				lsch.addTaskSchedule(tsch);
 				lsch.setVmType("t2.micro");
+			
 			}
 			// add the new local schedule to the global schedule
 			

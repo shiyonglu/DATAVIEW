@@ -69,6 +69,7 @@ public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 		server_cost.put("t2.xlarge", 13.0);
 		server_cost.put("t2.large", 8.0);
 		server_cost.put("t2.micro", 5.0);
+	
 	}
 
 	class ServerandCost {
