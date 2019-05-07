@@ -33,6 +33,23 @@ public class GlobalSchedule {
 	  return lschs.size();
 	}
 
+	
+	/**
+	 * Return the number of tasks in the global schedule, which is equal to the number of TaskSchedules.
+	 * 
+	 * @return Return the number of tasks in the global schedule, which is equal to the number of TaskSchedules.
+	 */
+	public int getNumberOfTasks()
+	{
+		int taskNum = 0;
+		
+		for(LocalSchedule lsch: lschs){
+				taskNum += lsch.length();
+		}
+		
+		return taskNum;
+	}
+	
 	public LocalSchedule getLocalSchedule(int i)
 	{
 		return lschs.get(i);
@@ -66,8 +83,14 @@ public class GlobalSchedule {
 	}
 	
 	/**
+	 * CompleteIPAssignment propagates the IP assignment of LocalSchedules to Taskschedules as well as outgoing data channels in 
+	 * TaskSchedules.
+	 * 
 	 * This method is necessary to propagate all IPS to the outgoing data channels of each task schedule before
-	 * we send each local schedule to each VM.
+	 * we assign each local schedule to a VM. This method can only be called after each local schedule of the global schedule has 
+	 * been assigned an IP, in this way, all the chidlren of a task already have IPs assigned to them so that
+	 * we can set the IP for each child task that corresponds to each outgoing data channel.  
+	 * 
 	 */
 	public void completeIPAssignment()
 	{

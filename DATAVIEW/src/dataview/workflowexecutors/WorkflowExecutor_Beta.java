@@ -27,17 +27,19 @@ import dataview.models.ProvenanceNode;
 import dataview.models.ProvenanceGraph;
 import dataview.models.TaskSchedule;
 
+
 /**
  * The Beta workflow executor is supporting multi-thread task submission to the task executor correspondingly.
  * Two scenarios is supported in the workflow executor: workflow input is read from the Dropbox folder "DATAVIEW-INPUT"; 
  * the workflow input is read from workflowlibdir which is the project folder path. 
  *
  */
-
 public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	public static String workflowTaskDir;
 	public static  String workflowLibdir;
 	public LocalScheduleRun[] scheduleRunners;
+	
+	// The key is the taskRunID, the value is the list of its child TaskRuns.
 	public ConcurrentHashMap<String, ConcurrentLinkedQueue<TaskRun>> relationMap = new ConcurrentHashMap<>();
 	public  int taskNum = 0; 
 	public  long starTime;
@@ -45,6 +47,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	public String accessKey;
 	public String secretKey;
 	public  List<JSONObject> taskSpecObj = new ArrayList<JSONObject>();
+
 	/**
 	 * The constructor is used to set the path of two folders and read the EC2 provisioning parameters from "config.properties"
 	 * 
@@ -52,22 +55,19 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	 * @param workflowlibdir
 	 * @param gsch
 	 * @throws IOException 
-	 */
-	
+	 */	
 	public WorkflowExecutor_Beta(String workflowTaskDir, String workflowLibDir, GlobalSchedule gsch) throws Exception {
 		super(gsch);
 		starTime = System.currentTimeMillis();
-		for(int i = 0; i < gsch.length(); i++){
-			for(int j = 0; j < gsch.getLocalSchedule(i).length(); j++){
-				taskNum++;
-			}
-		}
+ 
+		taskNum = gsch.getNumberOfTasks();
 		this.workflowTaskDir = workflowTaskDir;
 		this.workflowLibdir =  workflowLibDir;
 		VMProvisioner.parametersetting(workflowLibDir);
 		init();
 		System.out.println("the total number of tasks are "+ taskNum);
 	}
+	
 	/**The constructor initialize the file download and upload parameter: dropbox token and VM provisioning paramters: access key and secrete key
 	 * 
 	 * @param workflowTaskDir
@@ -77,16 +77,12 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	 * @param accessKey
 	 * @param secretKey
 	 * @throws Exception
-	 */
-	
+	 */	
 	public WorkflowExecutor_Beta(String workflowTaskDir, String workflowLibDir, GlobalSchedule gsch,String token,String accessKey, String secretKey) throws Exception {
 		super(gsch);
 		starTime = System.currentTimeMillis();
-		for(int i = 0; i < gsch.length(); i++){
-			for(int j = 0; j < gsch.getLocalSchedule(i).length(); j++){
-				taskNum++;
-			}
-		}
+		taskNum = gsch.getNumberOfTasks();
+
 		this.workflowTaskDir = workflowTaskDir;
 		this.workflowLibdir = workflowLibDir;
 		VMProvisioner.initializeProvisioner(accessKey, secretKey,"dataview1","Dataview_key","ami-064ab7adf0e30b152");
@@ -94,11 +90,16 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		init();
 	}
 	/**
-	 * The init() method calcualtes the VM instances number for each VM type firstly in VMnumbers. 
-	 * Then each VM types is provisioned ahead to make every VM available to be used.
+	 * The init() method calculates how many VM instances we need for each VM type, based on that 
+	 * we provision in batch numerous of VM instances for each  VM type using one call. We assume provisioning VM in batch 
+	 * is more efficient than provisioning each VM individually.  
+	 * 	  
+	 *
 	 * @throws Exception
 	 */
 	public void init() throws Exception{
+		// We introduce the data structure VMnumbers to store how many VM instances  we need to provision for each VM type, 
+		// in this Map, VM type is the key, and the number of VM instances is the value. 
 		Map<String, Integer> VMnumbers = new HashMap<String, Integer>();
 		for(int i = 0; i < gsch.length(); i++){
 			LocalSchedule ls = gsch.getLocalSchedule(i);
@@ -110,7 +111,8 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 				VMnumbers.put(ls.getVmType(), 1);
 			}
 		}		
-		System.out.println(VMnumbers);
+		Dataview.debugger.logObjectValue("VMnumbers", VMnumbers);
+		
 		ArrayList<String> ips = new ArrayList<String>();
 		VMProvisioner m = new VMProvisioner();	
 		for(String str : VMnumbers.keySet()){
@@ -127,20 +129,30 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 				Thread.sleep(90000);
 			}
 		}
-		// collect the IP address for each VM type
+		
+		
+		// We introduce ipsAndType (also called IPPool) to store the IPs of VM instances for each VM type
+		// Here, VM type is the key, and the list of IPs is the value.
 		Map<String, LinkedList<String>> ipsAndType = m.getVMInstances();
 		for(String str:ipsAndType.keySet()){
 			ips.addAll(ipsAndType.get(str));
 		}
-		System.out.println(ipsAndType);
+		Dataview.debugger.logObjectValue("ipsAndType", ipsAndType);
+		
+		
 		// get the pem file generated from the VM provisioning process. 
 		String pemFileLocation = workflowLibdir + VMProvisioner.keyName + ".pem";
+		
 		// configure each VM instance with confidential information instead of using pem 
+		// Use SSH to send the pem file to each VM instance
 		MakeMachinesReady.getMachineReady(pemFileLocation, ips);
+		
 		// move the pem file to each VM instance to send intermedidate output.
 		MoveToCloud.getFileReady(pemFileLocation, ips);
-		// prepare each VM isntance by stopping listening services and remove task files.   
+		
+		// prepare each VM instance by stopping listening services and remove task files.   
 		MoveToCloud.getCodeReady(ips);
+		
 		// assign ips to each local schedule.
 		for (int i = 0; i < gsch.length(); i++) {
 			LocalSchedule ls = gsch.getLocalSchedule(i);
@@ -155,8 +167,12 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			}
 			
 		}
+		
+		// propagate IP assingment to TaskSchedules and outgoing data channels  in TaskSchedules
 		gsch.completeIPAssignment();
 	}
+	
+	
 	/**
 	 * create threads based on the local schedule and start each thread.
 	 */
@@ -174,7 +190,13 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			run.join();
 		}	
 	}
+
 	/**
+	 * A LocalScheduleRun is a thread that is responsible for the scheduling of all tasks in a local schedule, which will 
+	 * be executed in one VM instance. All LocalScheduleRuns will run parallel. Each LocalScheduleRun will submit tasks 
+	 * in a local schedule sequentially to the correspondingly assigned VM instance. 
+	 *  
+	 * 
 	 * Each thread holds local schedule and submit those tasks in the local shcedule to VM instacne sequentially 
 	 * If the parent task and child task are submitted in different threads, signal needs to be communicated between two threads
 	 */
@@ -229,6 +251,8 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		public void run() {
 			for (TaskRun taskrun : mTaskRunners) {
 				try {
+					// check if a task is ready to run, that means, all its parents have finished their execution and 
+					// all their output data have completed their data transfer processes. 
 					while (!taskrun.isReady()) {
 						mLock.lock();
 						mReady.await();
@@ -252,6 +276,9 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 							}
 						}
 					}
+					
+					// taskrun.execute() is a blocking method, which will wait for the completion of the task execution as well as all the output
+					// data from the task have been moved to their destination VM instances successfully.
 					String taskspec = taskrun.execute();
 					System.out.println(taskspec);
 					JSONParser p = new JSONParser(taskspec);
@@ -287,6 +314,8 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 						}
 						pgraph.record();
 					}
+					
+					// 
 					onFinished(taskrun.taskRunID);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -296,8 +325,15 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	}
 	
 	
+	/**
+	 * A TaskRun is responsible for submitting the task execution information stored in a TaskSchedule object to the 
+	 * corresponding TaskExector. 
+	 * 
+	 * @author shiyo
+	 *
+	 */
 	public class TaskRun {
-		private String taskRunID;
+		private String taskRunID; // 
 		private int predecessors;
 		private LocalScheduleRun mLocalRunner;
 		private TaskSchedule taskschdule;
