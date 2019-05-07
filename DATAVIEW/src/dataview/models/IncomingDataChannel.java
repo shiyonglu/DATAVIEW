@@ -4,7 +4,8 @@ package dataview.models;
  * The incomingDataChannel will define the data flowing between the parent task and current 
  * task based on the port connection. 
  * 
- *
+ *  Each IncomingDataChannel specifies the index of the inputPort and the name of the source file or the name of the parent task
+ *  and the index of the OutputPort of the parent task that the data channel connects to. 
  */
 public class IncomingDataChannel {
 		public String srcFilename;        // from 1

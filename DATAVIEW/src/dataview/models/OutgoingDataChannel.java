@@ -4,7 +4,9 @@ package dataview.models;
  * The OutgoingDataChannel will define the data flowing between the current task and the child 
  * task based with the port connection. 
  * 
- *
+ * Each OutgoingDataChannel specifies the index of the OutputPort of the current TaskSchedule object, and 
+ * the child task object, and the IP that is assigned to the child task, and the destination file name, or 
+ * the index of InputPort of the child TaskSchedule that this OutgoingDataChannel connects to. 
  */
 public class OutgoingDataChannel {
 
