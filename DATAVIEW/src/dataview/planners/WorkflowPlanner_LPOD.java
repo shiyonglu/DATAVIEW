@@ -66,9 +66,9 @@ public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 	static {
 		D = 70;
 		time_interval = 30;
-		server_cost.put("VM1", 13.0);
-		server_cost.put("VM2", 8.0);
-		server_cost.put("VM3", 5.0);
+		server_cost.put("t2.xlarge", 13.0);
+		server_cost.put("t2.large", 8.0);
+		server_cost.put("t2.micro", 5.0);
 	}
 
 	class ServerandCost {

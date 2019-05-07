@@ -37,7 +37,7 @@ import dataview.models.TaskSchedule;
 public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	public static String workflowTaskDir;
 	public static  String workflowLibdir;
-	public LocalScheduleRun[] scheduleRunners;
+	public LocalScheduleRun[] lschRuns;
 	public ConcurrentHashMap<String, ConcurrentLinkedQueue<TaskRun>> relationMap = new ConcurrentHashMap<>();
 	public  int taskNum = 0; 
 	public  long starTime;
@@ -45,6 +45,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	public String accessKey;
 	public String secretKey;
 	public  List<JSONObject> taskSpecObj = new ArrayList<JSONObject>();
+	
 	/**
 	 * The constructor is used to set the path of two folders and read the EC2 provisioning parameters from "config.properties"
 	 * 
@@ -53,7 +54,6 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	 * @param gsch
 	 * @throws IOException 
 	 */
-	
 	public WorkflowExecutor_Beta(String workflowTaskDir, String workflowLibDir, GlobalSchedule gsch) throws Exception {
 		super(gsch);
 		starTime = System.currentTimeMillis();
@@ -114,18 +114,8 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		ArrayList<String> ips = new ArrayList<String>();
 		VMProvisioner m = new VMProvisioner();	
 		for(String str : VMnumbers.keySet()){
-			if(str.equals("VM1")){
-				m.provisionVMs("t2.xlarge",VMnumbers.get(str), workflowLibdir);
-				Thread.sleep(90000);
-			}
-			if(str.equals("VM2")){
-				m.provisionVMs("t2.large",VMnumbers.get(str), workflowLibdir );
-				Thread.sleep(90000);
-			}
-			if(str.equals("VM3")){
-				m.provisionVMs("t2.micro",VMnumbers.get(str), workflowLibdir );
-				Thread.sleep(90000);
-			}
+			m.provisionVMs(str,VMnumbers.get(str), workflowLibdir);
+			Thread.sleep(90000);
 		}
 		// collect the IP address for each VM type
 		Map<String, LinkedList<String>> ipsAndType = m.getVMInstances();
@@ -144,16 +134,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		// assign ips to each local schedule.
 		for (int i = 0; i < gsch.length(); i++) {
 			LocalSchedule ls = gsch.getLocalSchedule(i);
-			if(ls.getVmType().equals("VM1")){
-				ls.setIP(ipsAndType.get("t2.xlarge").pop());
-			}
-			if(ls.getVmType().equals("VM2")){
-				ls.setIP(ipsAndType.get("t2.large").pop());
-			}
-			if(ls.getVmType().equals("VM3")){
-				ls.setIP(ipsAndType.get("t2.micro").pop());
-			}
-			
+			ls.setIP(ipsAndType.get(ls.getVmType()).pop());
 		}
 		gsch.completeIPAssignment();
 	}
@@ -161,16 +142,16 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	 * create threads based on the local schedule and start each thread.
 	 */
 	public void execute() throws InterruptedException {
-		scheduleRunners =  new LocalScheduleRun[gsch.length()];
-		for(int i = 0; i < scheduleRunners.length; i++){
+		lschRuns =  new LocalScheduleRun[gsch.length()];
+		for(int i = 0; i < lschRuns.length; i++){
 			LocalSchedule localSchedule = gsch.getLocalSchedule(i);
 			LocalScheduleRun scheduleRunner = new LocalScheduleRun(localSchedule);
-			scheduleRunners[i] = scheduleRunner;
+			lschRuns[i] = scheduleRunner;
 		}
-		for(LocalScheduleRun run : scheduleRunners){
+		for(LocalScheduleRun run : lschRuns){
 			run.start();
 		}
-		for(LocalScheduleRun run : scheduleRunners){
+		for(LocalScheduleRun run : lschRuns){
 			run.join();
 		}	
 	}
