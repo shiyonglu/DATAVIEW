@@ -71,9 +71,9 @@ public class WorkflowPlanner_ICPCP extends WorkflowPlanner {
 	static {
 		D = 750000;
 		time_interval = 10;
-		server_cost.put("VM1", 5.0);
-		server_cost.put("VM2", 2.0);
-		server_cost.put("VM3", 1.0);
+		server_cost.put("t2.xlarge", 5.0);
+		server_cost.put("t2.large", 2.0);
+		server_cost.put("t2.micro", 1.0);
 	}
 
 	class ServerandCost {

@@ -37,7 +37,8 @@ import dataview.models.TaskSchedule;
 public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	public static String workflowTaskDir;
 	public static  String workflowLibdir;
-	public LocalScheduleRun[] scheduleRunners;
+	public LocalScheduleRun[] lschRuns;
+			
 	
 	// The key is the taskRunID, the value is the list of its child TaskRuns.
 	public ConcurrentHashMap<String, ConcurrentLinkedQueue<TaskRun>> relationMap = new ConcurrentHashMap<>();
@@ -116,18 +117,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		ArrayList<String> ips = new ArrayList<String>();
 		VMProvisioner m = new VMProvisioner();	
 		for(String str : VMnumbers.keySet()){
-			if(str.equals("VM1")){
-				m.provisionVMs("t2.xlarge",VMnumbers.get(str), workflowLibdir);
-				Thread.sleep(90000);
-			}
-			if(str.equals("VM2")){
-				m.provisionVMs("t2.large",VMnumbers.get(str), workflowLibdir );
-				Thread.sleep(90000);
-			}
-			if(str.equals("VM3")){
-				m.provisionVMs("t2.micro",VMnumbers.get(str), workflowLibdir );
-				Thread.sleep(90000);
-			}
+			m.provisionVMs(str,VMnumbers.get(str), workflowLibdir);
 		}
 		
 		
@@ -156,16 +146,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		// assign ips to each local schedule.
 		for (int i = 0; i < gsch.length(); i++) {
 			LocalSchedule ls = gsch.getLocalSchedule(i);
-			if(ls.getVmType().equals("VM1")){
-				ls.setIP(ipsAndType.get("t2.xlarge").pop());
-			}
-			if(ls.getVmType().equals("VM2")){
-				ls.setIP(ipsAndType.get("t2.large").pop());
-			}
-			if(ls.getVmType().equals("VM3")){
-				ls.setIP(ipsAndType.get("t2.micro").pop());
-			}
-			
+			ls.setIP(ipsAndType.get(ls.getVmType()).pop());
 		}
 		
 		// propagate IP assingment to TaskSchedules and outgoing data channels  in TaskSchedules
@@ -177,16 +158,16 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	 * create threads based on the local schedule and start each thread.
 	 */
 	public void execute() throws InterruptedException {
-		scheduleRunners =  new LocalScheduleRun[gsch.length()];
-		for(int i = 0; i < scheduleRunners.length; i++){
+		lschRuns =  new LocalScheduleRun[gsch.length()];
+		for(int i = 0; i < lschRuns.length; i++){
 			LocalSchedule localSchedule = gsch.getLocalSchedule(i);
 			LocalScheduleRun scheduleRunner = new LocalScheduleRun(localSchedule);
-			scheduleRunners[i] = scheduleRunner;
+			lschRuns[i] = scheduleRunner;
 		}
-		for(LocalScheduleRun run : scheduleRunners){
+		for(LocalScheduleRun run : lschRuns){
 			run.start();
 		}
-		for(LocalScheduleRun run : scheduleRunners){
+		for(LocalScheduleRun run : lschRuns){
 			run.join();
 		}	
 	}

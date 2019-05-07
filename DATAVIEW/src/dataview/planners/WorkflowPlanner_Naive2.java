@@ -35,7 +35,7 @@ public class WorkflowPlanner_Naive2 extends WorkflowPlanner{
 			planned_tasks.add(nt);
 			TaskSchedule tsch = w.getTaskSchedule(w.getTask(nt));
 			lsch.addTaskSchedule(tsch);
-			lsch.setVmType("VM3");
+			lsch.setVmType("t2.micro");
 		}
 		
 		// only one single local schedule for the global schedule
