@@ -1,0 +1,20 @@
+2019/05/03 18:28:20.331, Level: 1, Exception: mProjectPP
+2019/05/03 18:28:20.333, Level: 1, Exception: mDiffFit
+2019/05/03 18:28:20.335, Level: 1, Exception: mConcatFit
+2019/05/03 18:28:20.336, Level: 1, Exception: mBgModel
+2019/05/03 18:28:20.338, Level: 1, Exception: mBackground
+2019/05/03 18:28:20.339, Level: 1, Exception: mImgTbl
+2019/05/03 18:28:20.341, Level: 1, Exception: mAdd
+2019/05/03 18:28:20.342, Level: 1, Exception: mShrink
+2019/05/03 18:28:20.344, Level: 1, Exception: mJPEG
+2019/05/03 18:29:12.601, Level: 3, The value for variable/object:num_mDiffFit is 8
+2019/05/03 18:29:12.603, Level: 3, The value for variable/object:num_mProectPP is 7
+2019/05/03 18:29:12.605, Level: 1, Exception: mAdd
+2019/05/03 18:29:37.302, Level: 3, The value for variable/object:num_mDiffFit is 8
+2019/05/03 18:29:37.304, Level: 3, The value for variable/object:num_mProectPP is 7
+2019/05/03 18:31:57.444, Level: 1, Exception: TmpltBank
+2019/05/03 18:31:57.447, Level: 1, Exception: Inspiral
+2019/05/03 18:31:57.448, Level: 1, Exception: Thinca
+2019/05/03 18:31:57.449, Level: 1, Exception: TrigBank
+2019/05/03 18:31:57.450, Level: 1, Exception: Inspiral
+2019/05/03 18:31:57.452, Level: 1, Exception: Thinca
