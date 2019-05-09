@@ -35,17 +35,20 @@ import dataview.models.Task;
 /**	The task executor will bind the data products with input ports and output ports
  *  It will call a specific task to read data from the input port, do data processing and write data to corresponding outputs.
  *  
- *  Each input port of a task is like an incoming mailbox. The task executor will put data products of all input ports,then the
- *  task will take the data product from the input port, process it and then write the result as data products deposited at an output 
- *  port, which servers as an outgoing mailbox. The task executor will move the data products at the output port to the VM running 
- *  downstream task.
+ *  Each input port of a task is like an incoming mailbox. The task executor will put data products at the input ports of a task,then the
+ *  task will read the data products from the input ports, process them and then write the results as data products to the task's output 
+ *  ports, which server as outgoing mailboxex. Afterwards, the task executor will move the data products at the output ports to the VMs running 
+ *  child tasks. 
+ *  
+ *  
  */
 public class TaskExecutor {
 	ServerSocket providerSocket;
 	ObjectOutputStream out;
 	ObjectInputStream in;
 	Socket connection;
-	//   Change the name to datamovement.
+	
+	//   Change the name to DataTransfer.
 	public class DatamovementCallback {
 		private JSONObject outdc;
 		public DatamovementCallback(JSONObject dc) {
@@ -55,8 +58,9 @@ public class TaskExecutor {
 			outdc.put("transTime", new JSONValue(Double.toString(duration)));
 		}
 	}
-	/** If a output will transfer to the task's children tasks, each transfer will execute in one thread. Multiple final output will transfer
-	 	to the user's dropbox folder in a parallel manner. 
+
+	/** The data transfers from the output ports of a task to the task's child tasks are performed in parallel, each data transfer is managed by a separate thread. 
+	 *  The data transfers from the output ports of exit tasks to the Dropbox file system are performed in a similar parallel fashion.  
 	*/
 	public class TransformThread extends Thread {
 		private DatamovementCallback threadCallback;
@@ -80,6 +84,7 @@ public class TaskExecutor {
 		}
 	}
 	
+	
 	public TaskExecutor() throws ClassNotFoundException, SQLException {
 		try {
 			providerSocket = new ServerSocket(2004, 10);
@@ -91,7 +96,10 @@ public class TaskExecutor {
 
 	public void run() {
 		try {
-			do {
+			do {    // we use a do-while loop to receive one TaskScheudle specification at a time, we do not need to receive the code for the task because the code of the task
+				    // has already been transfered to this VM by the workflow executor right after VM provisioning. 
+				
+				// step 1: establish a TCP connection on port: 2004
 				Dataview.debugger
 						.logSuccessfulMessage(InetAddress.getLocalHost().getHostName() + " is waiting for connection");
 				connection = providerSocket.accept();
@@ -101,11 +109,15 @@ public class TaskExecutor {
 				out = new ObjectOutputStream(connection.getOutputStream());
 				in  = new ObjectInputStream(connection.getInputStream());
 				try {
+					
+					// Step 2: receipt a task specification 
 					Message message = (Message) in.readObject();
 					// the task specification will be record in p.
 					JSONParser p = new JSONParser(message.getB());
 					// the dropbox token information will be record in token.
 					String token = message.getA();
+					
+					// step 3: parse the task specification 
 					Dataview.debugger.logSuccessfulMessage("receive the task specification:");
 					Dataview.debugger.logSuccessfulMessage(message.getB());
 					JSONObject taskSpec = p.parseJSONObject();
@@ -113,10 +125,16 @@ public class TaskExecutor {
 					String taskID = taskSpec.get("taskInstanceID").toString().replace("\"", "");
 					JSONArray indcs = taskSpec.get("incomingDataChannels").toJSONArray();
 					final JSONArray outdcs = taskSpec.get("outgoingDataChannels").toJSONArray();
-					/** Each port will be mapped with an unique txt file storing all the data.
-					 * 	The input files names and output files names are already given.
-					 * 	The intermediate file name is created based on the taskID and the output port id in 
+					
+					/** Each port will be mapped to a unique txt file storing the data product for that input port.
+					 * 	The input file names and output file names of the whole workflow are already available in the worklflow specification.
+					 * These file names will be used for mapping for the inputports/outputports of those tasks which take them as input or output.   
+					 * 
+					 *  
+					 * 	Other input/output file names of this task will be  created by this TaskExecutor based on the taskInstanceID and the output port id in 
 					 * 	the incomingDataChannels in the task specification. 
+					 * 
+					 *  Step 4: Two mappings,inputportAndFile and outputportAndFile, are used to map file names to inputport and outputport indexes of the current task.
 					 */
 					SortedMap<String, String> inputportAndFile = new TreeMap<String, String>();
 					SortedMap<String, String>  outputportAndFile = new TreeMap<String, String>();
@@ -161,7 +179,9 @@ public class TaskExecutor {
 						}
 					}
 					Dataview.debugger.logObjectValue(" the inputportAndFile value is ", inputportAndFile);
-					Dataview.debugger.logObjectValue(" the outputportAndFile value is ", outputportAndFile);			
+					Dataview.debugger.logObjectValue(" the outputportAndFile value is ", outputportAndFile);
+					
+					// step 6: instantiate a task object t of the current task class tj and then call the t.run() method
 					Task t = null;
 					if (new File("/home/ubuntu/" + taskName + ".jar").exists()) {
 						try {
@@ -202,10 +222,13 @@ public class TaskExecutor {
 						}
 						
 					}
+					
+					//  bind the input file names to the input ports
 					for (int i = 0; i < t.ins.length; i++) {
 						t.ins[i].setLocation(inputportAndFile.get(i+""));
 						
 					}
+					// bind the output file names to the output ports
 					for (int i = 0; i < t.outs.length; i++) {
 						t.outs[i].setLocation(outputportAndFile.get(i+""));
 					}
@@ -218,7 +241,7 @@ public class TaskExecutor {
 					taskSpec.put("execTime", new JSONValue(Double.toString(duration)));
 					Dataview.debugger.logSuccessfulMessage("Task "+t.taskName + " is finished");
 					
-					// move the output file to the crossponding VM isntances
+					// 7. Transfer all the data products produced by this task to the VMs of their child tasks in parallel
 					ArrayList<TransformThread> threads = new ArrayList<TransformThread>();
 					for(int i = 0; i < outdcs.size(); i++){
 						JSONObject outdc = outdcs.get(i).toJSONObject();
@@ -243,8 +266,8 @@ public class TaskExecutor {
 							TransformThread thread = new TransformThread(task, callback);
 							threads.add(thread);
 							thread.start();
-						}else if(outdc.get("destTask").isEmpty()){
-							if(!token.isEmpty()){
+						}else if(outdc.get("destTask").isEmpty()){ // if it is an exit task 						
+							if(!token.isEmpty()){                  // if the DropboxToken is present, then we send the workflow outputs to the Dropbox file system
 								final String tokenForThread = token;
 								final String destFilename = outdc.get("destFilename").toString();
 								final String taskIDForThread = taskID;
@@ -279,6 +302,8 @@ public class TaskExecutor {
 						thread.join();
 					}
 					
+					// step 8: send back the execution status of the task back to the WorkflowExecutor
+					// 
 					Dataview.debugger.logSuccessfulMessage("Here is the task specification "+ taskSpec);
 					out.writeObject(taskSpec.toString());
 					out.flush();
@@ -291,7 +316,7 @@ public class TaskExecutor {
 			Dataview.debugger.logException(ioException);
 			ioException.printStackTrace();
 		} finally {
-			// 4: Closing connection
+			// 4: Closing connection and  related socket 
 			try {
 				in.close();
 				out.close();

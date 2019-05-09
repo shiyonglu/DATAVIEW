@@ -5,7 +5,7 @@ import java.util.*;
 
 /**
  * 
- * Global schedule consists of multiple virtual machines.
+ * A Global schedule consists of multiple virtual machines. 
  *
  */
 public class GlobalSchedule {
