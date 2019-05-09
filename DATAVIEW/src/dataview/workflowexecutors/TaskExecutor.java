@@ -49,9 +49,9 @@ public class TaskExecutor {
 	Socket connection;
 	
 	//   Change the name to DataTransfer.
-	public class DatamovementCallback {
+	public class TransferCallback {
 		private JSONObject outdc;
-		public DatamovementCallback(JSONObject dc) {
+		public TransferCallback(JSONObject dc) {
 			outdc = dc;
 		}
 		public void onThreadFinished(double duration) {
@@ -62,15 +62,15 @@ public class TaskExecutor {
 	/** The data transfers from the output ports of a task to the task's child tasks are performed in parallel, each data transfer is managed by a separate thread. 
 	 *  The data transfers from the output ports of exit tasks to the Dropbox file system are performed in a similar parallel fashion.  
 	*/
-	public class TransformThread extends Thread {
-		private DatamovementCallback threadCallback;
+	public class TransforThread extends Thread {
+		private TransferCallback threadCallback;
 		private Runnable runable;
 		/**
 		 * The constructor for each thread will take a Runnable object and callback object
 		 * @param task: has a override run() method will move data from one VM instance to another VM instance.
 		 * @param callback: has the method to record the data transfer time between different VMs. 
 		 */
-		public TransformThread(Runnable task, DatamovementCallback callback) {
+		public TransforThread(Runnable task, TransferCallback callback) {
 			runable = task;
 			threadCallback = callback;		
 		}
@@ -242,7 +242,7 @@ public class TaskExecutor {
 					Dataview.debugger.logSuccessfulMessage("Task "+t.taskName + " is finished");
 					
 					// 7. Transfer all the data products produced by this task to the VMs of their child tasks in parallel
-					ArrayList<TransformThread> threads = new ArrayList<TransformThread>();
+					ArrayList<TransforThread> threads = new ArrayList<TransforThread>();
 					for(int i = 0; i < outdcs.size(); i++){
 						JSONObject outdc = outdcs.get(i).toJSONObject();
 						if(!outdc.get("destIP").toString().replaceAll("\"", "").
@@ -262,8 +262,8 @@ public class TaskExecutor {
 									}
 								}
 							};
-							DatamovementCallback callback = new DatamovementCallback(outdc);
-							TransformThread thread = new TransformThread(task, callback);
+							TransferCallback callback = new TransferCallback(outdc);
+							TransforThread thread = new TransforThread(task, callback);
 							threads.add(thread);
 							thread.start();
 						}else if(outdc.get("destTask").isEmpty()){ // if it is an exit task 						
@@ -288,7 +288,7 @@ public class TaskExecutor {
 										}
 									}
 								};
-								TransformThread thread = new TransformThread(task, null);
+								TransforThread thread = new TransforThread(task, null);
 								threads.add(thread);
 								thread.start();
 							}
@@ -298,7 +298,7 @@ public class TaskExecutor {
 						
 					}
 					// the main thread will wait until all the threads are finished.
-					for (TransformThread thread : threads) {
+					for (TransforThread thread : threads) {
 						thread.join();
 					}
 					

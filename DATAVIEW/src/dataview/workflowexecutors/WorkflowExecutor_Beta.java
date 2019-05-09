@@ -38,7 +38,8 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	public static String workflowTaskDir;
 	public static  String workflowLibdir;
 	public LocalScheduleRun[] lschRuns;
-			
+	public String workflowName;
+	
 	
 	// The key is the taskRunID, the value is the list of its child TaskRuns.
 	public ConcurrentHashMap<String, ConcurrentLinkedQueue<TaskRun>> relationMap = new ConcurrentHashMap<>();
@@ -59,8 +60,8 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	 */	
 	public WorkflowExecutor_Beta(String workflowTaskDir, String workflowLibDir, GlobalSchedule gsch) throws Exception {
 		super(gsch);
+		workflowName = gsch.getWorkflow().workflowName; 
 		starTime = System.currentTimeMillis();
- 
 		taskNum = gsch.getNumberOfTasks();
 		this.workflowTaskDir = workflowTaskDir;
 		this.workflowLibdir =  workflowLibDir;
@@ -279,29 +280,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 					}
 					// will refactor this to recordProvenance() 
 					if(taskNum == 0){
-						long endTime = System.currentTimeMillis();
-						System.out.println("The workflow execution time is " + (endTime-starTime));
-						Date now = new Date();
-						SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
-						String datetime = ft.format(now);
-						ProvenanceGraph pgraph = new ProvenanceGraph("w-1", "RunID-"+datetime);						
-						for(JSONObject tmp:taskSpecObj){
-						   String taskId = tmp.get("taskInstanceID").toString().replace("\"", "");
-						   Double exeTime = Double.parseDouble(tmp.get("execTime").toString().replace("\"", ""));
-						   pgraph.myActivities.add(new ProvenanceNode(taskId,exeTime));
-						   JSONArray outdcs = tmp.get("outgoingDataChannels").toJSONArray();
-						   for(int i = 0; i < outdcs.size(); i++){
-								JSONObject outdc = outdcs.get(i).toJSONObject();
-								if(!outdc.get("destTask").isEmpty()){
-									String destTask = outdc.get("destTask").toString().replace("\"", "");
-									int portId = Integer.parseInt(outdc.get("inputPortIndex").toString().replace("\"", ""));
-									double transTime = Double.parseDouble(outdc.get("transTime").toString().replace("\"", ""));
-									pgraph.addEdge_TransTime(taskId, destTask, portId, transTime);
-								}
-								
-							}
-						}
-						pgraph.record();
+						recordProvenance();
 					}
 					
 					// when the execution of task T is completed, we need to inform all its child TaskRun, so that 
@@ -319,6 +298,31 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		}
 	}
 	
+	public void recordProvenance(){
+		long endTime = System.currentTimeMillis();
+		System.out.println("The workflow execution time is " + (endTime-starTime));
+		Date now = new Date();
+		SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
+		String datetime = ft.format(now);
+		ProvenanceGraph pgraph = new ProvenanceGraph(workflowName, "RunID-"+datetime);						
+		for(JSONObject tmp:taskSpecObj){
+		   String taskId = tmp.get("taskInstanceID").toString().replace("\"", "");
+		   Double exeTime = Double.parseDouble(tmp.get("execTime").toString().replace("\"", ""));
+		   pgraph.myActivities.add(new ProvenanceNode(taskId,exeTime));
+		   JSONArray outdcs = tmp.get("outgoingDataChannels").toJSONArray();
+		   for(int i = 0; i < outdcs.size(); i++){
+				JSONObject outdc = outdcs.get(i).toJSONObject();
+				if(!outdc.get("destTask").isEmpty()){
+					String destTask = outdc.get("destTask").toString().replace("\"", "");
+					int portId = Integer.parseInt(outdc.get("inputPortIndex").toString().replace("\"", ""));
+					double transTime = Double.parseDouble(outdc.get("transTime").toString().replace("\"", ""));
+					pgraph.addEdge_TransTime(taskId, destTask, portId, transTime);
+				}
+				
+			}
+		}
+		pgraph.record();
+	}
 	
 	/**
 	 * A TaskRun is responsible for submitting the task execution information stored in a TaskSchedule object to the 
