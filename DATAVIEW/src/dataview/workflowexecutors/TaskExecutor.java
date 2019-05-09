@@ -1,3 +1,40 @@
+/*
+ *  TaskExecutor:
+ *  A genetal introduction to TaskExecutor.
+ *  
+ *  
+ *  @seealso paper:  http:://wwww
+ *  @seealso http://www.youtube.com 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Log: 
+ *   
+ *   
+ *   <UL>
+ *   <li> 5/11/2019. I found a challenge to implement aBC, will discuss with Ishtiaq or Dr. Lu. The challenge is: 
+ *   ....... 
+ *   
+ *   5/10/2019. The impelemention of recording data transfer time is greatly simplified. Now we can simplly...
+ *   
+ *   
+ *   
+ *   5/9/2019. Dr. Suggested that maybe I can use record the time of data transfer without using another Callback 
+ *   Class, will look into it. 
+ *   
+ *   5/9/2019. From now, I will write whatever changes I make to this file to the log here. 
+ *   
+ * 
+ */
+
+
+
+
 package dataview.workflowexecutors;
 import java.io.File;
 import java.io.FileInputStream;
