@@ -3,13 +3,8 @@
  *  A genetal introduction to TaskExecutor.
  *  
  *  
- *  @seealso paper:  http:://wwww
- *  @seealso http://www.youtube.com 
- * 
- * 
- * 
- * 
- * 
+ *  @see paper:  http:://wwww
+ *  @see http://www.youtube.com 
  * 
  * 
  * 
@@ -22,6 +17,9 @@
  *   
  *   5/10/2019. The impelemention of recording data transfer time is greatly simplified. Now we can simplly...
  *   
+ *   We have one more step which is send back the execution status of the task back to the WorkflowExecutor. If we record the time in 
+ *   the Runnable method, the main thread will not lock until all the threads finished. We have to make main thread block here until all the
+ *   thread finish all the data transfer.  
  *   
  *   
  *   5/9/2019. Dr. Suggested that maybe I can use record the time of data transfer without using another Callback 
@@ -85,7 +83,6 @@ public class TaskExecutor {
 	ObjectInputStream in;
 	Socket connection;
 	
-	//   Change the name to DataTransfer.
 	public class TransferCallback {
 		private JSONObject outdc;
 		public TransferCallback(JSONObject dc) {
@@ -151,8 +148,8 @@ public class TaskExecutor {
 					Message message = (Message) in.readObject();
 					// the task specification will be record in p.
 					JSONParser p = new JSONParser(message.getB());
-					// the dropbox token information will be record in token.
-					String token = message.getA();
+					// the dropbox token information will be record in dropboxToken.
+					String dropboxToken = message.getA();
 					
 					// step 3: parse the task specification 
 					Dataview.debugger.logSuccessfulMessage("receive the task specification:");
@@ -179,9 +176,9 @@ public class TaskExecutor {
 						JSONObject indc = indcs.get(i).toJSONObject();
 						if(indc.get("srcTask").isEmpty()){
 							String inputfile = indc.get("srcFilename").toString().replace("\"", ""); 
-							if(!token.isEmpty()){
+							if(!dropboxToken.isEmpty()){
 								DbxRequestConfig config = new DbxRequestConfig("en_US");
-								DbxClientV2 client = new DbxClientV2(config, token);
+								DbxClientV2 client = new DbxClientV2(config, dropboxToken);
 								DbxDownloader<FileMetadata> dl = null;
 								try {
 									dl = client.files().download("/DATAVIEW-INPUT/"+inputfile);
@@ -304,8 +301,8 @@ public class TaskExecutor {
 							threads.add(thread);
 							thread.start();
 						}else if(outdc.get("destTask").isEmpty()){ // if it is an exit task 						
-							if(!token.isEmpty()){                  // if the DropboxToken is present, then we send the workflow outputs to the Dropbox file system
-								final String tokenForThread = token;
+							if(!dropboxToken.isEmpty()){                  // if the DropboxToken is present, then we send the workflow outputs to the Dropbox file system
+								final String tokenForThread = dropboxToken;
 								final String destFilename = outdc.get("destFilename").toString();
 								final String taskIDForThread = taskID;
 								

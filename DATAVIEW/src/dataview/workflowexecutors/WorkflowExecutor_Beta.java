@@ -75,12 +75,12 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	 * @param workflowTaskDir
 	 * @param workflowlibdir
 	 * @param gsch
-	 * @param token
+	 * @param dropboxToken
 	 * @param accessKey
 	 * @param secretKey
 	 * @throws Exception
 	 */	
-	public WorkflowExecutor_Beta(String workflowTaskDir, String workflowLibDir, GlobalSchedule gsch,String token,String accessKey, String secretKey) throws Exception {
+	public WorkflowExecutor_Beta(String workflowTaskDir, String workflowLibDir, GlobalSchedule gsch,String dropboxToken,String accessKey, String secretKey) throws Exception {
 		super(gsch);
 		starTime = System.currentTimeMillis();
 		taskNum = gsch.getNumberOfTasks();
@@ -88,7 +88,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		this.workflowTaskDir = workflowTaskDir;
 		this.workflowLibdir = workflowLibDir;
 		VMProvisioner.initializeProvisioner(accessKey, secretKey,"dataview1","Dataview_key","ami-064ab7adf0e30b152");
-		this.dropboxToken = token;
+		this.dropboxToken = dropboxToken;
 		init();
 	}
 	/**

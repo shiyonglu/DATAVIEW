@@ -28,8 +28,8 @@ public class Test {
 		//MR w = new MR();
 		//Diagnosis w = new Diagnosis();
 		//DummyWorkflow w = new DummyWorkflow();
-		//WordCount_workflow w = new WordCount_workflow();
-		Ligo_workflow w = new Ligo_workflow();
+		WordCount_workflow w = new WordCount_workflow();
+		//Ligo_workflow w = new Ligo_workflow();
 		// step 2: design a workflow
 		w.design();
 		frame.drawWorkflowGraph(w);

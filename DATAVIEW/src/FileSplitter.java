@@ -5,7 +5,7 @@ import dataview.models.*;
 /* FileSplitter will split a file into K files that are (almost) equal in size */
 /* task is called a parameterized task, the parameter K must be instantiated to a concrete value by a constructor. */
 public class FileSplitter extends Task{
-	private int M = 2; 
+	private int M = 5; 
 	
 	public FileSplitter ()
 	{

@@ -58,7 +58,7 @@ public class Mediator extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static String fileLocation = "";
 	private static String tableLocation = "";
-	private static String token;
+	private static String dropboxToken;
 	private static String accessKey;
 	private static String secretKey;
 	
@@ -159,9 +159,9 @@ public class Mediator extends HttpServlet {
 	
 
 	public void saveAs(String name, String diagramStr, HttpServletResponse response) throws Exception {
-		token = ReadAndWrite.read(tableLocation + "users.table", strUser, 6);
+		dropboxToken = ReadAndWrite.read(tableLocation + "users.table", strUser, 6);
 		DbxRequestConfig config = new DbxRequestConfig("en_US");
-		DbxClientV2 client = new DbxClientV2(config, token);
+		DbxClientV2 client = new DbxClientV2(config, dropboxToken);
 		String localFileAbsolutePath = fileLocation + File.separator + name;
 		String dropboxPath = "/DATAVIEW/Workflows/" + name;
 		if (!new File(localFileAbsolutePath).exists()) {
@@ -174,14 +174,14 @@ public class Mediator extends HttpServlet {
 	}
 
 
-	public void loadDropboxKey(String userId, String appKey, String secretKey, String token,
+	public void loadDropboxKey(String userId, String appKey, String secretKey, String dropboxToken,
 			HttpServletResponse response) throws Exception {
-		System.out.println("token---->" + token);
+		System.out.println("token---->" + dropboxToken);
 		
-		if (token != null && token != "") {
-			ReadAndWrite.write(tableLocation + "users.table", userId, token);
+		if (dropboxToken != null && dropboxToken != "") {
+			ReadAndWrite.write(tableLocation + "users.table", userId, dropboxToken);
 		} else {
-			token = ReadAndWrite.read(tableLocation + "users.table", userId, 6);
+			dropboxToken = ReadAndWrite.read(tableLocation + "users.table", userId, 6);
 		}
 	}
 
@@ -200,11 +200,11 @@ public class Mediator extends HttpServlet {
 		WorkflowPlanner wp = new WorkflowPlanner_T_Cluster(GW);
 		GlobalSchedule gsch = wp.plan();
 		
-		token = ReadAndWrite.read(tableLocation + "users.table", strUser,6);
+		dropboxToken = ReadAndWrite.read(tableLocation + "users.table", strUser,6);
 		String accesskey = ReadAndWrite.read(tableLocation + "users.table", strUser,7);
 		String secretkey = ReadAndWrite.read(tableLocation + "users.table", strUser,8);
 		WorkflowExecutor we = new WorkflowExecutor_Beta(fileLocation + File.separator, fileLocation + File.separator, 
-				gsch, token, accesskey, secretkey);
+				gsch, dropboxToken, accesskey, secretkey);
 		
 		we.execute();
 		PrintWriter out = response.getWriter();
@@ -212,9 +212,9 @@ public class Mediator extends HttpServlet {
 	}
 	public void overwriteAndSave(String name, String diagramStr, HttpServletResponse response) throws Exception {
 		System.out.println("=======overwriteandsave");
-		token = ReadAndWrite.read(tableLocation + "users.table", strUser, 6);
+		dropboxToken = ReadAndWrite.read(tableLocation + "users.table", strUser, 6);
 		DbxRequestConfig config = new DbxRequestConfig("en_US");
-		DbxClientV2 client = new DbxClientV2(config, token);
+		DbxClientV2 client = new DbxClientV2(config, dropboxToken);
 		
 		String localFileAbsolutePath = fileLocation + File.separator + name;
 		String dropboxPath = "/DATAVIEW/Workflows/" + name;
@@ -238,9 +238,9 @@ public class Mediator extends HttpServlet {
 		String workflowfilename = filename.substring(filename.lastIndexOf("/")+1);
 		String localFileAbsolutePath = fileLocation + File.separator + workflowfilename;
 		if (!new File(localFileAbsolutePath).exists()) {
-			token = ReadAndWrite.read(tableLocation + "users.table", strUser, 6);
+			dropboxToken = ReadAndWrite.read(tableLocation + "users.table", strUser, 6);
 			DbxRequestConfig config = new DbxRequestConfig("en_US");
-			DbxClientV2 client = new DbxClientV2(config, token);
+			DbxClientV2 client = new DbxClientV2(config, dropboxToken);
 			String dropBoxFilePath = filename;
 			DbxDownloader<FileMetadata> dl = null;
 			try {
@@ -268,9 +268,9 @@ public class Mediator extends HttpServlet {
 
 
 	public static void getDropboxDetails(String userID, HttpServletResponse response) throws Exception {
-		token = ReadAndWrite.read(tableLocation + "users.table", userID,6);
+		dropboxToken = ReadAndWrite.read(tableLocation + "users.table", userID,6);
 		JSONObject json = new JSONObject();
-		json.put("token", token);
+		json.put("token", dropboxToken);
 		JSONObject result = new JSONObject();
 		result.put("dropboxlist", json);
 		System.out.println(result.toString(4));
@@ -284,9 +284,9 @@ public class Mediator extends HttpServlet {
 		String localFileAbsolutePath = fileLocation + File.separator + task;		
 		String Location;
 		if (!new File(localFileAbsolutePath).exists()) {
-			token = ReadAndWrite.read(tableLocation + "users.table", strUser,6);
+			dropboxToken = ReadAndWrite.read(tableLocation + "users.table", strUser,6);
 			DbxRequestConfig config = new DbxRequestConfig("en_US");
-			DbxClientV2 client = new DbxClientV2(config, token);
+			DbxClientV2 client = new DbxClientV2(config, dropboxToken);
 			String dropBoxFilePath = filename;
 			DbxDownloader<FileMetadata> dl = null;
 			try {
@@ -359,9 +359,9 @@ public static void getData(String dataName, HttpServletResponse response) throws
 		String filename = dataName.substring(dataName.lastIndexOf("/")+1);
 		String localFileAbsolutePath = fileLocation + File.separator + filename;	
 		if (!new File(localFileAbsolutePath).exists()) {
-			token = ReadAndWrite.read(tableLocation + "users.table", strUser, 6);
+			dropboxToken = ReadAndWrite.read(tableLocation + "users.table", strUser, 6);
 			DbxRequestConfig config = new DbxRequestConfig("en_US");
-			DbxClientV2 client = new DbxClientV2(config, token);
+			DbxClientV2 client = new DbxClientV2(config, dropboxToken);
 			String dropBoxFilePath = dataName;
 			DbxDownloader<FileMetadata> dl = null;
 			try {

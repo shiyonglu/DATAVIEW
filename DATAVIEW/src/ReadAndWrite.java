@@ -17,7 +17,7 @@ import dataview.models.Dataview;
 
 public class ReadAndWrite {
 	// Write the dropbox token into a file
-	public static void write(String filename, String userId, String token ){
+	public static void write(String filename, String userId, String dropboxToken ){
 		File src = new File(filename);
 		File dest = new File(filename + ".bak");
 		try {
@@ -39,7 +39,7 @@ public class ReadAndWrite {
 			while((information = br.readLine())!=null){
 				String[] informationItem = information.split(",");
 				if(informationItem[1].equals(userId)){
-					String tmp = information + token + ",";
+					String tmp = information + dropboxToken + ",";
 					inputBuffer.append(tmp);
 					inputBuffer.append('\n');
 				}else{
@@ -149,7 +149,7 @@ public class ReadAndWrite {
 	
 	// Read the token or access key and secret key from file with the column id.
 	public static String read(String filename, String userId, int i ){
-		String token = "";
+		String dropboxToken = "";
 		FileInputStream in = null;
 		String information ;
 		BufferedReader br = null;
@@ -161,7 +161,7 @@ public class ReadAndWrite {
 			while((information = br.readLine())!=null){
 				String[] informationItem = information.split(",");
 				if (informationItem[1].equals(userId)&&informationItem.length > i) {
-					token =  informationItem[i];
+					dropboxToken =  informationItem[i];
 				}
 			}
 						
@@ -182,7 +182,7 @@ public class ReadAndWrite {
 			}
 
 		}
-		return token;
+		return dropboxToken;
 	}
 	
 }

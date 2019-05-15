@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Ligo_workflow extends Workflow{
 
-	final static int num_TmpltBank = 6;
+	final static int num_TmpltBank = 3;
 	private Map<Integer, Map<Integer, Double>> edgeMap;    
 	private Map<Integer, Map<String, Double >> execTime; // @Key: VMType @Value: execution time 
 	
