@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WordCountAggregation extends Task{
-	private int K; 
+	private int K;   // input port numbers
 	
 	public WordCountAggregation()
 	{
