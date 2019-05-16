@@ -1,6 +1,10 @@
 
 package dataview.workflowexecutors;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -119,8 +123,9 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		VMProvisioner m = new VMProvisioner();	
 		for(String str : VMnumbers.keySet()){
 			m.provisionVMs(str,VMnumbers.get(str), workflowLibdir);
+			
 		}
-		
+		//Thread.sleep(90000);
 		
 		// We introduce ipsAndType (also called IPPool) to store the IPs of VM instances for each VM type
 		// Here, VM type is the key, and the list of IPs is the value.
@@ -281,6 +286,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 					// will refactor this to recordProvenance() 
 					if(taskNum == 0){
 						recordProvenance();
+						fetchDataFromVM();
 					}
 					
 					// when the execution of task T is completed, we need to inform all its child TaskRun, so that 
@@ -297,6 +303,31 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			}
 		}
 	}
+	
+	public void fetchDataFromVM() throws IOException{
+		for(JSONObject tmp:taskSpecObj){
+			 JSONArray outdcs = tmp.get("outgoingDataChannels").toJSONArray();
+			 for(int i = 0; i < outdcs.size(); i++){
+					JSONObject outdc = outdcs.get(i).toJSONObject();
+					if(outdc.get("destTask").isEmpty()){
+						String filename = outdc.get("destFilename").toString().replace("\"", "");
+						String strHostName = tmp.get("myIP").toString().replace("\"","");
+						File f=  CmdLineDriver.getFile(filename,"/home/ubuntu/", strHostName);
+						BufferedReader reader = new BufferedReader(new FileReader(f));
+						BufferedWriter writer = new BufferedWriter(new FileWriter(workflowTaskDir + File.separator+ filename, true));
+						String line = reader.readLine();
+						while(line!=null){
+							writer.append(line);
+							line = reader.readLine();	
+						}
+						reader.close();
+						writer.close();
+						}
+					}
+	}
+}	
+	
+	
 	
 	public void recordProvenance(){
 		long endTime = System.currentTimeMillis();

@@ -10,10 +10,9 @@
  * 
  * Log: 
  *   
- *   
- *   <UL>
- *   <li> 5/11/2019. I found a challenge to implement aBC, will discuss with Ishtiaq or Dr. Lu. The challenge is: 
- *   ....... 
+ *   A DataTrasnferThread thread is created to move data from one VM to another or to the Dropbox
+ *   The main thread should wait until all the thread finished all the data movement. So the join method should be used.
+ *
  *   
  *   5/10/2019. The impelemention of recording data transfer time is greatly simplified. Now we can simplly...
  *   
@@ -29,10 +28,6 @@
  *   
  * 
  */
-
-
-
-
 package dataview.workflowexecutors;
 import java.io.File;
 import java.io.FileInputStream;
@@ -83,41 +78,31 @@ public class TaskExecutor {
 	ObjectInputStream in;
 	Socket connection;
 	
-	public class TransferCallback {
-		private JSONObject outdc;
-		public TransferCallback(JSONObject dc) {
-			outdc = dc;
-		}
-		public void onThreadFinished(double duration) {
-			outdc.put("transTime", new JSONValue(Double.toString(duration)));
-		}
-	}
+
 
 	/** The data transfers from the output ports of a task to the task's child tasks are performed in parallel, each data transfer is managed by a separate thread. 
 	 *  The data transfers from the output ports of exit tasks to the Dropbox file system are performed in a similar parallel fashion.  
 	*/
-	public class TransforThread extends Thread {
-		private TransferCallback threadCallback;
+
+	public class DataTrasnferThread extends Thread{
+		private JSONObject outdc;
 		private Runnable runable;
-		/**
-		 * The constructor for each thread will take a Runnable object and callback object
-		 * @param task: has a override run() method will move data from one VM instance to another VM instance.
-		 * @param callback: has the method to record the data transfer time between different VMs. 
-		 */
-		public TransforThread(Runnable task, TransferCallback callback) {
-			runable = task;
-			threadCallback = callback;		
+		public DataTrasnferThread (Runnable task, JSONObject outdc) {
+			this.outdc = outdc;
+			this.runable = task;
 		}
-		@Override
 		public void run() {
 			long start = System.nanoTime();
 			runable.run();
-			if (null != threadCallback) {
-				threadCallback.onThreadFinished((double)(System.nanoTime() - start) / 1_000_000_000.0);
+			if(!outdc.get("destIP").isEmpty()) {
+				outdc.put("transTime", new JSONValue(Double.toString((double)(System.nanoTime() - start) / 1_000_000_000.0)));
 			}
+			
 		}
+		
+		
 	}
-	
+
 	
 	public TaskExecutor() throws ClassNotFoundException, SQLException {
 		try {
@@ -276,7 +261,7 @@ public class TaskExecutor {
 					Dataview.debugger.logSuccessfulMessage("Task "+t.taskName + " is finished");
 					
 					// 7. Transfer all the data products produced by this task to the VMs of their child tasks in parallel
-					ArrayList<TransforThread> threads = new ArrayList<TransforThread>();
+					ArrayList<DataTrasnferThread> threads = new ArrayList<DataTrasnferThread>();
 					for(int i = 0; i < outdcs.size(); i++){
 						JSONObject outdc = outdcs.get(i).toJSONObject();
 						if(!outdc.get("destIP").toString().replaceAll("\"", "").
@@ -296,8 +281,8 @@ public class TaskExecutor {
 									}
 								}
 							};
-							TransferCallback callback = new TransferCallback(outdc);
-							TransforThread thread = new TransforThread(task, callback);
+							
+							DataTrasnferThread thread = new DataTrasnferThread(task, outdc);
 							threads.add(thread);
 							thread.start();
 						}else if(outdc.get("destTask").isEmpty()){ // if it is an exit task 						
@@ -322,17 +307,19 @@ public class TaskExecutor {
 										}
 									}
 								};
-								TransforThread thread = new TransforThread(task, null);
+								DataTrasnferThread thread = new DataTrasnferThread(task, outdc);
 								threads.add(thread);
 								thread.start();
 							}
+			
+							
 						}else {
 							outdc.put("transTime", new JSONValue(Double.toString(0.0)));
 						}
 						
 					}
 					// the main thread will wait until all the threads are finished.
-					for (TransforThread thread : threads) {
+					for (DataTrasnferThread thread : threads) {
 						thread.join();
 					}
 					
@@ -361,6 +348,5 @@ public class TaskExecutor {
 			} 
 		}
 	}
-	
 
 }

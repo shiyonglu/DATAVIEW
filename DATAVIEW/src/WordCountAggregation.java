@@ -9,7 +9,7 @@ public class WordCountAggregation extends Task{
 	public WordCountAggregation()
 	{
 		super("WordCountAggregation", "Aggregate all the counts from the prevous counting output");
-		K = 5;
+		K = 2;
 		ins = new InputPort[K];
 		outs = new OutputPort[1];
 		outs[0] = new OutputPort("in0", Port.DATAVIEW_HashMap, "This is the frequency of each word");

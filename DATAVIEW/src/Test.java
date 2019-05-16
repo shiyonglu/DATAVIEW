@@ -35,7 +35,7 @@ public class Test {
 		frame.drawWorkflowGraph(w);
 		
 		// step 3: choose a workflow planner
-		int whichplanner = WorkflowPlanner.WorkflowPlanner_Naive1;
+		int whichplanner = WorkflowPlanner.WorkflowPlanner_Naive2;
 		
 		WorkflowPlanner wp = null;
 		switch (whichplanner) {
@@ -64,7 +64,7 @@ public class Test {
 		GlobalSchedule gsch = wp.plan();
 		//System.out.println(gsch.getSpecification());
 		// step 5: select a workflow executor 
-		/*String fileLocation = System.getProperty("user.dir") + File.separator + "WebContent" +File.separator;
+		String fileLocation = System.getProperty("user.dir") + File.separator + "WebContent" +File.separator;
 		int whichexecutor = WorkflowExecutor.WorkflowExecutor_Beta;
 		WorkflowExecutor we = null;
 		switch (whichexecutor) {
@@ -76,7 +76,7 @@ public class Test {
 		}
 		
 		// step 6: execute a workflow
-		we.execute();	*/
+		we.execute();	
 	}
 
 }

@@ -9,6 +9,7 @@ package dataview.workflowexecutors;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,6 +60,60 @@ public class CmdLineDriver {
 		}
 
 	}
+	
+
+	public static File getFile(String Source, String DestinationDIR,
+			String strHostName) {
+		File f = null;
+		String SFTPHOST = strHostName;
+		int SFTPPORT = 22;
+		String SFTPUSER = "ubuntu";
+		String SFTPWORKINGDIR = DestinationDIR;
+		String FILETOTRANSFER = Source;
+		Session session = null;
+		Channel channel = null;
+		ChannelSftp channelSftp = null;
+		try {
+			JSch jsch = new JSch();
+			jsch.addIdentity(prvkey);
+			session = jsch.getSession(SFTPUSER, SFTPHOST, SFTPPORT);
+			java.util.Properties config = new java.util.Properties();
+			config.put("StrictHostKeyChecking", "no");
+			session.setConfig(config);
+			session.setPort(22);
+			session.connect();
+			channel = session.openChannel("sftp");
+			channel.connect();
+			channelSftp = (ChannelSftp) channel;
+			channelSftp.cd(SFTPWORKINGDIR);
+			InputStream is = channelSftp.get(FILETOTRANSFER);
+			//f = new File(Source+"-"+System.currentTimeMillis());
+			f = File.createTempFile(Source, ".temp");
+			f.deleteOnExit(); // Deletes file when the virtual machine terminate
+			//System.out.println("File path: "+f.getAbsolutePath());
+			OutputStream outputStream = new FileOutputStream(f);
+	        int read = 0;
+	        byte[] bytes = new byte[1024];
+	        while ((read = is.read(bytes)) != -1) {
+	            outputStream.write(bytes, 0, read);
+	        }
+	        outputStream.close();
+	        is.close();
+			channel.disconnect();
+			session.disconnect();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			if(channel != null &channel.isConnected()) {
+				channel.disconnect();
+			}
+			if(session!=null & session.isConnected()) {
+				session.disconnect();
+			}	
+		}
+		return f;
+	}
+	
 	
 	public static void executeCommands(String strHostName, String strCommand) {
 		String SFTPHOST = strHostName;
