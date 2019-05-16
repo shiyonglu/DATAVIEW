@@ -50,7 +50,7 @@ Check out tutorial: https://youtu.be/R6A6jreySFc or follow the instructions belo
     <li> How to create a workflow task for DATAVIEW (the linear regression example) (https://youtu.be/BPaoR_zogPA)</li>
     <li> How to create a workflow task in Python (https://youtu.be/3vSx-g9FnZU)</li>
     <li> How to create a workflow task for DATAVIEW (the K-means example) (https://youtu.be/N4jIYbYSFd4) </li>
-    <li> How to create a workflow in DATAVIEW (the word count example) (https://youtu.be/73-fyXyImeI) </li>
+    <li> How to create a workflow in DATAVIEW (the word count example) (https://youtu.be/x1f8UgyShtI) </li>
     <li> How to create a workflow in DATAVIEW (the distributed K-means workflow example) (https://youtu.be/aQJPzdQQ3Uc)</li>
     <li> How to create a workflow in DATAVIEW (the word count example revisited) (https://youtu.be/U8mhL9vVXlM)</li>
     <li> How to create a workflow in DATAVIEW (the distributed K-means workflow example revisited) (https://youtu.be/QLN8q9Hg1eE)</li>
