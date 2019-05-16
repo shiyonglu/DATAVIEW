@@ -1,8 +1,0 @@
-FileSplitter@6a0c282b was executed within 0.001511476
-WordCount@744578e0 was executed within 0.0060945
-WordCount@7d02f5c2 was executed within 0.004172552
-WordCountAggregation@23c2e2eb was executed within 0.004207408
-FileSplitter@6a0c282b.outs[0] <=WasTransferFrom WordCount@744578e0 within 0.0(S)
-FileSplitter@6a0c282b.outs[0] <=WasTransferFrom WordCount@7d02f5c2 within 0.0(S)
-WordCount@744578e0.outs[0] <=WasTransferFrom WordCountAggregation@23c2e2eb within 0.0(S)
-WordCount@7d02f5c2.outs[1] <=WasTransferFrom WordCountAggregation@23c2e2eb within 0.0(S)
