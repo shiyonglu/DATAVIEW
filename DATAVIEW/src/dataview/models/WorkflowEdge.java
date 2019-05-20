@@ -4,46 +4,60 @@ package dataview.models;
  * The workflow edge is used to connect between two tasks with the port id
  * 
  *
+ *  Log: 5/20/2019. Changed all the workflow inputs and outputs to allow arbitrary Java objects. Previously, we only allow 
+ *  files. Such extension allows to change an existing workflow with another intputs and outputs, which essentiallys allows to 
+ *  call the same workflow with different inputs or parameters easily. 
+ *  
  */
 public class WorkflowEdge{
-	public String srcFilename;
-	public String destFilename;
+	public int edgeType; // 0, input edge; 1: intermediate edge; 2: output edge
+	public int winIndex;
+	public int woutIndex;
+	
 	public Task srcTask;
 	public int outputPortIndex;
 	public Task destTask;
 	public int inputPortIndex;
 	
 	
-	/* connect the outputport of a task to the inputport of another task */
+	/* 
+	 * Create a workflowEdge of type 1
+	 * 
+	 * connect the outputport of a task to the inputport of another task 
+	 * 
+	 * */
 	public WorkflowEdge(Task srcTask, int outputPortIndex, Task destTask, int inputPortIndex)
 	{
+		this.edgeType = 1;
+		
 		this.srcTask = srcTask;
 		this.outputPortIndex = outputPortIndex;
 		this.destTask = destTask;
 		this.inputPortIndex = inputPortIndex;
-		this.srcFilename = null;
-		this.destFilename = null;
 	}
 	
 	/* connect a file to the inputport of a task */
-	public WorkflowEdge(String srcFilename, Task destTask, int inputPortIndex){
-		this.srcTask = null;
-		this.outputPortIndex = -1;
+	public WorkflowEdge(int winIndex, Task destTask, int inputPortIndex){
+		this.edgeType = 0;
+
+		this.winIndex = winIndex;
 		this.destTask = destTask;
 		this.inputPortIndex = inputPortIndex;
-		this.srcFilename = srcFilename;
-		this.destFilename = null;
 	}
 
-	/* connect the outputport of a task to a file */
-	public WorkflowEdge(Task srcTask, int outputPortIndex, String destFilename)
+	/* 
+	 * Create a workflowEdge of type 2
+	 * 
+	 * connect the outputport of a task to a workflow output 
+	 * 
+	 * */
+	public WorkflowEdge(Task srcTask, int outputPortIndex, int woutIndex)
 	{
+		this.edgeType = 2;
+		
 		this.srcTask = srcTask;
 		this.outputPortIndex = outputPortIndex;
-		this.destTask = null;
-		this.inputPortIndex = -1;
-		this.srcFilename = null;
-		this.destFilename = destFilename;
+		this.woutIndex = woutIndex;
 	}
 	
 	
@@ -51,32 +65,26 @@ public class WorkflowEdge{
 	{
 		JSONObject obj = new JSONObject();
 		
-		if(srcFilename != null) obj.put("srcFilename",  new JSONValue(srcFilename));
-		else obj.put("srcFilename",  new JSONValue(""));
-        
-		if(srcTask !=null) { 
-        	obj.put("srcTaskInstanceID", new JSONValue(srcTask.toString()));
-            obj.put("outputPortIndex", new JSONValue(""+outputPortIndex));
+		if(edgeType == 0) {
+			obj.put("win-",  new JSONValue(winIndex+""));
+    	    obj.put("destTaskInstanceID", new JSONValue(destTask.toString()));
+            obj.put("inputPortIndex", new JSONValue(""+inputPortIndex));
         }
-		else
+		else if(edgeType == 1)
+		{
+			obj.put("srcTaskInstanceID", new JSONValue(srcTask.toString()));
+            obj.put("outputPortIndex", new JSONValue(""+outputPortIndex));
+       	    obj.put("destTaskInstanceID", new JSONValue(destTask.toString()));
+            obj.put("inputPortIndex", new JSONValue(""+inputPortIndex));
+		}
+        else
 		{ 
         	obj.put("srcTaskInstanceID", new JSONValue(""));
             obj.put("outputPortIndex", new JSONValue(""));
+			obj.put("wout-",  new JSONValue(woutIndex+""));
+
         }
-			
-			
-        if(destFilename != null) obj.put("destFilename",  new JSONValue(destFilename));
-        else obj.put("destFilename",  new JSONValue(""));
-        
-        if(destTask !=null) {
-        	obj.put("destTaskInstanceID", new JSONValue(destTask.toString()));
-            obj.put("inputPortIndex", new JSONValue(""+inputPortIndex));
-        }
-        else {
-        	obj.put("destTaskInstanceID", new JSONValue(""));
-            obj.put("inputPortIndex", new JSONValue(""));
-        }
-		
+							
         return obj;
 	}	
 }

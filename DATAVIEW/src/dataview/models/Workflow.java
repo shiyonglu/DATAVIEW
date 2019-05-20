@@ -18,12 +18,15 @@ import java.util.Map;
  * 
  */
 public class Workflow {
+	// The following fields are public interface, unlikely to change
 	public String workflowName;
-	public String workflowDescription;
+	public  String workflowDescription;
+	public Object [] wins;         // an array of workflow inputs
+	public Object [] wouts;         // an array of workflow outputs
+	
+	// the following fields are private, subject to change during implementation
 	private List<Task> myTasks;
 	private List<WorkflowEdge> myEdges;
-	private List<String> srcFilenames;
-	private List<String> destFilenames;
 	private List<Stage> myStages;
 	
 	public Workflow(String workflowName, String workflowDescription)
@@ -33,32 +36,35 @@ public class Workflow {
 		this.workflowDescription = workflowDescription;
 		myTasks = new ArrayList<>();
 		myEdges = new ArrayList<>();
-		srcFilenames  = new ArrayList<>();
-		destFilenames  = new ArrayList<>();
 		myStages = new ArrayList<>();
 	}
 	
 	public int getNumOfNodes()
 	{
-		return srcFilenames.size()+myTasks.size()+destFilenames.size();
+		return wins.length+myTasks.size()+wouts.length;
 	}
 	
-	public int getNumOfSrcFiles()
+	public int getNumOfWorkflowInputs()
 	{
-		return srcFilenames.size();
+		return wins.length;
 	}
-	
+
+	public int getNumOfWorkflowOutputs()
+	{
+		return wouts.length;
+	}
+
 	public int getNumOfTasks()
 	{
 		return myTasks.size();
 	}
 
-	public String getSrcFilename(int i) {
-		return this.srcFilenames.get(i);
+	public Object getWorkflowOutput(int i) {
+		return this.wouts[i];
 	}
 	
-	public String getDestFilename(int i) {
-		return this.destFilenames.get(i);
+	public Object getWorkflowInput(int i) {
+		return this.wins[i];
 	}
 
 	
@@ -71,19 +77,7 @@ public class Workflow {
 		return myEdges;
 	}
 	
-	public int getNumOfDestFiles()
-	{
-		return destFilenames.size();
-	}
 
-	
-	public int getIndexOfSrcFilename(String srcFilename)
-	{
-		for(int i= 0; i <srcFilenames.size(); i++)
-			if(srcFilenames.get(i).equals(srcFilename)) return i;
-		
-		return -1;
-	}
 	
 	public int getIndexOfTask(Task t)
 	{
@@ -95,26 +89,6 @@ public class Workflow {
 	
 	
 	
-	private void addSrcFilename(String srcFilename) {
-		if(getIndexOfSrcFilename(srcFilename) == -1) srcFilenames.add(srcFilename);
-		else return;
-	}
-
-	
-	public int getIndexOfDestFilename(String destFilename)
-	{
-		for(int i= 0; i <destFilenames.size(); i++)
-			if(destFilenames.get(i).equals(destFilename)) return i;
-		
-		return -1;
-	}
-	
-	
-	private void addDestFilename(String destFilename) {
-		if(getIndexOfDestFilename(destFilename) == -1) destFilenames.add(destFilename);
-		else return;
-	}
-
 
 	public void addEdge(Task srcTask, int outputPortIndex, Task destTask, int inputPortIndex)
 	{
@@ -129,29 +103,24 @@ public class Workflow {
 	}
 	
 	
-	public void addEdge(String srcFilename, Task destTask, int inputPortIndex) {
-		addSrcFilename(srcFilename);
+	public void addEdge(int winIndex, Task destTask, int inputPortIndex) {
 		//System.out.println("22222222222222");
-		myEdges.add(new WorkflowEdge(srcFilename, destTask, inputPortIndex));
+		myEdges.add(new WorkflowEdge(winIndex, destTask, inputPortIndex));
 	}
 	
-	public void addEdge(String srcFilename, Task destTask) {
-		addSrcFilename(srcFilename);
+	public void addEdge(int winIndex, Task destTask) {
 		//System.out.println("22222222222222");
-		myEdges.add(new WorkflowEdge(srcFilename, destTask, 0));
+		myEdges.add(new WorkflowEdge(winIndex, destTask, 0));
 	}
 
 	
-	public void addEdge(Task srcTask, int outputPortIndex, String destFilename) {
+	public void addEdge(Task srcTask, int outputPortIndex, int woutIndex) {
 		//System.out.println("33333333333333333333");
-		addDestFilename(destFilename);
-		myEdges.add(new WorkflowEdge(srcTask, outputPortIndex, destFilename));
+		myEdges.add(new WorkflowEdge(srcTask, outputPortIndex, woutIndex));
 	}
 
-	public void addEdge(Task srcTask, String destFilename) {
-		//System.out.println("33333333333333333333");
-		addDestFilename(destFilename);
-		myEdges.add(new WorkflowEdge(srcTask, 0, destFilename));
+	public void addEdge(Task srcTask, int woutIndex) {
+		myEdges.add(new WorkflowEdge(srcTask, 0, woutIndex));
 	}
 
 
@@ -178,10 +147,10 @@ public class Workflow {
 		String str = "";
 		
 		for(WorkflowEdge e: myEdges) {
-			if(e.srcFilename != null) 
-				str = str + "File: " + e.srcFilename + " => " + e.destTask + ".inputport: " + e.inputPortIndex + "\n";
-			else if (e.destFilename != null)
-				str = str + e.srcTask + ".outputPort: " + e.outputPortIndex + " => " + "File: "+e.destFilename+"\n";
+			if(e.edgeType == 0)
+				str = str + "win- " + e.winIndex + " => " + e.destTask + ".inputport: " + e.inputPortIndex + "\n";
+			else if (e.edgeType == 2)
+				str = str + e.srcTask + ".outputPort: " + e.outputPortIndex + " => " + "wout-"+e.woutIndex+"\n";
 			else
 				str = str + e.srcTask + ".outputPort: " + e.outputPortIndex + " => " + e.destTask + ".inputport: " + e.inputPortIndex + "\n";
 		}		
@@ -329,11 +298,11 @@ public class Workflow {
     }
 
     /* connect the first output of parent to each input of the M children */
-    public void addEdges_SplitPattern(String srcFileName, Task [] children, int M)
+    public void addEdges_SplitPattern(int winIndex, Task [] children, int M)
     {
     	
      	for(int i=0; i < M; i++){
-    		addEdge(srcFileName, children[i], 0);
+    		addEdge(winIndex, children[i], 0);
     	} 	
     }
 
@@ -349,11 +318,11 @@ public class Workflow {
     }
 
     /* connect the first output of parent to each input of the M children */
-    public void addEdges_SplitPattern(String srcFileName, Task [] children, int k, int M)
+    public void addEdges_SplitPattern(int winIndex, Task [] children, int k, int M)
     {
     	
      	for(int i=0; i < M; i++){
-    		addEdge(srcFileName, children[i], k);
+    		addEdge(winIndex, children[i], k);
     	} 	
     }
 
@@ -427,17 +396,17 @@ public class Workflow {
 		
 		// all input files
 		JSONArray src = new JSONArray();
-		for(int i=0; i< srcFilenames.size(); i++) {
-			src.add(new JSONValue(srcFilenames.get(i)));
+		for(int i=0; i< wins.length; i++) {
+			src.add(new JSONValue("win-"+i));
 		}
-		obj.put("srcFilenames", new JSONValue(src));
+		obj.put("workflowInputs", new JSONValue(src));
 		
 		// all output files
 		JSONArray dest = new JSONArray();
-		for(int i=0; i< destFilenames.size(); i++) {
-			dest.add(new JSONValue(destFilenames.get(i)));
+		for(int i=0; i< wouts.length; i++) {
+			dest.add(new JSONValue("wout-"+i));
 		}
-		obj.put("destFilenames", new JSONValue(dest));
+		obj.put("workflowOutputs", new JSONValue(dest));
 
 		
 		// add all task edges
@@ -463,16 +432,16 @@ public class Workflow {
 		for(WorkflowEdge e: myEdges) {
 		    if(e.destTask != null && e.destTask.equals(t)) { // found an incoming data channel
 		    	System.out.println("found an incoming data channel..");
-		    	if(e.srcFilename != null)
-		    		tsch.AddIncomingDataChannel(new IncomingDataChannel(e.srcFilename, e.inputPortIndex));
+		    	if(e.edgeType == 0)
+		    		tsch.AddIncomingDataChannel(new IncomingDataChannel(e.winIndex, e.inputPortIndex));
 		    	else
 		          tsch.AddIncomingDataChannel(new IncomingDataChannel(e.srcTask, e.outputPortIndex, e.inputPortIndex));
 		    }
 		    
 		    if(e.srcTask != null && e.srcTask.equals(t)) {  // then we found an outgoing data channel
 		    	System.out.println("found an outgoing data channel..");
-		    	if(e.destFilename != null)
-		    		tsch.AddOutgoingDataChannel(new OutgoingDataChannel(e.outputPortIndex, e.destFilename));
+		    	if(e.edgeType == 2)
+		    		tsch.AddOutgoingDataChannel(new OutgoingDataChannel(e.outputPortIndex, e.woutIndex));
 		    	else
 		          tsch.AddOutgoingDataChannel(new OutgoingDataChannel(e.outputPortIndex, e.destTask, e.inputPortIndex));
 

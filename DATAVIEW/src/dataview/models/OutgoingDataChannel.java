@@ -17,7 +17,7 @@ public class OutgoingDataChannel {
 		public String destIP;
 		public int inputPortIndex;        // to
 
-		public String destFilename;       // to
+		public int woutIndex;       // to
 		
 		
 		/* connect the output port of a task to the inputport of another task */
@@ -28,15 +28,15 @@ public class OutgoingDataChannel {
 			
 			this.destTask = destTask;  // to
 			this.inputPortIndex = inputPortIndex; // to
-			this.destFilename = null;  // NA
+			this.woutIndex = -1;  // NA
 		}
 		
 		/* Connect the ouput port of a task to an output file*/
-		public OutgoingDataChannel(int myOutputPortIndex, String destFilename){
+		public OutgoingDataChannel(int myOutputPortIndex, int woutIndex){
 			this.myOutputPortIndex = myOutputPortIndex;  // from
 			
 			
-			this.destFilename = destFilename;   // to
+			this.woutIndex = woutIndex;   // to
 			
 			this.destTask = null;   // NA
 			this.inputPortIndex = -1;  // NA
@@ -81,10 +81,10 @@ public class OutgoingDataChannel {
 	    		obj.put("inputPortIndex", new JSONValue("-1"));
 
 	    	
-	    	if(destFilename != null)
-	    		obj.put("destFilename", new JSONValue(destFilename));
+	    	if(woutIndex != -1)
+	    		obj.put("wout", new JSONValue("wout"+woutIndex));
 	    	else
-	    		obj.put("destFilename", new JSONValue(""));
+	    		obj.put("wout", new JSONValue(""));
 	    	
 	    	
 	    	return obj;

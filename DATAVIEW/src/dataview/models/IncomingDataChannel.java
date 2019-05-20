@@ -9,7 +9,7 @@ package dataview.models;
  *  and the index of the OutputPort of the parent task that the data channel connects to. 
  */
 public class IncomingDataChannel {
-		public String srcFilename;        // from 1
+		public int winIndex;        // from 1
 		public Task srcTask;   // from 2
 		public int outputPortIndex;       // from 2
 		public int myInputPortIndex;       // to
@@ -23,12 +23,12 @@ public class IncomingDataChannel {
 			
 			this.myInputPortIndex = myInputPortIndex;            // to
 			
-			this.srcFilename = null;                         // NA
+			this.winIndex = -1;                         // NA
 		}
 		
-		/* connect a file to the input port of a task */
-		public IncomingDataChannel(String srcFilename,  int myInputPortIndex){
-			this.srcFilename = srcFilename;                 // from 1
+		/* connect a workflow input to the input port of a task */
+		public IncomingDataChannel(int wintIndex,  int myInputPortIndex){
+			this.winIndex = winIndex;            // from 1
 			this.myInputPortIndex = myInputPortIndex;          // to
 			
 			this.srcTask = null;                        // NA			
@@ -48,8 +48,8 @@ public class IncomingDataChannel {
 		public JSONObject getSpecification()
 		{
 	    	JSONObject obj = new JSONObject();
-	    	if(srcFilename != null)
-	    		obj.put("srcFilename", new JSONValue(srcFilename));
+	    	if(winIndex !=-1 )
+	    		obj.put("win-", new JSONValue(winIndex+""));
 	    	else
 	    		obj.put("srcFilename", new JSONValue(""));
 	    	
