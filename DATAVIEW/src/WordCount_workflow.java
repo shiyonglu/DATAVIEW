@@ -13,16 +13,16 @@ public class WordCount_workflow extends Workflow{
 		
 		public void design()
 		{
-
+			int K = 2; // number of wordcount tasks  
 	        // create and add all the tasks
 			Task stage1 = addTask("FileSplitter");
-			Task [] stage2 = addTasks("WordCount", 2);
+			Task [] stage2 = addTasks("WordCount", K);
 			Task stage3 = addTask("WordCountAggregation");
 						
 			// add edge by a single edge or by a pattern
 			addEdge("book.txt", stage1, 0);
-			addEdges_SplitPattern(stage1, stage2, 2);
-			addEdges_JoinPattern(stage2, stage3, 2);					
+			addEdges_SplitPattern(stage1, stage2, K);
+			addEdges_JoinPattern(stage2, stage3, K);					
 			addEdge(stage3, 0, "finalwordcount.txt");
 		}
 }

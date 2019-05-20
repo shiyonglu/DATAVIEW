@@ -3,25 +3,22 @@
  *  A genetal introduction to TaskExecutor.
  *  
  *  
- *  @seealso paper:  http:://wwww
- *  @seealso http://www.youtube.com 
- * 
- * 
- * 
- * 
- * 
+ *  @see paper:  http:://wwww
+ *  @see http://www.youtube.com 
  * 
  * 
  * 
  * Log: 
  *   
- *   
- *   <UL>
- *   <li> 5/11/2019. I found a challenge to implement aBC, will discuss with Ishtiaq or Dr. Lu. The challenge is: 
- *   ....... 
+ *   A DataTrasnferThread thread is created to move data from one VM to another or to the Dropbox
+ *   The main thread should wait until all the thread finished all the data movement. So the join method should be used.
+ *
  *   
  *   5/10/2019. The impelemention of recording data transfer time is greatly simplified. Now we can simplly...
  *   
+ *   We have one more step which is send back the execution status of the task back to the WorkflowExecutor. If we record the time in 
+ *   the Runnable method, the main thread will not lock until all the threads finished. We have to make main thread block here until all the
+ *   thread finish all the data transfer.  
  *   
  *   
  *   5/9/2019. Dr. Suggested that maybe I can use record the time of data transfer without using another Callback 
@@ -31,10 +28,6 @@
  *   
  * 
  */
-
-
-
-
 package dataview.workflowexecutors;
 import java.io.File;
 import java.io.FileInputStream;
@@ -85,42 +78,31 @@ public class TaskExecutor {
 	ObjectInputStream in;
 	Socket connection;
 	
-	//   Change the name to DataTransfer.
-	public class DatamovementCallback {
-		private JSONObject outdc;
-		public DatamovementCallback(JSONObject dc) {
-			outdc = dc;
-		}
-		public void onThreadFinished(double duration) {
-			outdc.put("transTime", new JSONValue(Double.toString(duration)));
-		}
-	}
+
 
 	/** The data transfers from the output ports of a task to the task's child tasks are performed in parallel, each data transfer is managed by a separate thread. 
 	 *  The data transfers from the output ports of exit tasks to the Dropbox file system are performed in a similar parallel fashion.  
 	*/
-	public class TransformThread extends Thread {
-		private DatamovementCallback threadCallback;
+
+	public class DataTrasnferThread extends Thread{
+		private JSONObject outdc;
 		private Runnable runable;
-		/**
-		 * The constructor for each thread will take a Runnable object and callback object
-		 * @param task: has a override run() method will move data from one VM instance to another VM instance.
-		 * @param callback: has the method to record the data transfer time between different VMs. 
-		 */
-		public TransformThread(Runnable task, DatamovementCallback callback) {
-			runable = task;
-			threadCallback = callback;		
+		public DataTrasnferThread (Runnable task, JSONObject outdc) {
+			this.outdc = outdc;
+			this.runable = task;
 		}
-		@Override
 		public void run() {
 			long start = System.nanoTime();
 			runable.run();
-			if (null != threadCallback) {
-				threadCallback.onThreadFinished((double)(System.nanoTime() - start) / 1_000_000_000.0);
+			if(!outdc.get("destIP").isEmpty()) {
+				outdc.put("transTime", new JSONValue(Double.toString((double)(System.nanoTime() - start) / 1_000_000_000.0)));
 			}
+			
 		}
+		
+		
 	}
-	
+
 	
 	public TaskExecutor() throws ClassNotFoundException, SQLException {
 		try {
@@ -151,8 +133,8 @@ public class TaskExecutor {
 					Message message = (Message) in.readObject();
 					// the task specification will be record in p.
 					JSONParser p = new JSONParser(message.getB());
-					// the dropbox token information will be record in token.
-					String token = message.getA();
+					// the dropbox token information will be record in dropboxToken.
+					String dropboxToken = message.getA();
 					
 					// step 3: parse the task specification 
 					Dataview.debugger.logSuccessfulMessage("receive the task specification:");
@@ -179,9 +161,9 @@ public class TaskExecutor {
 						JSONObject indc = indcs.get(i).toJSONObject();
 						if(indc.get("srcTask").isEmpty()){
 							String inputfile = indc.get("srcFilename").toString().replace("\"", ""); 
-							if(!token.isEmpty()){
+							if(!dropboxToken.isEmpty()){
 								DbxRequestConfig config = new DbxRequestConfig("en_US");
-								DbxClientV2 client = new DbxClientV2(config, token);
+								DbxClientV2 client = new DbxClientV2(config, dropboxToken);
 								DbxDownloader<FileMetadata> dl = null;
 								try {
 									dl = client.files().download("/DATAVIEW-INPUT/"+inputfile);
@@ -279,7 +261,7 @@ public class TaskExecutor {
 					Dataview.debugger.logSuccessfulMessage("Task "+t.taskName + " is finished");
 					
 					// 7. Transfer all the data products produced by this task to the VMs of their child tasks in parallel
-					ArrayList<TransformThread> threads = new ArrayList<TransformThread>();
+					ArrayList<DataTrasnferThread> threads = new ArrayList<DataTrasnferThread>();
 					for(int i = 0; i < outdcs.size(); i++){
 						JSONObject outdc = outdcs.get(i).toJSONObject();
 						if(!outdc.get("destIP").toString().replaceAll("\"", "").
@@ -299,13 +281,13 @@ public class TaskExecutor {
 									}
 								}
 							};
-							DatamovementCallback callback = new DatamovementCallback(outdc);
-							TransformThread thread = new TransformThread(task, callback);
+							
+							DataTrasnferThread thread = new DataTrasnferThread(task, outdc);
 							threads.add(thread);
 							thread.start();
 						}else if(outdc.get("destTask").isEmpty()){ // if it is an exit task 						
-							if(!token.isEmpty()){                  // if the DropboxToken is present, then we send the workflow outputs to the Dropbox file system
-								final String tokenForThread = token;
+							if(!dropboxToken.isEmpty()){                  // if the DropboxToken is present, then we send the workflow outputs to the Dropbox file system
+								final String tokenForThread = dropboxToken;
 								final String destFilename = outdc.get("destFilename").toString();
 								final String taskIDForThread = taskID;
 								
@@ -325,17 +307,19 @@ public class TaskExecutor {
 										}
 									}
 								};
-								TransformThread thread = new TransformThread(task, null);
+								DataTrasnferThread thread = new DataTrasnferThread(task, outdc);
 								threads.add(thread);
 								thread.start();
 							}
+			
+							
 						}else {
 							outdc.put("transTime", new JSONValue(Double.toString(0.0)));
 						}
 						
 					}
 					// the main thread will wait until all the threads are finished.
-					for (TransformThread thread : threads) {
+					for (DataTrasnferThread thread : threads) {
 						thread.join();
 					}
 					
@@ -364,6 +348,5 @@ public class TaskExecutor {
 			} 
 		}
 	}
-	
 
 }

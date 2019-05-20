@@ -23,7 +23,7 @@ public class WorkflowPlanner_Naive1 extends WorkflowPlanner{
 	
 	public GlobalSchedule plan()
 	{
-		GlobalSchedule gsch = new GlobalSchedule();
+		GlobalSchedule gsch = new GlobalSchedule(w);
 		for(int i=0; i<numnode; i++) {
 			Task t = w.getTask(i);
 			TaskSchedule tsch = w.getTaskSchedule(t);

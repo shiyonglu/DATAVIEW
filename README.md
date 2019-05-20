@@ -26,7 +26,7 @@ Check out tutorial: https://youtu.be/R6A6jreySFc or follow the instructions belo
      <li> Unzip the DATAVIEW-master.zip file and import the DATAVIEW project into Eclipse as an "Existing Projects into Workspace" by selecting "Projects from Folder or Archive".
     </li> 
     <li> The external dependecies libraries must be added to the Eclipse project from /DATAVIEW/WebContent/WEB-INF/lib </li>
-    <li> Create an Access key ID and a Secret access key in Amazon EC2 following the turotial: https://youtu.be/9741e4CubMQ </li>
+    <li> Create an Access key ID and a Secret access key in Amazon EC2 following the tutotial: https://youtu.be/9741e4CubMQ </li>
     <li>Replace the accessKey(Access key ID) and the secretKey(Secret access key) in config.properties by the Access key ID and Secret access key created in the previous step. File config.properties is under /DATAVIEW/WebContent/workflowLibDir/. </li>
     <li>/DATAVIEW/src/test.java shows the six steps to create a new workflow and execute it in Amazon EC2.</li>
     <li>After the execution of a workflow completes, please terminate all the EC2 instances from your AWS account manually.</li>
@@ -47,10 +47,11 @@ Check out tutorial: https://youtu.be/R6A6jreySFc or follow the instructions belo
 <OL>
     <li> Chapter 1: A gentle introduction to DATAVIEW （https://youtu.be/7S4iGKXpaAc) </li>
     <li> How to download and import DATAVIEW into Eclipse as Java API (https://youtu.be/R6A6jreySFc)</li>
+    <li> How to create an Access Key ID and a Secret access key in Amazon EC2 (https://youtu.be/9741e4CubMQ)</li>
     <li> How to create a workflow task for DATAVIEW (the linear regression example) (https://youtu.be/BPaoR_zogPA)</li>
     <li> How to create a workflow task in Python (https://youtu.be/3vSx-g9FnZU)</li>
     <li> How to create a workflow task for DATAVIEW (the K-means example) (https://youtu.be/N4jIYbYSFd4) </li>
-    <li> How to create a workflow in DATAVIEW (the word count example) (https://youtu.be/73-fyXyImeI) </li>
+    <li> How to create a workflow in DATAVIEW (the word count example) (https://youtu.be/x1f8UgyShtI) </li>
     <li> How to create a workflow in DATAVIEW (the distributed K-means workflow example) (https://youtu.be/aQJPzdQQ3Uc)</li>
     <li> How to create a workflow in DATAVIEW (the word count example revisited) (https://youtu.be/U8mhL9vVXlM)</li>
     <li> How to create a workflow in DATAVIEW (the distributed K-means workflow example revisited) (https://youtu.be/QLN8q9Hg1eE)</li>

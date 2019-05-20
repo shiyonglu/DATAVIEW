@@ -47,7 +47,7 @@ public class User {
 	public String country = "";
 
 	// dropbox confidentials
-	public String dropbox_token = "";
+	public String dropboxToken = "";
 
 	// Amazon confidentials
 	public String amazonec2_accesskey = "";
@@ -204,9 +204,6 @@ public class User {
 			fileChannel.write(ByteBuffer.wrap((jobtitle+",").getBytes()));
 			fileChannel.write(ByteBuffer.wrap((country+",").getBytes()));
 			fileChannel.write(ByteBuffer.wrap((password+",").getBytes()));
-			//fileChannel.write(ByteBuffer.wrap((dropbox_token+", ").getBytes()));
-			//fileChannel.write(ByteBuffer.wrap((accessKey+", ").getBytes()));
-			//fileChannel.write(ByteBuffer.wrap((dropbox_token+", ").getBytes()));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

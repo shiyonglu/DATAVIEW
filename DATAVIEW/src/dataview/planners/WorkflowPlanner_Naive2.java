@@ -27,7 +27,7 @@ public class WorkflowPlanner_Naive2 extends WorkflowPlanner{
 	{
 		List<Integer> planned_tasks = new ArrayList<Integer>();
 		
-		GlobalSchedule gsch = new GlobalSchedule();
+		GlobalSchedule gsch = new GlobalSchedule(w);
 		LocalSchedule lsch = new LocalSchedule();
 		
 		int nt;

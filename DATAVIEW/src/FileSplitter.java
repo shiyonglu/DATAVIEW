@@ -5,15 +5,15 @@ import dataview.models.*;
 /* FileSplitter will split a file into K files that are (almost) equal in size */
 /* task is called a parameterized task, the parameter K must be instantiated to a concrete value by a constructor. */
 public class FileSplitter extends Task{
-	private int M = 2; 
+	private int K = 2; // output port numbers, which is same to the WordCount task numbers in the second stage.
 	
 	public FileSplitter ()
 	{
 		super("FileSplitter", "FileSplitter will split a file into M files that are (almost) equal in size ");
 		ins = new InputPort[1];
 		ins[0] = new InputPort("in0", Port.DATAVIEW_BigFile, "This is the first number");
-		outs = new OutputPort[M];
-		for(int i=0; i<M; i++)
+		outs = new OutputPort[K];
+		for(int i=0; i<K; i++)
 			outs[i] = new OutputPort("out"+i, Port.DATAVIEW_BigFile, "This is the "+i+"th output");				
 	}
 	
@@ -52,8 +52,8 @@ public class FileSplitter extends Task{
 			Dataview.debugger.logException(e2);
 		}
 		
-		Dataview.debugger.logObjectValue("M",  M);
-		int linesperfile = (numlines/M)+1;  // the last file might have less lines
+		Dataview.debugger.logObjectValue("M",  K);
+		int linesperfile = (numlines/K)+1;  // the last file might have less lines
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(inputfile));
@@ -65,7 +65,7 @@ public class FileSplitter extends Task{
 
 		
 		// write to K output files
-		for(int i=0; i<M; i++)
+		for(int i=0; i<K; i++)
 		{
 			String filename = (String)outs[i].getFileName();
 			Dataview.debugger.logObjectValue("filename",  filename);
