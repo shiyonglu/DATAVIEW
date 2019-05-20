@@ -20,13 +20,13 @@ package dataview.models;
  */
 public class OutgoingDataChannel {
 
-		public int myOutputPortIndex;        // from
+		public int myOutputPortIndex;        // from an outputPort of this task
 		
-		public Task destTask;  // to
-		public String destIP;
-		public int inputPortIndex;        // to
+		public Task destTask;                // to an outputPort of a child task
+		public int inputPortIndex;           // to an outputPort of a child task
+		public String destIP;                // the IP of the VM that the child task is assigned to
 
-		public int woutIndex;       // to
+		public int woutIndex;                // or to a workflow output
 		
 		
 		/* connect the output port of a task to the inputport of another task */

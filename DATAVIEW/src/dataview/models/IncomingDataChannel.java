@@ -16,26 +16,26 @@ package dataview.models;
  
  */
 public class IncomingDataChannel {
-		public int winIndex;        // from 1
-		public Task srcTask;   // from 2
-		public int outputPortIndex;       // from 2
-		public int myInputPortIndex;       // to
+		public int winIndex;        // from a workflow input
+		public Task srcTask;   // or an outputPort of a parent task
+		public int outputPortIndex;       // or from an outputPort of a parent task
+		public int myInputPortIndex;       // to an inpurtPort of this task
 		
 		
 		/* connect the output port of the parent task to the input port of the current task */
 		public IncomingDataChannel(Task srcTask, int outputPortIndex, int myInputPortIndex)
 		{
-			this.srcTask = srcTask;                    // from 2      
-			this.outputPortIndex = outputPortIndex;          // from 2
+			this.srcTask = srcTask;                    // from
+			this.outputPortIndex = outputPortIndex;    // from
 			
-			this.myInputPortIndex = myInputPortIndex;            // to
+			this.myInputPortIndex = myInputPortIndex;  // to       
 			
 			this.winIndex = -1;                         // NA
 		}
 		
 		/* connect a workflow input to the input port of a task */
 		public IncomingDataChannel(int wintIndex,  int myInputPortIndex){
-			this.winIndex = winIndex;            // from 1
+			this.winIndex = winIndex;                 // from 
 			this.myInputPortIndex = myInputPortIndex;          // to
 			
 			this.srcTask = null;                        // NA			
