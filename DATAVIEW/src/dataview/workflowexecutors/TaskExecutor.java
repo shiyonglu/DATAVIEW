@@ -82,37 +82,6 @@ public class TaskExecutor {
 	Socket connection;
 	
 
-
-	/** The data transfers from the output ports of a task to the task's child tasks are performed in parallel, each data transfer is managed by a separate thread. 
-	 *  The data transfers from the output ports of exit tasks to the Dropbox file system are performed in a similar parallel fashion.  
-	*/
-	public class DataTrasnferThread extends Thread{
-		private JSONObject outdc;
-		private DataTransferRequest runable;
-		public DataTrasnferThread (DataTransferRequest task, JSONObject outdc) {
-			this.outdc = outdc;
-			this.runable = task;
-		}
-		public void run() {
-			long start = System.nanoTime();
-			runable.run();
-			if(!outdc.get("destIP").isEmpty()) {
-				outdc.put("transTime", new JSONValue(Double.toString((double)(System.nanoTime() - start) / 1_000_000_000.0)));
-			}
-			
-		}
-		
-		
-	}
-	/**
-	 * The data transfer implementations are override between VMs and VM to dropbox by implementation the interface
-	 * 
-	 *
-	 */
-	interface DataTransferRequest {
-	    public void run();
-	}
-	
 	public TaskExecutor() throws ClassNotFoundException, SQLException {
 		try {
 			providerSocket = new ServerSocket(2004, 10);
@@ -240,36 +209,38 @@ public class TaskExecutor {
 	public void dataMove(JSONObject taskSpec,String dropboxToken) throws InterruptedException{
 		String taskID = taskSpec.get("taskInstanceID").toString().replace("\"", "");
 		JSONArray outdcs = taskSpec.get("outgoingDataChannels").toJSONArray();
-		ArrayList<DataTrasnferThread> threads = new ArrayList<DataTrasnferThread>();
+		//ArrayList<DataTrasnferThread> threads = new ArrayList<DataTrasnferThread>();
+		ArrayList<Runnable> threads = new ArrayList<Runnable>();
 		for(int i = 0; i < outdcs.size(); i++){
-			JSONObject outdc = outdcs.get(i).toJSONObject();
+			final JSONObject outdc = outdcs.get(i).toJSONObject();
 			if(!outdc.get("destIP").toString().replaceAll("\"", "").
 					equals(taskSpec.get("myIP").toString().replaceAll("\"", "")) && !outdc.get("destIP").isEmpty() ){
 				final String taskInstanceID = taskSpec.get("taskInstanceID").toString();
 				final String outputPortIndex = outdc.get("myOutputPortIndex").toString();
 				final String destIP = outdc.get("destIP").toString();
-				DataTransferRequest task = new DataTransferRequest() {
+				Runnable vmToVM = new Runnable() {
 					public void run() {
 						try {
+							long start = System.nanoTime();
 							MoveDataToCloud.getDataReady(taskInstanceID.replaceAll("\"", "")+"_"+
 									outputPortIndex.replaceAll("\"", "")+".txt", 
 									destIP.replaceAll("\"", ""));
+							outdc.put("transTime", new JSONValue(Double.toString((double)(System.nanoTime() - start) / 1_000_000_000.0)));
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					}
 				};
-				
-				DataTrasnferThread thread = new DataTrasnferThread(task, outdc);
-				threads.add(thread);
-				thread.start();
+				Thread transferVMtoVM = new Thread(vmToVM);
+				//DataTrasnferThread thread = new DataTrasnferThread(task, outdc);
+				threads.add(transferVMtoVM);
+				transferVMtoVM.start();
 			}else if(outdc.get("destTask").isEmpty()){ // if it is an exit task 						
 				if(!dropboxToken.isEmpty()){                  // if the DropboxToken is present, then we send the workflow outputs to the Dropbox file system
 					final String tokenForThread = dropboxToken;
 					final String destFilename = outdc.get("destFilename").toString();
 					final String taskIDForThread = taskID;
-					
-					DataTransferRequest task = new DataTransferRequest() {
+					Runnable vmToDropbox = new Runnable()  {
 						public void run() {
 							try {
 								// update the final output to Dropbox 
@@ -284,9 +255,9 @@ public class TaskExecutor {
 							}
 						}
 					};
-					DataTrasnferThread thread = new DataTrasnferThread(task, outdc);
-					threads.add(thread);
-					thread.start();
+					Thread transferVMtoDropbox = new Thread(vmToDropbox);
+					threads.add(transferVMtoDropbox);
+					transferVMtoDropbox.start();
 				}
 
 				
@@ -296,8 +267,8 @@ public class TaskExecutor {
 			
 		}
 		// the main thread will wait until all the threads are finished.
-		for (DataTrasnferThread thread : threads) {
-			thread.join();
+		for (Runnable thread : threads) {
+			((Thread) thread).join();
 		}
 		
 	}
