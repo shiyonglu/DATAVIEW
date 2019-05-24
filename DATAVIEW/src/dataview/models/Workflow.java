@@ -18,7 +18,7 @@ import java.util.Map;
  *  Log: 5/20/2019.  Changed the workflow model. 
  *  
  *  Changed all the workflow inputs and outputs to allow arbitrary Java objects. Previously, we only allow 
- *  files. Such extension allows to change an existing workflow with another intputs and outputs, which essentiallys allows to 
+ *  files. Such extension allows to change an existing workflow with another intputs and outputs, which essentially allows to 
  *  call the same workflow with different inputs or parameters easily. 
  
  * 
@@ -438,7 +438,7 @@ public class Workflow {
 		TaskSchedule tsch = new TaskSchedule(t);
 		for(WorkflowEdge e: myEdges) {
 		    if(e.destTask != null && e.destTask.equals(t)) { // found an incoming data channel
-		    	System.out.println("found an incoming data channel..");
+		    	//System.out.println("found an incoming data channel..");
 		    	if(e.edgeType == 0)
 		    		tsch.AddIncomingDataChannel(new IncomingDataChannel(e.winIndex, e.inputPortIndex));
 		    	else
@@ -446,7 +446,7 @@ public class Workflow {
 		    }
 		    
 		    if(e.srcTask != null && e.srcTask.equals(t)) {  // then we found an outgoing data channel
-		    	System.out.println("found an outgoing data channel..");
+		    	//System.out.println("found an outgoing data channel..");
 		    	if(e.edgeType == 2)
 		    		tsch.AddOutgoingDataChannel(new OutgoingDataChannel(e.outputPortIndex, e.woutIndex));
 		    	else

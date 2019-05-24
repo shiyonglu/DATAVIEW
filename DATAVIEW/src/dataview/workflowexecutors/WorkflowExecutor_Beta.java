@@ -125,7 +125,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			m.provisionVMs(str,VMnumbers.get(str), workflowLibdir);
 			
 		}
-		Thread.sleep(90000);
+		//Thread.sleep(90000);
 		
 		// We introduce ipsAndType (also called IPPool) to store the IPs of VM instances for each VM type
 		// Here, VM type is the key, and the list of IPs is the value.

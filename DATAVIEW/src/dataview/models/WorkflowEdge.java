@@ -7,14 +7,14 @@ package dataview.models;
  *  Log: 5/20/2019.  Changed the workflow model. 
  *  
  *  Changed all the workflow inputs and outputs to allow arbitrary Java objects. Previously, we only allow 
- *  files. Such extension allows to change an existing workflow with another intputs and outputs, which essentiallys allows to 
+ *  files. Such extension allows to change an existing workflow with another intputs and outputs, which essentially allows to 
  *  call the same workflow with different inputs or parameters easily. 
  *  
  */
 public class WorkflowEdge{
 	public int edgeType; // 0, input edge; 1: intermediate edge; 2: output edge
-	public int winIndex;
-	public int woutIndex;
+	public int winIndex = -1;
+	public int woutIndex = -1;
 	
 	public Task srcTask;
 	public int outputPortIndex;

@@ -1,1 +1,23 @@
 2019/05/16 11:37:12.713, Level: 3, The value for variable/object:VMnumbers is {t2.micro=1}
+2019/05/16 12:35:23.491, Level: 3, The value for variable/object:VMnumbers is {t2.micro=1}
+2019/05/16 12:35:26.650, Level: 3, The value for variable/object:ipsAndType is {t2.micro=[54.147.79.12]}
+2019/05/16 12:35:28.045, Level: 3, We reached here:  /Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowLibDir/Dataview_key.pemfile on 54.147.79.12 is ready!!
+2019/05/16 12:35:31.078, Level: 3, We reached here:  send dataview.workflowexecutors.Message@7ea732f0
+2019/05/16 12:35:31.206, Level: 3, We reached here:  local recv FileSplitter@329f14c3
+2019/05/16 12:35:31.849, Level: 3, We reached here:  send dataview.workflowexecutors.Message@6f40a728
+2019/05/16 12:35:31.952, Level: 3, We reached here:  local recv WordCount@21b50891
+2019/05/16 12:35:32.604, Level: 3, We reached here:  send dataview.workflowexecutors.Message@21bd637b
+2019/05/16 12:35:32.704, Level: 3, We reached here:  local recv WordCount@744578e0
+2019/05/16 12:35:33.365, Level: 3, We reached here:  send dataview.workflowexecutors.Message@e4d4282
+2019/05/16 12:35:33.475, Level: 3, We reached here:  local recv WordCountAggregation@625a80df
+2019/05/16 12:58:51.080, Level: 3, The value for variable/object:VMnumbers is {t2.micro=1}
+2019/05/16 12:58:54.225, Level: 3, The value for variable/object:ipsAndType is {t2.micro=[54.147.79.12]}
+2019/05/16 12:58:55.555, Level: 3, We reached here:  /Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowLibDir/Dataview_key.pemfile on 54.147.79.12 is ready!!
+2019/05/16 12:58:58.746, Level: 3, We reached here:  send dataview.workflowexecutors.Message@6f84186e
+2019/05/16 12:58:58.875, Level: 3, We reached here:  local recv FileSplitter@6a0c282b
+2019/05/16 12:58:59.542, Level: 3, We reached here:  send dataview.workflowexecutors.Message@3d6d1021
+2019/05/16 12:58:59.649, Level: 3, We reached here:  local recv WordCount@744578e0
+2019/05/16 12:59:00.325, Level: 3, We reached here:  send dataview.workflowexecutors.Message@74ff5a7e
+2019/05/16 12:59:00.434, Level: 3, We reached here:  local recv WordCount@7d02f5c2
+2019/05/16 12:59:01.102, Level: 3, We reached here:  send dataview.workflowexecutors.Message@25ad21cb
+2019/05/16 12:59:01.213, Level: 3, We reached here:  local recv WordCountAggregation@23c2e2eb

@@ -24,9 +24,9 @@ public class WorkflowVisualization extends JFrame
 		Dataview.debugger.logNullPointer("graph", graph);
 		
 		Object parent = graph.getDefaultParent();
-		int numnode1 = w.getNumOfSrcFiles();
+		int numnode1 = w.wins.length;
 		int numnode2 = w.getNumOfTasks();
-		int numnode3 = w.getNumOfDestFiles();
+		int numnode3 = w.wouts.length;
 
 		
 		int numnode = numnode1+numnode2+numnode3;
@@ -43,7 +43,7 @@ public class WorkflowVisualization extends JFrame
 			// draw srcFilename nodes
 			for (int i = 0; i < numnode1; i++)
 			{
-				 nodes[i] = graph.insertVertex(parent, null, ""+w.getSrcFilename(i), 0, 0, 60,
+				 nodes[i] = graph.insertVertex(parent, null, ""+w.wins[i], 0, 0, 60,
 						20);
 			}
 
@@ -60,22 +60,22 @@ public class WorkflowVisualization extends JFrame
 			for (int i = 0; i < numnode3; i++)
 			{
 				 
-				 nodes[i+numnode1+numnode2] = graph.insertVertex(parent, null, ""+w.getDestFilename(i), 0, 0, 60,
+				 nodes[i+numnode1+numnode2] = graph.insertVertex(parent, null, ""+w.wouts[i], 0, 0, 60,
 						20);
 			}
 
 			
 			
 			for(WorkflowEdge e: w.getEdges()) {
-				if (e.srcFilename != null) {   // source node is an input file
-					int i = w.getIndexOfSrcFilename(e.srcFilename);
+				if (e.winIndex != -1) {   // source node is an input file
+					int i = e.winIndex;
 				    int j = w.getIndexOfTask(e.destTask);
 					 graph.insertEdge(parent, null, null,
 							nodes[i], nodes[j+numnode1]);
 				}
-				else if(e.destFilename != null) { // destination node is an output file
+				else if(e.woutIndex != -1) { // destination node is an output file
 					int i = w.getIndexOfTask(e.srcTask);
-				    int j = w.getIndexOfDestFilename(e.destFilename);
+				    int j = e.woutIndex;
 					 graph.insertEdge(parent, null, null,
 							nodes[i+numnode1], nodes[j+numnode1+numnode2]);
 				}

@@ -26,14 +26,14 @@ public class Test {
 		//SampleWorkflow w = new SampleWorkflow();
 		//Montage_workflow w = new Montage_workflow();
 		//MR w = new MR();
-		//Diagnosis w = new Diagnosis();
+		Diagnosis w = new Diagnosis();
 		//DummyWorkflow w = new DummyWorkflow();
-		WordCount_workflow w = new WordCount_workflow();
+		//WordCount_workflow w = new WordCount_workflow();
 		//Ligo_workflow w = new Ligo_workflow();
 		// step 2: design a workflow
 		w.design();
 		frame.drawWorkflowGraph(w);
-		
+	
 		// step 3: choose a workflow planner
 		int whichplanner = WorkflowPlanner.WorkflowPlanner_Naive2;
 		
@@ -62,8 +62,9 @@ public class Test {
 		// step 4: generate a workflow schedule	
 		
 		GlobalSchedule gsch = wp.plan();
-		//System.out.println(gsch.getSpecification());
+		System.out.println(gsch.getSpecification());
 		// step 5: select a workflow executor 
+		/*
 		String fileLocation = System.getProperty("user.dir") + File.separator + "WebContent" +File.separator;
 		int whichexecutor = WorkflowExecutor.WorkflowExecutor_Beta;
 		WorkflowExecutor we = null;
@@ -77,6 +78,7 @@ public class Test {
 		
 		// step 6: execute a workflow
 		we.execute();	
+		*/
 	}
 
 }

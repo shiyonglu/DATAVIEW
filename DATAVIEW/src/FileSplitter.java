@@ -9,7 +9,7 @@ public class FileSplitter extends Task{
 	
 	public FileSplitter ()
 	{
-		super("FileSplitter", "FileSplitter will split a file into M files that are (almost) equal in size ");
+		super("FileSplitter", "FileSplitter will split a file into K files that are (almost) equal in size ");
 		ins = new InputPort[1];
 		ins[0] = new InputPort("in0", Port.DATAVIEW_BigFile, "This is the first number");
 		outs = new OutputPort[K];
@@ -52,7 +52,7 @@ public class FileSplitter extends Task{
 			Dataview.debugger.logException(e2);
 		}
 		
-		Dataview.debugger.logObjectValue("M",  K);
+		Dataview.debugger.logObjectValue("K",  K);
 		int linesperfile = (numlines/K)+1;  // the last file might have less lines
 		BufferedReader br = null;
 		try {

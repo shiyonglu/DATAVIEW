@@ -1,3 +1,4 @@
+import dataview.models.DATAVIEW_BigFile;
 import dataview.models.Task;
 import dataview.models.Workflow;
 
@@ -5,10 +6,17 @@ public class Diagnosis extends Workflow {
 
 	public Diagnosis() {
 		super("Diagnosis Recommendation", " This workflow is for doctor to make some recommendation for a patient");
+		wins = new Object[2];
+		wouts = new Object[1];
+		wins[0] = new DATAVIEW_BigFile("originalInput.txt");
+		wins[1] = new DATAVIEW_BigFile("parameter.txt");
+		
+		wouts[0] =new DATAVIEW_BigFile("output0.txt");
+		
 	}
 	public void design()
 	{
-
+		
         // create and add all the tasks
 		
 		Task T1 = addTask("Extraction");
@@ -21,7 +29,9 @@ public class Diagnosis extends Workflow {
 		
 		
 		// add edges
-		addEdge("originalInput.txt", T1, 0);
+		
+		addEdge(0, T1, 0);
+	
 		addEdge(T1, 0, T2, 0);
 		
 		addEdge(T2,0,T3,0);
@@ -32,14 +42,15 @@ public class Diagnosis extends Workflow {
 		addEdge(T3,0,T5,0);
 		addEdge(T3,1,T4,1);
 		
-		addEdge("parameter.txt",T4,2);
+		addEdge(1,T4,2);
 		addEdge(T4,0,T5,1);
 		
-		addEdge("parameter.txt",T5,3);
+		addEdge(1,T5,3);
 		addEdge(T5,0,T6,0);
 		
 
-	    addEdge(T6, 0, "output0.txt");	    
+	    addEdge(T6, 0, 0);	
+	       
 	}
 		
 }

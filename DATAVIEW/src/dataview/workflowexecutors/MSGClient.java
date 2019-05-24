@@ -42,7 +42,6 @@ public class MSGClient extends Thread {
 			// requestSocket = new Socket("localhost", 2004);
 			// System.out.println("Connected to localhost in port 2004");
 			// 2. get Input and Output streams
-
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			// out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
