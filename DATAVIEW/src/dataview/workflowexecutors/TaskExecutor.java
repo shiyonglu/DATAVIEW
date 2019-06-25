@@ -1,9 +1,3 @@
-/**
- *  TaskExecutor:
- *  A genetal introduction to TaskExecutor.
- *  
- * 
- */
 package dataview.workflowexecutors;
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,7 +35,8 @@ import dataview.models.JSONValue;
 import dataview.models.Task;
 
 
-/**	The task executor will bind the data products with input ports and output ports
+/**	A genetal introduction to TaskExecutor.
+ * 	The task executor will bind the data products with input ports and output ports
  *  It will call a specific task to read data from the input port, do data processing and write data to corresponding outputs.
  *  
  *  Each input port of a task is like an incoming mailbox. The task executor will put data products at the input ports of a task,then the
@@ -67,8 +62,8 @@ public class TaskExecutor {
 		}
 	}
 	
-	/**Retrieve the input file name for each task based on the task specification information and combine it to the input port index. The input port index is the key value of inputportAndFile object and
-	 * the value is the file name. When the dropboxToken is not empty and the task has no parent task, the input files associated with the task should be downloaded from the Dropbox. 
+	/** Retrieve the input file name for each task based on the task specification information and combine it to the input port index. The input port index is the key value of inputportAndFile object and
+	 *  the value is the file name. When the dropboxToken is not empty and the task has no parent task, the input files associated with the task should be downloaded from the Dropbox. 
 	 * 
 	 * @param taskSpec
 	 * @param dropboxToken
@@ -108,7 +103,7 @@ public class TaskExecutor {
 		return inputportAndFile;
 	}
 	
-	/**Retrieve the output file name for each task based on the task specification information and combine it to the output port index.
+	/** Retrieve the output file name for each task based on the task specification information and combine it to the output port index.
 	 * 
 	 * @param taskSpec
 	 * @param dropboxToken
@@ -137,7 +132,7 @@ public class TaskExecutor {
 		return outputportAndFile;
 		
 	}
-	/**Load a class dynamically at runtime and create a Task instance. After setting the file names to the input ports and output ports, the run method is called to execute a task.
+	/** Load a class dynamically at runtime and create a Task instance. After setting the file names to the input ports and output ports, the run method is called to execute a task.
 	 * 
 	 * @param taskSpec
 	 * @param inputportAndFile
@@ -204,8 +199,8 @@ public class TaskExecutor {
 		taskSpec.put("execTime", new JSONValue(Double.toString(duration)));
 		Dataview.debugger.logSuccessfulMessage("Task "+t.taskName + " is finished");	
 	}
-	/**Move the output files from one task to its child tasks in parallel, if the task has child tasks. If the dropbox token is provided, the final output will move to
-	 * the Dropbox "/DATAVIEW-OUTPUT/" folder parallelly.
+	/** Move the output files from one task to its child tasks in parallel, if the task has child tasks. If the dropbox token is provided, the final output will move to
+	 *  the Dropbox "/DATAVIEW-OUTPUT/" folder parallel.
 	 * 
 	 * @param taskSpec
 	 * @param dropboxToken
@@ -334,8 +329,8 @@ public class TaskExecutor {
 					dataMove(taskSpec,dropboxToken);
 					
 					
-					// step 7: send back the execution status of the task back to the WorkflowExecutor and
-					// 
+					// step 7: send back the execution status of the task back to the WorkflowExecutor and close the connection. 
+					
 					Dataview.debugger.logSuccessfulMessage("Here is the task specification "+ taskSpec);
 					out.writeObject(taskSpec.toString());
 					out.flush();	
