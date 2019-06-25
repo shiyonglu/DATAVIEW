@@ -1,31 +1,7 @@
-/*
+/**
  *  TaskExecutor:
  *  A genetal introduction to TaskExecutor.
  *  
- *  
- *  @see paper:  http:://wwww
- *  @see http://www.youtube.com 
- * 
- * 
- * 
- * Log: 
- *   
- *   A DataTrasnferThread thread is created to move data from one VM to another or to the Dropbox
- *   The main thread should wait until all the thread finished all the data movement. So the join method should be used.
- *
- *   
- *   5/10/2019. The impelemention of recording data transfer time is greatly simplified. Now we can simplly...
- *   
- *   We have one more step which is send back the execution status of the task back to the WorkflowExecutor. If we record the time in 
- *   the Runnable method, the main thread will not lock until all the threads finished. We have to make main thread block here until all the
- *   thread finish all the data transfer.  
- *   
- *   
- *   5/9/2019. Dr. Suggested that maybe I can use record the time of data transfer without using another Callback 
- *   Class, will look into it. 
- *   
- *   5/9/2019. From now, I will write whatever changes I make to this file to the log here. 
- *   
  * 
  */
 package dataview.workflowexecutors;
@@ -90,8 +66,16 @@ public class TaskExecutor {
 			e.printStackTrace();
 		}
 	}
-
 	
+	/**Retrieve the input file name for each task based on the task specification information and combine it to the input port index. The input port index is the key value of inputportAndFile object and
+	 * the value is the file name. When the dropboxToken is not empty and the task has no parent task, the input files associated with the task should be downloaded from the Dropbox. 
+	 * 
+	 * @param taskSpec
+	 * @param dropboxToken
+	 * @return   
+	 * @throws DbxException
+	 * @throws IOException
+	 */
 	public SortedMap<String, String> mappingInputAndFile (JSONObject taskSpec,String dropboxToken) throws DbxException, IOException{
 		JSONArray indcs = taskSpec.get("incomingDataChannels").toJSONArray();
 		SortedMap<String, String> inputportAndFile = new TreeMap<String, String>();
@@ -124,6 +108,14 @@ public class TaskExecutor {
 		return inputportAndFile;
 	}
 	
+	/**Retrieve the output file name for each task based on the task specification information and combine it to the output port index.
+	 * 
+	 * @param taskSpec
+	 * @param dropboxToken
+	 * @return
+	 * @throws DbxException
+	 * @throws IOException
+	 */
 	public SortedMap<String, String> mappingOutputAndFile (JSONObject taskSpec,String dropboxToken) throws DbxException, IOException{
 		JSONArray outdcs = taskSpec.get("outgoingDataChannels").toJSONArray();
 		SortedMap<String, String>  outputportAndFile = new TreeMap<String, String>();
@@ -145,7 +137,13 @@ public class TaskExecutor {
 		return outputportAndFile;
 		
 	}
-	
+	/**Load a class dynamically at runtime and create a Task instance. After setting the file names to the input ports and output ports, the run method is called to execute a task.
+	 * 
+	 * @param taskSpec
+	 * @param inputportAndFile
+	 * @param outputportAndFile
+	 * @throws MalformedURLException
+	 */
 	public void execute(JSONObject taskSpec, SortedMap<String, String>  inputportAndFile,SortedMap<String, String>  outputportAndFile) throws MalformedURLException{
 	String taskName = taskSpec.get("taskName").toString().replace("\"", "");	
 	Task t = null;
@@ -206,11 +204,18 @@ public class TaskExecutor {
 		taskSpec.put("execTime", new JSONValue(Double.toString(duration)));
 		Dataview.debugger.logSuccessfulMessage("Task "+t.taskName + " is finished");	
 	}
+	/**Move the output files from one task to its child tasks in parallel, if the task has child tasks. If the dropbox token is provided, the final output will move to
+	 * the Dropbox "/DATAVIEW-OUTPUT/" folder parallelly.
+	 * 
+	 * @param taskSpec
+	 * @param dropboxToken
+	 * @throws InterruptedException
+	 */
 	public void dataMove(JSONObject taskSpec,String dropboxToken) throws InterruptedException{
 		String taskID = taskSpec.get("taskInstanceID").toString().replace("\"", "");
 		JSONArray outdcs = taskSpec.get("outgoingDataChannels").toJSONArray();
 		//ArrayList<DataTrasnferThread> threads = new ArrayList<DataTrasnferThread>();
-		ArrayList<Runnable> threads = new ArrayList<Runnable>();
+		ArrayList<Runnable> dataTransferThreads = new ArrayList<Runnable>();
 		for(int i = 0; i < outdcs.size(); i++){
 			final JSONObject outdc = outdcs.get(i).toJSONObject();
 			if(!outdc.get("destIP").toString().replaceAll("\"", "").
@@ -225,7 +230,7 @@ public class TaskExecutor {
 							MoveDataToCloud.getDataReady(taskInstanceID.replaceAll("\"", "")+"_"+
 									outputPortIndex.replaceAll("\"", "")+".txt", 
 									destIP.replaceAll("\"", ""));
-							outdc.put("transTime", new JSONValue(Double.toString((double)(System.nanoTime() - start) / 1_000_000_000.0)));
+							outdc.put("dataTransferTime", new JSONValue(Double.toString((double)(System.nanoTime() - start) / 1_000_000_000.0)));
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -233,7 +238,7 @@ public class TaskExecutor {
 				};
 				Thread transferVMtoVM = new Thread(vmToVM);
 				//DataTrasnferThread thread = new DataTrasnferThread(task, outdc);
-				threads.add(transferVMtoVM);
+				dataTransferThreads.add(transferVMtoVM);
 				transferVMtoVM.start();
 			}else if(outdc.get("destTask").isEmpty()){ // if it is an exit task 						
 				if(!dropboxToken.isEmpty()){                  // if the DropboxToken is present, then we send the workflow outputs to the Dropbox file system
@@ -256,7 +261,7 @@ public class TaskExecutor {
 						}
 					};
 					Thread transferVMtoDropbox = new Thread(vmToDropbox);
-					threads.add(transferVMtoDropbox);
+					dataTransferThreads.add(transferVMtoDropbox);
 					transferVMtoDropbox.start();
 				}
 
@@ -267,16 +272,18 @@ public class TaskExecutor {
 			
 		}
 		// the main thread will wait until all the threads are finished.
-		for (Runnable thread : threads) {
-			((Thread) thread).join();
+		for (Runnable dataTransferThread : dataTransferThreads) {
+			((Thread) dataTransferThread).join();
 		}
 		
 	}
-	
+	/** we use a do-while loop to receive one TaskScheudle specification at a time, we do not need to receive the code for the task because the code of the task
+	 *  has already been transfered to this VM by the workflow executor right after VM provisioning.
+	 * 
+	 */
 	public void run() {
 		try {
-			do {    // we use a do-while loop to receive one TaskScheudle specification at a time, we do not need to receive the code for the task because the code of the task
-				    // has already been transfered to this VM by the workflow executor right after VM provisioning. 
+			do {     
 				
 				// step 1: establish a TCP connection on port: 2004, and waits until a client connects to the server on 2004 port.
 				Dataview.debugger
