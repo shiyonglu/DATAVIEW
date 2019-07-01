@@ -68,7 +68,7 @@ public class WorkflowEdge{
 		JSONObject obj = new JSONObject();
 		
 		if(edgeType == 0) {
-			obj.put("win-",  new JSONValue(winIndex+""));
+			obj.put("win",  new JSONValue(winIndex+""));
     	    obj.put("destTaskInstanceID", new JSONValue(destTask.toString()));
             obj.put("inputPortIndex", new JSONValue(""+inputPortIndex));
         }
@@ -83,7 +83,7 @@ public class WorkflowEdge{
 		{ 
         	obj.put("srcTaskInstanceID", new JSONValue(""));
             obj.put("outputPortIndex", new JSONValue(""));
-			obj.put("wout-",  new JSONValue(woutIndex+""));
+			obj.put("wout",  new JSONValue(woutIndex+""));
 
         }
 							

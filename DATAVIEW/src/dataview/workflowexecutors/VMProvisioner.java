@@ -33,6 +33,7 @@ import com.amazonaws.services.ec2.model.DescribeSecurityGroupsResult;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.IpPermission;
 import com.amazonaws.services.ec2.model.KeyPair;
+import com.amazonaws.services.ec2.model.KeyPairInfo;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
@@ -72,7 +73,7 @@ public class VMProvisioner {
 			groupName = paramgroupName;
 			keyName = paramkeyName;
 			imageID = paramimageID;
-			System.out.println("#Initialized successfully....");
+			//System.out.println("#Initialized successfully....");
 		}
 	
 	public static Properties getPropValues(String workflowlibdir) throws IOException {
@@ -92,11 +93,11 @@ public class VMProvisioner {
 		groupName = prop.getProperty("groupName");
 		keyName = prop.getProperty("keyName");
 		imageID = prop.getProperty("imageID");
-		instanceType = prop.getProperty("instanceType");
+		//instanceType = prop.getProperty("instanceType");
 	}
 	
 	
-	public  void init() throws IOException {
+	public void init() throws IOException {
 		credentials = new BasicAWSCredentials(accessKey, secretKey);
 		region = Region.getRegion(Regions.US_EAST_1);
 		ec2client = new AmazonEC2Client(credentials);
@@ -430,13 +431,16 @@ public class VMProvisioner {
 		}
 		return result;
 	}
+
+	
+	
 	public static boolean checkIfKeyExists(AmazonEC2Client ec2Client, String keyName)
 	{
 		DescribeKeyPairsRequest request = new DescribeKeyPairsRequest();
 		DescribeKeyPairsResult response = ec2Client.describeKeyPairs(request);
 		for (int i=0; i < response.getKeyPairs().size(); i++){
 			if (response.getKeyPairs().get(i).getKeyName().equalsIgnoreCase(keyName)){
-				System.out.println("key already exists, need to delete");
+				System.out.println("key already exists, can be used");
 				//deleteKeyPair(keyName);
 				return true;
 			}
@@ -486,6 +490,10 @@ public class VMProvisioner {
 		if(!checkIfSecGroupExists(ec2client, groupName)){
 			createSecurityGroup(groupName);
 		}
+		if(!checkIfKeyExists(ec2client, keyName)){
+			createKeyPair(path, keyName);
+		}
+		/*
 		if(checkIfKeyExists(ec2client, keyName)){
 			deleteKeyPair(keyName);
 		}
@@ -601,5 +609,25 @@ public class VMProvisioner {
 		}
 		return resultList;
 	}
+	
+	public static void vmTerminationAndKeyDelete(String workflowLibDir){
+		try {
+			VMProvisioner.parametersetting(workflowLibDir);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ArrayList<String> vms = null;
+		try {
+			vms = VMProvisioner.getAvailableAndPendingInstIds();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		for (String vmid:vms){
+			VMProvisioner.terminateInstance(vmid);
+		}
+		VMProvisioner.deleteKeyPair(keyName);		
+	}
+	
 
 }

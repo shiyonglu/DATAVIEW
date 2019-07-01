@@ -5,17 +5,18 @@ import dataview.models.Workflow;
 public class Diagnosis extends Workflow {
 
 	public Diagnosis() {
-		super("Diagnosis Recommendation", " This workflow is for doctor to make some recommendation for a patient");
+		super("DiagnosisRecommendation", " This workflow is for doctor to make some recommendation for a patient");
 		wins = new Object[2];
 		wouts = new Object[1];
 		wins[0] = new DATAVIEW_BigFile("originalInput.txt");
-		wins[1] = new DATAVIEW_BigFile("parameter.txt");
-		
-		wouts[0] =new DATAVIEW_BigFile("output0.txt");
+		//wins[1] = new DATAVIEW_BigFile("parameter.txt");
+		wins[1] = new Double(0.3);
+		wouts[0] =new DATAVIEW_BigFile("DGoutput0.txt");
 		
 	}
 	public void design()
 	{
+		
 		
         // create and add all the tasks
 		

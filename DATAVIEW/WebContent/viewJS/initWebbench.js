@@ -72,8 +72,9 @@ function convertWorkflowsItemsToArray(items){
 
 
 function convertTaskItemsToArray(items){
+	//console.log(items);
 	var itemsarray = items.split(",");
-	//console.log(itemsarray);
+	
 	var jsonString = "{\"Tasks\":[";
 	for (temp in itemsarray ) {
 		//alert(itemsarray[temp]);
@@ -106,7 +107,9 @@ function convertTaskItemsToArray(items){
 
 
 function convertDropboxItemsToArray(items){
-	console.log(items);
+	if(Object.keys(items).length==0){
+		alert("Please Enable the CORS Plugin in the Browser");
+	}
 	var itemsarray = items.split(",");
 	var jsonString = "{\"Dropbox\":[";
 	for (temp in itemsarray ) {

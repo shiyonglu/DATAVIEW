@@ -1,3 +1,4 @@
+import dataview.models.DATAVIEW_BigFile;
 import dataview.models.Task;
 import dataview.models.Workflow;
 import dataview.models.WorkflowEdge;
@@ -27,6 +28,14 @@ public class Montage_workflow extends Workflow{
 	Montage_workflow()
 	{
 		super("Montage_workflow", "This workflow is used to benefit from the Montage workflow structure to do experiments.");	
+		
+		wins = new Object[num_mProectPP];
+		wouts = new Object[1];
+		for(int i = 0; i < num_mProectPP; i++){
+			wins[i] = new DATAVIEW_BigFile("input" + i +".txt");
+		}
+		
+		wouts[0] = new DATAVIEW_BigFile("output0.txt");
 		edgeMap = new HashMap<Integer, Map<Integer, Double>>();
 		execTime = new HashMap<Integer, Map<String, Double >>();
 	}
@@ -231,7 +240,7 @@ public class Montage_workflow extends Workflow{
 		Task stage9 = addTask("mJPEG");
 
 		for(int i = 0; i<stage1.length; i++){
-			addEdge("input" + i +".txt", stage1[i], 0);
+			addEdge(i, stage1[i], 0);
 		}
 		addMulEdges(stage1,stage2);
 		addEdges_JoinPattern(stage2,stage3,num_mDiffFit);
@@ -242,7 +251,7 @@ public class Montage_workflow extends Workflow{
 		addEdge(stage6,stage7);
 		addEdge(stage7,stage8);
 		addEdge(stage8,stage9);
-		addEdge(stage9, 0, "output0.txt");
+		addEdge(stage9, 0, 0);
 	}
 
 	private void addMulEdges (Task [] parent, Task [] children){

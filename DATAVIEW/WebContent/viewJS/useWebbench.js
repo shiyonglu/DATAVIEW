@@ -49,7 +49,34 @@ function workflowRunConfigureDetail(userid){
 		ajaxCall(params, responseHandler, null);
 
 		
-	}		
+	}else{
+		console.log("run the serverrun workflow");
+		createRunningWorkflowSplash();
+		var params = "action=serverRunWorkflows&userID=" + userid + "&name=" + currentWorkflowName ;
+		function responseHandler(argArray,
+				response) {
+			
+		var allStubNames = getAllStubNames();	
+		
+		for (var i = 0; i < allStubNames.length; i++) {
+			fillStubWithNewDP(allStubNames[i]);
+		}
+		removeRunningWorkflowSplash();
+		var params = "action=initializeUserFolder";
+
+		function responseHandler(argArray, someObject) {
+			createTreeInTheSidebar();
+			generateUniqueRunID();
+		}
+		ajaxCall(params, responseHandler, null);
+		}
+		
+		ajaxCall(params, responseHandler, null);
+		
+		
+	}
+	
+	
 		 
 }
 

@@ -6,12 +6,10 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
-
+import com.dropbox.core.v1.DbxEntry.File;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
-
-import dataview.models.Workflow;
 
 public class WorkflowVisualization extends JFrame
 {
@@ -27,7 +25,7 @@ public class WorkflowVisualization extends JFrame
 		int numnode1 = w.wins.length;
 		int numnode2 = w.getNumOfTasks();
 		int numnode3 = w.wouts.length;
-
+		
 		
 		int numnode = numnode1+numnode2+numnode3;
 
@@ -42,9 +40,15 @@ public class WorkflowVisualization extends JFrame
 
 			// draw srcFilename nodes
 			for (int i = 0; i < numnode1; i++)
-			{
-				 nodes[i] = graph.insertVertex(parent, null, ""+w.wins[i], 0, 0, 60,
-						20);
+			{	
+				if(w.wins[i].getClass().equals(DATAVIEW_BigFile.class)){
+					String inputname = ((DATAVIEW_BigFile) w.wins[i]).getFilename();
+					System.out.println("*************"+inputname);
+					 nodes[i] = graph.insertVertex(parent, null, ""+inputname , 0, 0, 60,
+								20);
+				}
+				
+				// nodes[i] = graph.insertVertex(parent, null, ""+ w.wins[i], 0, 0, 60, 20);
 			}
 
 			// draw task nodes
@@ -59,9 +63,12 @@ public class WorkflowVisualization extends JFrame
 			// draw destFilename nodes
 			for (int i = 0; i < numnode3; i++)
 			{
-				 
-				 nodes[i+numnode1+numnode2] = graph.insertVertex(parent, null, ""+w.wouts[i], 0, 0, 60,
-						20);
+				if(w.wouts[i].getClass().equals(DATAVIEW_BigFile.class)){
+					String outputname = ((DATAVIEW_BigFile) w.wouts[i]).getFilename();
+					 nodes[i+numnode1+numnode2] = graph.insertVertex(parent, null, ""+outputname , 0, 0, 60,
+								20);
+				}
+				// nodes[i+numnode1+numnode2] = graph.insertVertex(parent, null, ""+w.wouts[i], 0, 0, 60,	20);
 			}
 
 			

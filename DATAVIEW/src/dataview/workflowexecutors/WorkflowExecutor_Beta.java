@@ -3,9 +3,11 @@ package dataview.workflowexecutors;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,16 +22,19 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import dataview.models.DATAVIEW_BigFile;
 import dataview.models.Dataview;
 import dataview.models.GlobalSchedule;
 import dataview.models.IncomingDataChannel;
 import dataview.models.JSONArray;
 import dataview.models.JSONObject;
 import dataview.models.JSONParser;
+import dataview.models.JSONValue;
 import dataview.models.LocalSchedule;
 import dataview.models.ProvenanceNode;
 import dataview.models.ProvenanceGraph;
 import dataview.models.TaskSchedule;
+import dataview.models.Workflow;
 
 
 /**
@@ -43,6 +48,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	public static  String workflowLibdir;
 	public LocalScheduleRun[] lschRuns;
 	public String workflowName;
+	public Workflow w;
 	
 	
 	// The key is the taskRunID, the value is the list of its child TaskRuns.
@@ -71,6 +77,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		this.workflowLibdir =  workflowLibDir;
 		VMProvisioner.parametersetting(workflowLibDir);
 		init();
+		this.w = gsch.getWorkflow();
 		System.out.println("the total number of tasks are "+ taskNum);
 	}
 	
@@ -88,7 +95,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		super(gsch);
 		starTime = System.currentTimeMillis();
 		taskNum = gsch.getNumberOfTasks();
-
+		this.w = gsch.getWorkflow();
 		this.workflowTaskDir = workflowTaskDir;
 		this.workflowLibdir = workflowLibDir;
 		VMProvisioner.initializeProvisioner(accessKey, secretKey,"dataview1","Dataview_key","ami-064ab7adf0e30b152");
@@ -125,7 +132,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			m.provisionVMs(str,VMnumbers.get(str), workflowLibdir);
 			
 		}
-		//Thread.sleep(90000);
+		Thread.sleep(90000);
 		
 		// We introduce ipsAndType (also called IPPool) to store the IPs of VM instances for each VM type
 		// Here, VM type is the key, and the list of IPs is the value.
@@ -264,9 +271,21 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 					List<IncomingDataChannel> indcs = taskrun.taskschdule.getIncomingDataChannels();
 					if(dropboxToken.isEmpty()){
 						for(int i = 0; i < indcs.size(); i++){
-							if(indcs.get(i).srcFilename != null){
-								String	dataFileLocation = workflowTaskDir + indcs.get(i).srcFilename;
-								MoveToCloud.getFileReadyOneIP(dataFileLocation, taskrun.taskschdule.getIP());
+							if(indcs.get(i).winIndex != -1){
+								if(w.wins[indcs.get(i).winIndex].getClass().equals(DATAVIEW_BigFile.class)){
+									String filename = ((DATAVIEW_BigFile)w.wins[indcs.get(i).winIndex]).getFilename();
+									String	dataFileLocation = workflowTaskDir + filename;
+									MoveToCloud.getFileReadyOneIP(dataFileLocation, taskrun.taskschdule.getIP());
+								}else{
+									String filename = w.workflowName + w.hashCode() +"@"+ indcs.get(i).winIndex;
+									String dataFileLocation = workflowTaskDir + filename;
+									if(!new File(dataFileLocation).exists()){
+										BufferedWriter	writer = new BufferedWriter(new FileWriter(dataFileLocation));
+										writer.write(w.wins[indcs.get(i).winIndex].toString());	
+										writer.close();
+									}
+									MoveToCloud.getFileReadyOneIP(dataFileLocation, taskrun.taskschdule.getIP());
+								}
 							}
 						}
 					}
@@ -286,7 +305,10 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 					// will refactor this to recordProvenance() 
 					if(taskNum == 0){
 						recordProvenance();
-						fetchDataFromVM();
+						if(dropboxToken.isEmpty()){
+							fetchDataFromVM();
+						}
+						
 					}
 					
 					// when the execution of task T is completed, we need to inform all its child TaskRun, so that 
@@ -310,10 +332,16 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			 for(int i = 0; i < outdcs.size(); i++){
 					JSONObject outdc = outdcs.get(i).toJSONObject();
 					if(outdc.get("destTask").isEmpty()){
+						
 						String filename = outdc.get("destFilename").toString().replace("\"", "");
+						File of = new File(workflowTaskDir + File.separator+ filename);
+						if(of.exists()){
+							of.delete();
+						}
 						String strHostName = tmp.get("myIP").toString().replace("\"","");
 						File f=  CmdLineDriver.getFile(filename,"/home/ubuntu/", strHostName);
 						BufferedReader reader = new BufferedReader(new FileReader(f));
+						
 						BufferedWriter writer = new BufferedWriter(new FileWriter(workflowTaskDir + File.separator+ filename, true));
 						String line = reader.readLine();
 						while(line!=null){
@@ -352,7 +380,8 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 				
 			}
 		}
-		pgraph.record();
+		//pgraph.record();
+		pgraph.record(workflowLibdir);
 	}
 	
 	/**
@@ -403,14 +432,56 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		 * @throws Exception
 		 */
 		public String execute() throws Exception {
-			Message m = new Message(dropboxToken,taskschdule.getSpecification().toString());
+			JSONObject taskscheduleJson = taskschdule.getSpecification();
+			
+			JSONArray indcs = taskscheduleJson.get("incomingDataChannels").toJSONArray();
+			for(int i = 0; i < indcs.size(); i++){
+				JSONObject indc = indcs.get(i).toJSONObject();
+				if(!indc.get("win").isEmpty()){
+					String inputindex = indc.get("win").toString().replace("\"", "");
+					if(w.wins[Integer.parseInt(inputindex)].getClass().equals(DATAVIEW_BigFile.class)){
+						String inputindexfilename = ((DATAVIEW_BigFile)w.wins[Integer.parseInt(inputindex)]).getFilename();
+						indc.put("srcFilename",new JSONValue(inputindexfilename));
+					}
+					else{
+						String inputindexfilename = w.workflowName + w.hashCode() +"@"+  Integer.parseInt(inputindex);
+						indc.put("srcFilename",new JSONValue(inputindexfilename));
+					}
+					
+					
+				}
+				
+			}
+			
+			
+			
+			JSONArray outdcs = taskscheduleJson.get("outgoingDataChannels").toJSONArray();
+			for(int i = 0; i < outdcs.size(); i++){
+				JSONObject outdc = outdcs.get(i).toJSONObject();
+				if(!outdc.get("wout").isEmpty()){
+					String outputindex = outdc.get("wout").toString().replace("\"", "");
+					if(w.wouts[Integer.parseInt(outputindex)].getClass().equals(DATAVIEW_BigFile.class)){
+						String outputindexfilename = ((DATAVIEW_BigFile)w.wouts[Integer.parseInt(outputindex)]).getFilename();
+						outdc.put("destFilename",new JSONValue(outputindexfilename));
+					}
+				}
+			}
+			
+			
+			
+			Message m = new Message(dropboxToken,taskscheduleJson.toString());
 			MSGClient client = new MSGClient(mLocalRunner.lsc.getIP(), m );
 			client.run();
 			return client.getResp();
 		}
 	}
+	
 
 }
+
+
+
+
 /**
  * 
  * The message class will separate the token information and task specification information
@@ -436,5 +507,8 @@ class Message implements Serializable {
     public String getB() {
         return B;
     }
+    
+    
+    
 }
 

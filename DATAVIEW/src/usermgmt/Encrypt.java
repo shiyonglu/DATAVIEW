@@ -20,7 +20,7 @@ public class Encrypt {
     SecretKey key;
 
     public Encrypt() throws Exception {
-        myEncryptionKey = "ThisIsSpartaThisIsSparta";
+    	myEncryptionKey = "ThisIsSpartaThisIsSparta";
         myEncryptionScheme = DESEDE_ENCRYPTION_SCHEME;
         arrayBytes = myEncryptionKey.getBytes(UNICODE_FORMAT);
         ks = new DESedeKeySpec(arrayBytes);
@@ -56,4 +56,20 @@ public class Encrypt {
         }
         return decryptedText;
     }
+    
+    public static void main(String[] args){
+    	Encrypt encrypt = null;
+		try {
+			encrypt = new Encrypt();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		String key = encrypt.encrypt("Esme Chambers");
+		System.out.println(key);
+		String dekey = encrypt.decrypt("Tm02HBs6zECKt5aVMo+t/w==");
+		System.out.println(dekey);
+		
+    }
+    
 }

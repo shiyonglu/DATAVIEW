@@ -210,6 +210,31 @@ public class ProvenanceGraph {
 			e.printStackTrace();
 		}   
     }
+    
+    public void record(String path)
+    {
+		FileWriter fw = null;
+		BufferedWriter bw = null;
+
+		
+		File file = new File(path + provname);
+		
+		try {
+			if(!file.exists()) file.createNewFile();
+			
+			fw = new FileWriter(file.getAbsoluteFile(), true);
+			bw = new BufferedWriter(fw);
+			
+			bw.write(this.toString());
+
+			bw.close();
+			fw.close();
+		} catch(IOException e) {
+			Dataview.debugger.logException(e); // DATAVIEW can continue to rerun with exception
+			e.printStackTrace();
+		}   
+    }
+    
 }
 
 

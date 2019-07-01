@@ -27,7 +27,7 @@ public class Algorithm1 extends Task {
 		outs = new OutputPort[1];
 		ins[0] = new InputPort("in0", Port.DATAVIEW_String, "This is the first input");
 		ins[1] = new InputPort("in1", Port.DATAVIEW_String, "This is the second input");
-		ins[2] = new InputPort("in2", Port.DATAVIEW_String, "This is the third input");
+		ins[2] = new InputPort("in2", Port.DATAVIEW_double, "This is the third input");
 		// ins[1] = new InputPort("2in", "Integer", "This is the second
 		// number");
 		outs[0] = new OutputPort("out0", Port.DATAVIEW_String, "This is the output");

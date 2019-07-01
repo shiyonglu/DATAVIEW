@@ -208,7 +208,7 @@ function main(banner, container, outline, toolbar, sidebarL, status, sidebarR) {
 							var node = enc.encode(editor.graph.getModel());
 							var diagramXML = mxUtils.getPrettyXml(node);
 							diagramXML = replaceAll(diagramXML, '&', '^');
-							console.log(diagramXML);
+							//console.log(diagramXML);
 							if (window.XMLHttpRequest) {
 								xmlhttp = new XMLHttpRequest();
 							} else {
@@ -445,7 +445,7 @@ function saveAndRun(runAfterSaving) {
 	var node = enc.encode(editorG.graph.getModel());
 	var diagramXML = mxUtils.getPrettyXml(node);
 	diagramXML = replaceAll(diagramXML, '&', '^');
-	console.log(diagramXML);
+	//console.log(diagramXML);
 	if (window.XMLHttpRequest) {
 		xmlhttp = new XMLHttpRequest();
 	} else {

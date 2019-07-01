@@ -51,29 +51,29 @@ var params = "action=getDropboxDetails&userId="+ userID;
 		
 		else{
 			
-			treeLeft.setXMLAutoLoading("http://database.cs.wayne.edu:8080/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
+			treeLeft.setXMLAutoLoading("http://40.117.212.81/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
 					+ tvAppToken 
 					+ "&name=/dataview/tasks");
 			treeLeft.setDataMode("json");
 			
-			treeLeft.load("http://database.cs.wayne.edu:8080/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
+			treeLeft.load("http://40.117.212.81/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
 					+ tvAppToken + "&name=/dataview/tasks","json");
 			
 			
-			treeLeft.setXMLAutoLoading("http://database.cs.wayne.edu:8080/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
+			treeLeft.setXMLAutoLoading("http://40.117.212.81/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
 					+ tvAppToken 
 					+ "&name=/dataview/workflows");
 			treeLeft.setDataMode("json");
 			
-			treeLeft.load("http://database.cs.wayne.edu:8080/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
+			treeLeft.load("http://40.117.212.81/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
 					+ tvAppToken + "&name=/dataview/workflows","json");
 			
 			
-			treeRight.setXMLAutoLoading("http://database.cs.wayne.edu:8080/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
+			treeRight.setXMLAutoLoading("http://40.117.212.81/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
 					+ tvAppToken + "&name=");
 			
 			treeRight.setDataMode("json");
-			treeRight.load("http://database.cs.wayne.edu:8080/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
+			treeRight.load("http://40.117.212.81/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
 					+ tvAppToken + "&name=","json");
 			treeRight.attachEvent("onXLS", function(id){
 				setTimeout(function() {

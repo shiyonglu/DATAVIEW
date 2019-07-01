@@ -6,8 +6,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
-import dataview.models.Dataview;
+import usermgmt.Encrypt;
+
+
 
 /**
  * This class is used to read and write user information for multiple users, which has three static methods.
@@ -17,7 +22,9 @@ import dataview.models.Dataview;
 
 public class ReadAndWrite {
 	// Write the dropbox token into a file
-	public static void write(String filename, String userId, String dropboxToken ){
+
+	
+	public static void write(String filename, String userId, String token, int index){
 		File src = new File(filename);
 		File dest = new File(filename + ".bak");
 		try {
@@ -25,7 +32,12 @@ public class ReadAndWrite {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		src.delete();
+		 Encrypt encrypt = null;
+			try {
+				encrypt = new Encrypt();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		FileInputStream in = null;
 		String information ;
 		BufferedReader br = null;
@@ -35,19 +47,32 @@ public class ReadAndWrite {
 			in = new FileInputStream(filename + ".bak");
 			lock = in.getChannel().lock(0L, Long.MAX_VALUE, true);
 			 br = new BufferedReader(new InputStreamReader(in));
-			
-			while((information = br.readLine())!=null){
-				String[] informationItem = information.split(",");
-				if(informationItem[1].equals(userId)){
-					String tmp = information + dropboxToken + ",";
-					inputBuffer.append(tmp);
-					inputBuffer.append('\n');
-				}else{
-					inputBuffer.append(information);
-					inputBuffer.append('\n');
-				}
-				
-			}
+			 List<String> allLines = Files.readAllLines(Paths.get(filename));
+			 src.delete();
+			 for(int i = 0; i < allLines.size(); i++){
+				 information = allLines.get(i);
+				 String[] informationItem = information.split(",");
+				 if(informationItem[1].equals(userId)){
+					 	token = encrypt.encrypt(token);
+					 	if(informationItem.length < index){
+					 		String tmp = information + token + ",";
+							inputBuffer.append(tmp);
+					 	}else{
+					 		informationItem[index] = token;
+					 		String tmp = new String("");
+					 		for(int j =0; j< informationItem.length; j++){
+					 			tmp += informationItem[j]+",";
+					 		}
+					 		inputBuffer.append(tmp);
+					 	}
+					 	
+					}else{
+						inputBuffer.append(information);
+					}
+					if(i<allLines.size()-1){
+						inputBuffer.append(System.getProperty("line.separator"));
+					}
+			 }
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -63,6 +88,7 @@ public class ReadAndWrite {
 			}
 
 		}
+		
 		String inputStr = inputBuffer.toString();
 		FileOutputStream fileOut;
 		try {
@@ -70,26 +96,32 @@ public class ReadAndWrite {
 			fileOut.write(inputStr.getBytes());
 		    fileOut.close();
 		} catch (FileNotFoundException e) {
-			Dataview.debugger.logException(e);
+			
 			e.printStackTrace();
 		} catch (IOException e) {
-			Dataview.debugger.logException(e);
+			
 			e.printStackTrace();
 		}
 		dest.delete();
 		
 	}
 	// Write the access key and secret key into file 
-	public static void write(String filename, String userId, String accessKey,String secretKey ){
+	public static void write(String filename, String userId, String accessKey,String secretKey , int accessKeyIndex, int secretKeyIndex){
+		 Encrypt encrypt = null;
+			try {
+				encrypt = new Encrypt();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		
 		File src = new File(filename);
 		File dest = new File(filename + ".bak");
 		try {
 			Files.copy(src.toPath(), dest.toPath());
 		} catch (IOException e1) {
-			Dataview.debugger.logException(e1);
+			
 			e1.printStackTrace();
 		}
-		src.delete();
 		FileInputStream in = null;
 		String information ;
 		BufferedReader br = null;
@@ -99,24 +131,52 @@ public class ReadAndWrite {
 			in = new FileInputStream(filename + ".bak");
 			lock = in.getChannel().lock(0L, Long.MAX_VALUE, true);
 			 br = new BufferedReader(new InputStreamReader(in));
-			
-			while((information = br.readLine())!=null){
-				String[] informationItem = information.split(",");
-				if(informationItem[1].equals(userId)){
-					String tmp = information + accessKey + "," + secretKey +",";
-					inputBuffer.append(tmp);
-					inputBuffer.append('\n');
-				}else{
-					inputBuffer.append(information);
-					inputBuffer.append('\n');
-				}
-				
-			}
+			 List<String> allLines = Files.readAllLines(Paths.get(filename));
+			 src.delete();
+			 for(int i = 0; i < allLines.size(); i++){
+				 information = allLines.get(i);
+				 String[] informationItem = information.split(",");
+				 if(informationItem[1].equals(userId)){
+					accessKey = encrypt.encrypt(accessKey);
+					secretKey = encrypt.encrypt(secretKey);
+					
+					System.out.println("-------"+ informationItem.length);
+					if(informationItem.length < (accessKeyIndex+1)){
+						String tmp = information + accessKey + "," + secretKey +",";
+						inputBuffer.append(tmp);
+					
+					}else if(informationItem.length >= (accessKeyIndex+1) && informationItem.length< (secretKeyIndex+1)){
+						informationItem[accessKeyIndex] = accessKey;
+						String tmp = new String("");
+				 		for(int j =0; j< informationItem.length; j++){
+				 			tmp += informationItem[j]+",";
+				 		}
+						tmp = tmp + secretKey +",";
+						inputBuffer.append(tmp);
+					}else{
+						informationItem[accessKeyIndex] = accessKey;
+						informationItem[secretKeyIndex] = secretKey;
+						String tmp = new String("");
+				 		for(int j =0; j< informationItem.length; j++){
+				 			tmp += informationItem[j]+",";
+				 		}
+				 		inputBuffer.append(tmp);
+					}
+					
+					 
+				 
+				 }else{
+						inputBuffer.append(information);
+					}
+					if(i<allLines.size()-1){
+						inputBuffer.append(System.getProperty("line.separator"));
+					}
+			 }
 		} catch (FileNotFoundException e) {
-			Dataview.debugger.logException(e);
+			
 			e.printStackTrace();
 		} catch (IOException e) {
-			Dataview.debugger.logException(e);
+			
 			e.printStackTrace();
 		} finally {
 			try {
@@ -125,7 +185,7 @@ public class ReadAndWrite {
 				br.close();
 				
 			} catch (IOException e) {
-				Dataview.debugger.logException(e);
+				
 				e.printStackTrace();
 			}
 
@@ -137,10 +197,10 @@ public class ReadAndWrite {
 			fileOut.write(inputStr.getBytes());
 		    fileOut.close();
 		} catch (FileNotFoundException e) {
-			Dataview.debugger.logException(e);
+			
 			e.printStackTrace();
 		} catch (IOException e) {
-			Dataview.debugger.logException(e);
+			
 			e.printStackTrace();
 		}
 		dest.delete();
@@ -149,7 +209,13 @@ public class ReadAndWrite {
 	
 	// Read the token or access key and secret key from file with the column id.
 	public static String read(String filename, String userId, int i ){
-		String dropboxToken = "";
+		 Encrypt encrypt = null;
+			try {
+				encrypt = new Encrypt();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		String token = "";
 		FileInputStream in = null;
 		String information ;
 		BufferedReader br = null;
@@ -161,15 +227,16 @@ public class ReadAndWrite {
 			while((information = br.readLine())!=null){
 				String[] informationItem = information.split(",");
 				if (informationItem[1].equals(userId)&&informationItem.length > i) {
-					dropboxToken =  informationItem[i];
+					token =  informationItem[i];
+					token = encrypt.decrypt(token);
 				}
 			}
 						
 		} catch (FileNotFoundException e) {
-			Dataview.debugger.logException(e);
+			
 			e.printStackTrace();
 		} catch (IOException e) {
-			Dataview.debugger.logException(e);
+			
 			e.printStackTrace();
 		} finally {
 			try {
@@ -177,12 +244,12 @@ public class ReadAndWrite {
 				in.close();
 				br.close();
 			} catch (IOException e) {
-				Dataview.debugger.logException(e);
+				
 				e.printStackTrace();
 			}
 
 		}
-		return dropboxToken;
+		return token;
 	}
 	
 }

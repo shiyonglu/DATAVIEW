@@ -6,7 +6,14 @@ package dataview.models;
  */
 
 public class Dataview {
+
+	public static Debugger debugger = new Debugger("dataview.log");
 	
-	public static final Debugger debugger = new Debugger("dataview.log");
 	public static final Debugger result = new Debugger("result.txt");
+	
+	public static void setDebugger(String path){	
+		debugger = new Debugger(path);
+	}
+	
+
 }

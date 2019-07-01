@@ -18,7 +18,6 @@ public class InputPort extends Port{
 	
 	public Object read() {
 
-		 System.out.println("Filename:" + this.getFileName());
 		 DATAVIEW_BigFile f = new DATAVIEW_BigFile(this.getFileName());
 		 		 
 		 	      
@@ -43,6 +42,8 @@ public class InputPort extends Port{
 	     if(porttype == Port.DATAVIEW_BigFile)
 	    	 return f;
 	    
+	     if(porttype == Port.DATAVIEW_MathMatrix)
+	    	 return f.getMathMatrix();
 	        	 
 	     Dataview.debugger.logErrorMessage("Inputport type: " + porttype + " is not yet supported in this DATAVIEW release.");
 	     return null;

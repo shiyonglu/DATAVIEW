@@ -1,3 +1,4 @@
+import dataview.models.DATAVIEW_BigFile;
 import dataview.models.Task;
 import dataview.models.Workflow;
 import dataview.models.WorkflowEdge;
@@ -23,6 +24,17 @@ public class Ligo_workflow extends Workflow{
 	Ligo_workflow()
 	{
 		super("Ligo_workflow", "This workflow is used to benefit from the Ligo workflow structure to do experiments.");	
+		wins = new Object[num_TmpltBank];
+		wouts = new Object[num_TmpltBank];
+		for(int i = 0; i < num_TmpltBank; i++){
+			wins[i] = new DATAVIEW_BigFile("input" + i +".txt");
+		}
+		for(int i = 0; i < num_TmpltBank; i++){
+			wouts[i] = new DATAVIEW_BigFile("output" + i + ".txt");
+		}
+		
+		
+		
 		edgeMap = new HashMap<Integer, Map<Integer, Double>>();
 		execTime = new HashMap<Integer, Map<String, Double >>();
 	}
@@ -181,7 +193,7 @@ public class Ligo_workflow extends Workflow{
 		
 		
 		for(int i = 0; i<stage1.length; i++){
-			addEdge("input" + i +".txt", stage1[i], 0);
+			addEdge(i, stage1[i], 0);
 		}
 		addEdges_OneToOneMapping(stage1,stage2);
 		addEdges_JoinPattern(stage2,stage3,num_TmpltBank);
@@ -189,7 +201,7 @@ public class Ligo_workflow extends Workflow{
 		addEdges_OneToOneMapping(stage4,stage5);
 		addEdges_JoinPattern(stage5,stage6,num_TmpltBank);
 		for(int i = 0; i<stage1.length; i++){
-			addEdge(stage6, 0, "output" + i + ".txt");
+			addEdge(stage6, 0, i);
 		}
 		
 	}

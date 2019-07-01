@@ -10,7 +10,7 @@ import dataview.models.GlobalSchedule;
 
 public class WorkflowExecutor {
 	public static final int WorkflowExecutor_Beta =2;
-	
+	public static final int WorkflowExecutor_Local =0;
 	protected static GlobalSchedule gsch;
 	
 	public WorkflowExecutor(){

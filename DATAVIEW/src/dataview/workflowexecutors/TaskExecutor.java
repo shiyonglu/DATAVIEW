@@ -324,7 +324,7 @@ public class TaskExecutor {
 					execute(taskSpec,inputportAndFile,outputportAndFile);
 					
 			
-					// 6. Transfer all the data products produced by this task to the VMs of their child tasks in parallel
+					// step 6: Transfer all the data products produced by this task to the VMs of their child tasks in parallel
 					
 					dataMove(taskSpec,dropboxToken);
 					

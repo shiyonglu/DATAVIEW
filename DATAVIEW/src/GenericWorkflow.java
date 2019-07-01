@@ -54,6 +54,7 @@ public class GenericWorkflow extends Workflow {
 		}	
 		// add the input file connection with task
 		  NodeList input2task = spec.getElementsByTagName("inputDP2PortMapping");	
+		  wins = new Object[input2task.getLength()];
 	 	   for (int i = 0; i < input2task.getLength(); i ++){
 	 		   Element mapping = (Element) input2task.item(i);
 	 		   String from = mapping.getAttribute("from");
@@ -62,7 +63,8 @@ public class GenericWorkflow extends Workflow {
 	 		   String taskid = to.substring(0,to.indexOf("."));
 	 		   String portid = to.substring(to.length()-1);
 	 		   int index = tasksId.indexOf(taskid);
-	 		   addEdge(filename, tasks.get(index) , Integer.parseInt(portid));      
+	 		   wins[i] = new DATAVIEW_BigFile(filename);
+	 		   addEdge(i, tasks.get(index) , Integer.parseInt(portid));      
 	 	   }
 	 	   	
 		// add the tasks connection
@@ -84,7 +86,8 @@ public class GenericWorkflow extends Workflow {
 	 	 
 	 	 // add the output files connection
 	 	 NodeList task2output = spec.getElementsByTagName("outputDP2PortMapping");	
-	 	   for (int i = 0; i < task2output.getLength(); i ++){
+	 	 wouts = new Object[task2output.getLength()];
+	 	 for (int i = 0; i < task2output.getLength(); i ++){
 	 		   Element mapping = (Element) task2output.item(i);
 	 		   String from = mapping.getAttribute("from");
 	 		   String to = mapping.getAttribute("to");
@@ -92,8 +95,8 @@ public class GenericWorkflow extends Workflow {
 	 		   String fromportid = from.substring(from.length()-1);
 	 		   int fromindex = tasksId.indexOf(fromtaskid);
 	 		   String outputfile = to + ".txt";
-	 		   
-	 		   addEdge(tasks.get(fromindex) , Integer.parseInt(fromportid), outputfile);      
+	 		   wouts[i] = new DATAVIEW_BigFile(outputfile);
+	 		   addEdge(tasks.get(fromindex) , Integer.parseInt(fromportid), i);      
 	 	   }
 	 	 
 	}

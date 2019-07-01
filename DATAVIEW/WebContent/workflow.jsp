@@ -312,16 +312,16 @@ H2 {
 			<tr>
 				<th>
 					<ul id="menu">
-						<li><a href="https://dl.dropboxusercontent.com/u/43553770/csc8710/slides/dataview.pptx">Documentation</a></li>
+						<li><a href="https://github.com/shiyonglu/DATAVIEW">Documentation</a></li>
 						<li><a href="#" onclick="connectDropbox();return false;">Dropbox</a></li>
 						<li><a href="#" onclick="cloudVMConfigure();return false;">Cloud</a></li>
-						<li><a href="#" onclick="stopAvailableVM();return false;"> ResetVM </a></li>
+						<li><a href="#" onclick="stopAvailableVMs();return false;"> ResetVM </a></li>
 						<!-- 
 						<li><a
 							href="downloadmain.jsp?fileName=dataview.war&filePath=/home/amohan/Software">Download</a></li>
 							-->
 						<li><a
-							href="https://dl.dropboxusercontent.com/s/ix93567lxsngn6y/dataview.war?dl=0">Download</a></li>
+							href="https://github.com/shiyonglu/DATAVIEW">Download</a></li>
 						<li><a href="login.jsp">Logout</a></li>
 					</ul>
 				</th>

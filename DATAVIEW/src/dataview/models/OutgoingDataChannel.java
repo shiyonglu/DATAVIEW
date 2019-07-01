@@ -91,7 +91,7 @@ public class OutgoingDataChannel {
 
 	    	
 	    	if(woutIndex != -1)
-	    		obj.put("wout", new JSONValue("wout"+woutIndex));
+	    		obj.put("wout", new JSONValue(""+woutIndex));
 	    	else
 	    		obj.put("wout", new JSONValue(""));
 	    	

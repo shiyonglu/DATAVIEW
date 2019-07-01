@@ -155,9 +155,9 @@ public class Workflow {
 		
 		for(WorkflowEdge e: myEdges) {
 			if(e.edgeType == 0)
-				str = str + "win- " + e.winIndex + " => " + e.destTask + ".inputport: " + e.inputPortIndex + "\n";
+				str = str + "win " + e.winIndex + " => " + e.destTask + ".inputport: " + e.inputPortIndex + "\n";
 			else if (e.edgeType == 2)
-				str = str + e.srcTask + ".outputPort: " + e.outputPortIndex + " => " + "wout-"+e.woutIndex+"\n";
+				str = str + e.srcTask + ".outputPort: " + e.outputPortIndex + " => " + "wout"+e.woutIndex+"\n";
 			else
 				str = str + e.srcTask + ".outputPort: " + e.outputPortIndex + " => " + e.destTask + ".inputport: " + e.inputPortIndex + "\n";
 		}		
@@ -404,14 +404,14 @@ public class Workflow {
 		// all input files
 		JSONArray src = new JSONArray();
 		for(int i=0; i< wins.length; i++) {
-			src.add(new JSONValue("win-"+i));
+			src.add(new JSONValue("win"+i));
 		}
 		obj.put("workflowInputs", new JSONValue(src));
 		
 		// all output files
 		JSONArray dest = new JSONArray();
 		for(int i=0; i< wouts.length; i++) {
-			dest.add(new JSONValue("wout-"+i));
+			dest.add(new JSONValue("wout"+i));
 		}
 		obj.put("workflowOutputs", new JSONValue(dest));
 

@@ -13,7 +13,10 @@ public class Debugger {
 		mylogger.setLevel(newlevel);
 	}
 	
-	
+	public void setDisplay(boolean on) 
+	{ 
+		mylogger.setDisplay(on); 
+	}
 	
 	// during debugging, let's check if an object is a null pointer 
 	// level is 0 as null pointer might cause crash

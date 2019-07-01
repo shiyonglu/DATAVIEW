@@ -34,10 +34,9 @@ public class IncomingDataChannel {
 		}
 		
 		/* connect a workflow input to the input port of a task */
-		public IncomingDataChannel(int wintIndex,  int myInputPortIndex){
+		public IncomingDataChannel(int winIndex,  int myInputPortIndex){
 			this.winIndex = winIndex;                 // from 
 			this.myInputPortIndex = myInputPortIndex;          // to
-			
 			this.srcTask = null;                        // NA			
 			this.outputPortIndex = -1;                     // NA			
 		}
@@ -56,9 +55,10 @@ public class IncomingDataChannel {
 		{
 	    	JSONObject obj = new JSONObject();
 	    	if(winIndex !=-1 )
-	    		obj.put("win-", new JSONValue(winIndex+""));
+	    		obj.put("win", new JSONValue(winIndex+""));
 	    	else
-	    		obj.put("srcFilename", new JSONValue(""));
+	    		obj.put("win", new JSONValue(""));
+	    		//obj.put("srcFilename", new JSONValue(""));
 	    	
 	    	if(srcTask != null)
 	    		obj.put("srcTask", new JSONValue(srcTask.toString()));

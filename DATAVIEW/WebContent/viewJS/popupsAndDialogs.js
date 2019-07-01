@@ -216,8 +216,6 @@ function shareWorkflow() {
 function connectDropbox(){
 	  $(function() {
 		 	var paramUserID = $("#usrId").val();
-		 	var appKeyId = $("#appKeyId").val('');
-		 	var sKeyId = $("#secretKeyId").val('');
 		 	var tKeyId =  $("#tokenKeyId").val('');
 		 	
 		 	var paramWorkfowName = currentWorkflowName;
@@ -226,8 +224,6 @@ function connectDropbox(){
 		    	        dialogClass: 'DynamicDialogStyle',
 		    	        autoOpen: true,
 		    	        modal: true,
-		    	    /*    buttons: { "Get Token": function () {getDropboxTokenUrl($(this).data("paramShare").userID);},
-		    	        	       "Submit": function () {dropboxLoad($(this).data("paramShare").userID);}},*/
 		    	        buttons: { "Submit": function () {dropboxLoad($(this).data("paramShare").userID)}},
 		    	        height:330,
 		    	        width: 550,
@@ -239,20 +235,14 @@ function connectDropbox(){
 }
 
 function dropboxLoad(userId){
-	var appKey = $("#appKeyId").val();
-	var secretKey = $("#secretKeyId").val();
 	var token =  $("#tokenKeyId").val();
 	
 	console.log("userid:----"+userId);
-	console.log("appKey----" + appKey);
-	console.log("secretKey---" + secretKey);
 	console.log("token---" + token);
 
 	// Write logic to change dropbox key 
 	
 	var params = "action=loadDropboxKey&userId=" + userId
-	+ "&appKey=" + appKey 
-	+ "&secretKey=" + secretKey
 	+ "&token=" + token;
 
 	function responseHandler(argArray,
@@ -310,6 +300,23 @@ function cloudVMConfigure() {
 		    	    }		
 		    );
 		  });
+}
+
+function stopAvailableVMs(){
+	$(function() {
+		var paramUserID = $("#usrId").val();
+		var params = "action=stopVMs&userID=" + paramUserID;
+		function responseHandler(argArray,
+				responseFromServer) {
+			 updateStatus("ERROR: Please insert key values first");
+			 if (responseFromServer.indexOf("empty") >= 0 )
+				 updateStatus("ERROR: Please insert Amazon key values first");
+			 else
+				 updateStatus("All the existing VMs are terminated successfully");
+			
+		}
+	ajaxCall(params, responseHandler, null);
+	});	
 }
 
 function stopAvailableVM(){

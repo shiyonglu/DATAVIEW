@@ -9,8 +9,10 @@ import dataview.planners.WorkflowPlanner_LPOD;
 import dataview.planners.WorkflowPlanner_Naive1;
 import dataview.planners.WorkflowPlanner_Naive2;
 import dataview.planners.WorkflowPlanner_T_Cluster;
+import dataview.workflowexecutors.VMProvisioner;
 import dataview.workflowexecutors.WorkflowExecutor;
 import dataview.workflowexecutors.WorkflowExecutor_Beta;
+import dataview.workflowexecutors.WorkflowExecutor_Local;
 
 /** 
  * six steps shows the whole process to creat a workflow, design a workflow, generate a workflow schedule, and execute a workfow in EC2.
@@ -60,15 +62,23 @@ public class Test {
 		
 
 		// step 4: generate a workflow schedule	
-		
+	
 		GlobalSchedule gsch = wp.plan();
 		System.out.println(gsch.getSpecification());
 		// step 5: select a workflow executor 
-		/*
+		
 		String fileLocation = System.getProperty("user.dir") + File.separator + "WebContent" +File.separator;
+		
+		//int whichexecutor = WorkflowExecutor.WorkflowExecutor_Local;
+		
 		int whichexecutor = WorkflowExecutor.WorkflowExecutor_Beta;
 		WorkflowExecutor we = null;
+		
+		
 		switch (whichexecutor) {
+		case WorkflowExecutor.WorkflowExecutor_Local:
+			we = new WorkflowExecutor_Local(fileLocation+"workflowTaskDir"+ File.separator, fileLocation + "workflowLibDir"+ File.separator , gsch);
+			break;
 		case WorkflowExecutor.WorkflowExecutor_Beta:
 			we = new WorkflowExecutor_Beta(fileLocation+"workflowTaskDir"+ File.separator, fileLocation + "workflowLibDir"+ File.separator , gsch);
 			break;
@@ -78,7 +88,10 @@ public class Test {
 		
 		// step 6: execute a workflow
 		we.execute();	
-		*/
+		
+		// step 7: VM machine termination.
+		VMProvisioner.vmTerminationAndKeyDelete(fileLocation+"workflowLibDir"+ File.separator);
+
 	}
 
 }
