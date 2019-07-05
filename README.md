@@ -21,6 +21,7 @@ Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Drop
 Check out tutorial: https://youtu.be/R6A6jreySFc or follow the instructions below:
 
 <OL>
+    <li> Make sure the JAVA Version is 8 </li>
     <li>Download the DATAVIEW package from https://github.com/shiyonglu/DATAVIEW by clicking the "Clone or Download" button.
     </li> 
      <li> Unzip the DATAVIEW-master.zip file and import the DATAVIEW project into Eclipse as an "Existing Projects into Workspace" by selecting "Projects from Folder or Archive".
