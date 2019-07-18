@@ -50,6 +50,8 @@ Check out tutorial: https://youtu.be/xJikeWptYSw or follow the instructions belo
 <h2>DATAVIEW Tutorials</h2>
 <OL>
     <li> Chapter 1: A gentle introduction to DATAVIEW （https://youtu.be/7S4iGKXpaAc) </li>
+    <li> How to download, import DATAVIEW into Eclipse as Java API and run a workflow with local executor (https://youtu.be/xJikeWptYSw)</li>
+    <!--
     <li> How to download and import DATAVIEW into Eclipse as Java API (https://youtu.be/R6A6jreySFc)</li>
     <li> How to create an Access Key ID and a Secret access key in Amazon EC2 (https://youtu.be/9741e4CubMQ)</li>
     <li> How to create a workflow task for DATAVIEW (the linear regression example) (https://youtu.be/BPaoR_zogPA)</li>
@@ -63,8 +65,8 @@ Check out tutorial: https://youtu.be/xJikeWptYSw or follow the instructions belo
     <li> How to debug the functionality of a task (https://youtu.be/N4jIYbYSFd4)</li>
     <li> How to use Dataview.debugger to debug your DATAVIEW applications (https://youtu.be/1d1vJRGPBYs) </li>
     <li> How to develop a new workflow planner (https://youtu.be/R0i2s-LkGV8) </li>
-    <li> An introduction to WowkrlfowExecutor_Alpha (<a href="https://www.youtube.com/watch?v=kBIcxWyJgQA&t=2726s">part 1</a>
+    <li> An introduction to WowkrlfowExecutor_Beta (<a href="https://www.youtube.com/watch?v=kBIcxWyJgQA&t=2726s">part 1</a>
         | <a href="https://www.youtube.com/watch?v=Km24otM3rEM&t=582s">part 2</a>)
-        
+        -->
 </OL>
 
