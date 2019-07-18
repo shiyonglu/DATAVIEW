@@ -18,7 +18,7 @@ Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Drop
 * A dropbox token should be provided in the main interface when you login in, which can be generated based on this tutorial:https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/
 
 <h2>Download and configure DATAVIEW as JAVA API</h2>
-<!--Check out tutorial: https://youtu.be/R6A6jreySFc or follow the instructions below: -->
+Check out tutorial: https://youtu.be/xJikeWptYSw or follow the instructions below: 
 
 <OL>
     <li> Make sure the JAVA Version is 8 </li>
