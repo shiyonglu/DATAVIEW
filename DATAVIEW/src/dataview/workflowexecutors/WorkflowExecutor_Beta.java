@@ -31,6 +31,7 @@ import dataview.models.JSONObject;
 import dataview.models.JSONParser;
 import dataview.models.JSONValue;
 import dataview.models.LocalSchedule;
+import dataview.models.ProvenanceEdge;
 import dataview.models.ProvenanceNode;
 import dataview.models.ProvenanceGraph;
 import dataview.models.TaskSchedule;
@@ -103,6 +104,25 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		init();
 	}
 	/**
+	 * This constructor takes the JSONObject retrieving from the configuration file.
+	 * @param obj
+	 * @param gsch
+	 * @throws Exception
+	 */
+	public WorkflowExecutor_Beta(JSONObject obj, GlobalSchedule gsch) throws Exception{
+		super(gsch);
+		workflowName = gsch.getWorkflow().workflowName; 
+		starTime = System.currentTimeMillis();
+		taskNum = gsch.getNumberOfTasks();
+		this.workflowTaskDir = obj.get("LocalStorage").toJSONObject().get("workflowTaskDir").toString().replace("\"", "");
+		this.workflowLibdir = obj.get("LocalStorage").toJSONObject().get("workflowLibdir").toString().replace("\"", "");
+//		VMProvisioner.parametersetting(workflowLibdir);
+		VMProvisioner.parametersetting(obj.get("EC2").toJSONObject());
+		init();
+		this.w = gsch.getWorkflow();
+		
+	}
+	/**
 	 * The init() method calculates how many VM instances we need for each VM type, based on that 
 	 * we provision in batch numerous of VM instances for each  VM type using one call. We assume provisioning VM in batch 
 	 * is more efficient than provisioning each VM individually.  
@@ -132,7 +152,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			m.provisionVMs(str,VMnumbers.get(str), workflowLibdir);
 			
 		}
-		Thread.sleep(90000);
+		//Thread.sleep(90000);
 		
 		// We introduce ipsAndType (also called IPPool) to store the IPs of VM instances for each VM type
 		// Here, VM type is the key, and the list of IPs is the value.
@@ -148,6 +168,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		
 		// configure each VM instance with confidential information instead of using pem 
 		// Use SSH to send the pem file to each VM instance
+		
 		MakeMachinesReady.getMachineReady(pemFileLocation, ips);
 		
 		// move the pem file to each VM instance to send intermedidate output.
@@ -208,7 +229,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	public class LocalScheduleRun extends Thread {
 		public LocalSchedule lsc;
 		public Lock mLock;
-		public Condition mReady;
+		public Condition mReadyCon;
 		public TaskRun[] mTaskRunners;
 
 		public LocalScheduleRun(LocalSchedule lsc) {
@@ -229,14 +250,14 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			}
 			this.lsc = lsc;
 			mLock = new ReentrantLock();
-			mReady = mLock.newCondition();
+			mReadyCon = mLock.newCondition();
 		}
 		
 		// wake up this LocalScheduleRun thread so that it can execute the next TaskRun
 		// WakeupSleep point
 		public void wakeUP() {
 			mLock.lock();
-			mReady.signal();
+			mReadyCon.signal();
 			mLock.unlock();
 		}
 		
@@ -256,7 +277,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 					// all their output data have completed their data transfer processes. 
 					while (!taskrun.isReady()) { // WakeupSleep point: The LocalScheduleRun thread will sleep here if the next TaskRun is not ready
 						mLock.lock();     // for execution
-						mReady.await();
+						mReadyCon.await();
 						mLock.unlock();
 					}
 					// move each task to VM instance
@@ -296,6 +317,8 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 					System.out.println(taskspec);
 					JSONParser p = new JSONParser(taskspec);
 					JSONObject taskSpec = p.parseJSONObject();
+					String assignedVM = taskrun.ownerLocalScheduleRun.lsc.getVmType();
+					taskSpec.put("vmType", new JSONValue(assignedVM));
 					Dataview.debugger.logSuccessfulMessage("local recv " + taskSpec.get("taskInstanceID").toString().replace("\"", ""));
 					taskSpecObj.add(taskSpec);
 					synchronized(this){
@@ -304,7 +327,9 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 					}
 					// will refactor this to recordProvenance() 
 					if(taskNum == 0){
-						recordProvenance();
+						ProvenanceGraph pgraph = recordProvenance();
+						writeToWorklfowMetaConfiguration(pgraph);
+						// update a specific workflow configuration file.
 						if(dropboxToken.isEmpty()){
 							fetchDataFromVM();
 						}
@@ -312,7 +337,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 					}
 					
 					// when the execution of task T is completed, we need to inform all its child TaskRun, so that 
-					// each Child TaskRun can modify its NumOfParentsFinished status via the onParentFinished() method
+					// each Child TaskRun can modify its numOfParentsUnfinished status via the onParentFinished() method
 					ConcurrentLinkedQueue<TaskRun> children = relationMap.get(taskrun.taskRunID);
 					if (children != null) {
 						for (TaskRun tr: children) {
@@ -325,6 +350,147 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			}
 		}
 	}
+	
+	public void writeToWorklfowMetaConfiguration(ProvenanceGraph pgraph){
+		String worklfowname = pgraph.workflowName;
+		List<ProvenanceNode> myActivities = pgraph.myActivities;
+		List<ProvenanceEdge> myEdges = pgraph.myEdges;
+		File file = new File(workflowLibdir + worklfowname + ".json");
+		System.out.println("The json file is written");
+		JSONObject workflowobj = new JSONObject();
+		FileWriter fw = null;
+		BufferedWriter bw = null;
+		try {
+			if(!file.exists()) {
+				workflowobj.put("WorkflowName", new JSONValue(worklfowname));
+				workflowobj.put("NumberWorkflowRun", new JSONValue(Double.toString(1)));
+				JSONObject taskrun = new JSONObject();
+				for(ProvenanceNode n:myActivities){
+					JSONObject obj = new JSONObject();
+					JSONArray jarray = new JSONArray();
+					String taskname = n.activityname;
+					taskname = taskname.substring(0, taskname.indexOf("@"));
+					String vmtype = n.vmtype;
+					Double exetime = n.exetime;
+					obj.put(vmtype, new JSONValue(Double.toString(exetime)));
+					obj.put("NumberCurrentVMrun", new JSONValue(Double.toString(1)));
+					jarray.add(new JSONValue(obj));
+					
+					
+					taskrun.put(taskname, new JSONValue(jarray));
+				}
+				workflowobj.put("Execution", new JSONValue(taskrun));
+				JSONObject tasktransfer = new JSONObject();
+				for(ProvenanceEdge e: myEdges) {
+					JSONArray jarray = new JSONArray();
+					String parentTask = e.destNode;
+					parentTask = parentTask.substring(0, parentTask.indexOf("@"));
+					String childTask = e.srcNode;
+					childTask = childTask.substring(0, childTask.indexOf("@"));
+					JSONObject obj = new JSONObject();
+					obj.put("To",new JSONValue(childTask));
+					obj.put("DataSize", new JSONValue(Double.toString(e.outputdatasize)));
+					obj.put("Trans", new JSONValue(Double.toString(e.transTime)));
+					if(tasktransfer.containsKey(parentTask)){
+						jarray = tasktransfer.get(parentTask).toJSONArray();
+						jarray.add(new JSONValue(obj));
+						
+					}else{
+						jarray.add(new JSONValue(obj));
+						tasktransfer.put(parentTask, new JSONValue(jarray));
+					}
+				}
+				workflowobj.put("Tasktransfer", new JSONValue(tasktransfer));
+				file.createNewFile();
+				fw = new FileWriter(file.getAbsoluteFile(), true);
+				bw = new BufferedWriter(fw);
+				bw.write(workflowobj.toString());
+				bw.close();
+				fw.close();
+				
+			}else{
+				String content = null;
+				StringBuilder contentBuilder = new StringBuilder();
+				BufferedReader br = new BufferedReader(new FileReader(file));
+			    String sCurrentLine;
+			    while ((sCurrentLine = br.readLine()) != null){
+			        	contentBuilder.append(sCurrentLine).append("\n");
+			    }
+			    
+			    br.close();
+				content = contentBuilder.toString();
+				JSONParser jsonParser = new JSONParser(content);
+				workflowobj = jsonParser.parseJSONObject();
+				double iteration = Double.parseDouble(workflowobj.get("NumberWorkflowRun").toString().replace("\"", ""));
+				iteration += 1 ;
+				workflowobj.replace("NumberWorkflowRun", new JSONValue(Double.toString(iteration)));
+				JSONObject taskobj = workflowobj.get("Execution").toJSONObject();
+				for(ProvenanceNode n:myActivities){
+					String vmtype = n.vmtype;
+					Double exetime = n.exetime;
+					String taskname = n.activityname;
+					taskname = taskname.substring(0, taskname.indexOf("@"));
+					JSONArray jarraytasks = taskobj.get(taskname).toJSONArray();
+					boolean insert = false;
+					for(int i = 0; i<jarraytasks.size(); i++){
+						JSONObject obj = jarraytasks.get(i).toJSONObject();
+						if(obj.keySet().contains(vmtype)){
+							insert = true;
+							double previousrun = Double.parseDouble(obj.get("NumberCurrentVMrun").toString().replace("\"", ""));
+							double prexe = Double.parseDouble(obj.get(vmtype).toString().replace("\"", ""));
+							double updatexe = (prexe*previousrun + exetime)/(previousrun+1);
+							obj.replace(vmtype, new JSONValue(Double.toString(updatexe)));
+							obj.replace("NumberCurrentVMrun", new JSONValue(Double.toString(previousrun+1)));
+						}else{
+							continue;
+						}
+					}
+					
+					if(!insert){
+						JSONObject obj1 = new JSONObject();
+						obj1.put(vmtype, new JSONValue(Double.toString(exetime)));
+						obj1.put("NumberCurrentVMrun", new JSONValue(Double.toString(1)));
+						jarraytasks.add(new JSONValue(obj1));
+					}
+					
+				}
+				JSONObject jsonedge = workflowobj.get("Tasktransfer").toJSONObject();
+				for(ProvenanceEdge e: myEdges){
+					String parentTask = e.destNode;
+					parentTask = parentTask.substring(0, parentTask.indexOf("@"));
+					String childTask = e.srcNode;
+					childTask = childTask.substring(0, childTask.indexOf("@"));
+					JSONArray jarrayedge  = jsonedge.get(parentTask).toJSONArray();
+					for(int i = 0; i < jarrayedge.size(); i++){
+						JSONObject obj = jarrayedge.get(i).toJSONObject();
+						if(obj.keySet().contains(childTask)){
+							Double Transtime = Double.parseDouble(obj.get("Trans").toString().replace("\"", ""));
+							obj.replace("Trans", new JSONValue(Double.toString((e.transTime+Transtime)/2)));	
+						}else{
+							Double datasize = Double.parseDouble(obj.get("DataSize").toString().replace("\"", ""));
+							Double Transtime = Double.parseDouble(obj.get("Trans").toString().replace("\"", ""));
+							if(datasize!=0.0 && Transtime==0){
+								obj.replace("Trans", new JSONValue(Double.toString(e.transTime)));
+							}else if (datasize!=0 && Transtime!=0){
+								obj.replace("Trans", new JSONValue(Double.toString((e.transTime+Transtime)/2)));
+							}
+						}
+						
+						
+					}	
+				}
+				fw = new FileWriter(file.getAbsoluteFile(), false);
+				bw = new BufferedWriter(fw);
+				bw.write(workflowobj.toString());
+				bw.close();
+				fw.close();	
+			}
+		} catch(IOException e) {
+			Dataview.debugger.logException(e); // DATAVIEW can continue to rerun with exception
+			e.printStackTrace();
+		}   		
+	} 
+	
 	
 	public void fetchDataFromVM() throws IOException{
 		for(JSONObject tmp:taskSpecObj){
@@ -357,7 +523,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	
 	
 	
-	public void recordProvenance(){
+	public ProvenanceGraph recordProvenance(){
 		long endTime = System.currentTimeMillis();
 		System.out.println("The workflow execution time is " + (endTime-starTime));
 		Date now = new Date();
@@ -367,21 +533,34 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		for(JSONObject tmp:taskSpecObj){
 		   String taskId = tmp.get("taskInstanceID").toString().replace("\"", "");
 		   Double exeTime = Double.parseDouble(tmp.get("execTime").toString().replace("\"", ""));
-		   pgraph.myActivities.add(new ProvenanceNode(taskId,exeTime));
+		   // add the vmtype information here and output size here.
+		   //Double dataSize = Double.parseDouble(tmp.get("dataSize").toString().replace("\"", ""));
+		   String assignedVM = tmp.get("vmType").toString().replace("\"", "");
+		   pgraph.myActivities.add(new ProvenanceNode(taskId,exeTime, assignedVM));
 		   JSONArray outdcs = tmp.get("outgoingDataChannels").toJSONArray();
 		   for(int i = 0; i < outdcs.size(); i++){
 				JSONObject outdc = outdcs.get(i).toJSONObject();
-				if(!outdc.get("destTask").isEmpty()){
+				if(!outdc.get("destTask").toString().replace("\"", "").isEmpty()){
 					String destTask = outdc.get("destTask").toString().replace("\"", "");
 					int portId = Integer.parseInt(outdc.get("inputPortIndex").toString().replace("\"", ""));
-					double transTime = Double.parseDouble(outdc.get("transTime").toString().replace("\"", ""));
-					pgraph.addEdge_TransTime(taskId, destTask, portId, transTime);
+					double transTime;
+					if(outdc.get("dataTransferTime")==null){
+						transTime = Double.parseDouble(outdc.get("transTime").toString().replace("\"", ""));
+					}else{
+						transTime = Double.parseDouble(outdc.get("dataTransferTime").toString().replace("\"", ""));
+					}
+					
+					double outputDatasize = Double.parseDouble(outdc.get("outputDatasize").toString().replace("\"", ""));
+					pgraph.addEdge_TransTime(taskId, destTask, portId, transTime,outputDatasize);
 				}
 				
 			}
 		}
+		
 		//pgraph.record();
 		pgraph.record(workflowLibdir);
+		
+		return pgraph;
 	}
 	
 	/**
@@ -393,48 +572,39 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	 */
 	public class TaskRun {
 		private String taskRunID; // 
-		private int numOfParentsFinished;
-		private LocalScheduleRun mLocalRunner;
+		private int numOfParentsUnfinished;
+		private LocalScheduleRun ownerLocalScheduleRun;
 		private TaskSchedule taskschdule;
 		
 		public TaskRun(LocalScheduleRun localRunner, TaskSchedule taskschedule){
-			numOfParentsFinished = taskschedule.getParents().size();
-			mLocalRunner = localRunner;
+			numOfParentsUnfinished = taskschedule.getParents().size();
+			ownerLocalScheduleRun = localRunner;
 			this.taskschdule = taskschedule;
 			taskRunID = taskschedule.getTaskInstanceID();
 		}
 		
 		/**
 		 * The method onParentFinished() will be called by a LocalScheduleRun when one of it parent tasks finishes its execution, 
-		 * which will decrease NumOfParentsFinished by 1.
+		 * which will decrease numOfParentsUnfinished by 1.
 		 */
 		public void onParentFinished() {
-			--numOfParentsFinished;
+			--numOfParentsUnfinished;
 			if(isReady())
-			    mLocalRunner.wakeUP();
+			    ownerLocalScheduleRun.wakeUP();
 		}
 
 		/**
-		 * A TaskRun is ready to run when all its parents complete their execution, that is, when numOfParentsFinished = 0.
+		 * A TaskRun is ready to run when all its parents complete their execution, that is, when numOfParentsUnfinished = 0.
 		 * 
 		 * @return
 		 */
 		public boolean isReady() {
-			return numOfParentsFinished == 0;
+			return numOfParentsUnfinished == 0;
 		}
-
 		/**
-		 * The execute() method remotely interacts with the remote TaskExecutor to execute a task. The method is a blocking one.
-		 * It uses an TCP/IP protocol to conduct such interaction based on port 2004.
-		 * 
-		 * 
-		 * @return
-		 * @throws Exception
+		 * Mapping input data channel to a temporal file name
 		 */
-		public String execute() throws Exception {
-			JSONObject taskscheduleJson = taskschdule.getSpecification();
-			
-			JSONArray indcs = taskscheduleJson.get("incomingDataChannels").toJSONArray();
+		public void inputDataChanleFilesMapping (JSONArray indcs){
 			for(int i = 0; i < indcs.size(); i++){
 				JSONObject indc = indcs.get(i).toJSONObject();
 				if(!indc.get("win").isEmpty()){
@@ -447,15 +617,13 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 						String inputindexfilename = w.workflowName + w.hashCode() +"@"+  Integer.parseInt(inputindex);
 						indc.put("srcFilename",new JSONValue(inputindexfilename));
 					}
-					
-					
 				}
-				
 			}
-			
-			
-			
-			JSONArray outdcs = taskscheduleJson.get("outgoingDataChannels").toJSONArray();
+		}
+		/**
+		 * Mapping output data channel to a temporal file name. 
+		 */
+		public void outputDataChanleFilesMapping (JSONArray outdcs){
 			for(int i = 0; i < outdcs.size(); i++){
 				JSONObject outdc = outdcs.get(i).toJSONObject();
 				if(!outdc.get("wout").isEmpty()){
@@ -466,11 +634,24 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 					}
 				}
 			}
-			
-			
-			
+		}
+		
+		/**
+		 * The execute() method remotely interacts with the remote TaskExecutor to execute a task. The method is a blocking one.
+		 * It uses an TCP/IP protocol to conduct such interaction based on port 2004.
+		 * 
+		 * 
+		 * @return
+		 * @throws Exception
+		 */
+		public String execute() throws Exception {
+			JSONObject taskscheduleJson = taskschdule.getSpecification();
+			JSONArray indcs = taskscheduleJson.get("incomingDataChannels").toJSONArray();
+			inputDataChanleFilesMapping (indcs);
+			JSONArray outdcs = taskscheduleJson.get("outgoingDataChannels").toJSONArray();
+			outputDataChanleFilesMapping (outdcs);
 			Message m = new Message(dropboxToken,taskscheduleJson.toString());
-			MSGClient client = new MSGClient(mLocalRunner.lsc.getIP(), m );
+			MSGClient client = new MSGClient(ownerLocalScheduleRun.lsc.getIP(), m );
 			client.run();
 			return client.getResp();
 		}
