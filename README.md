@@ -18,18 +18,22 @@ Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Drop
 * A dropbox token should be provided in the main interface when you login in, which can be generated based on this tutorial:https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/
 
 <h2>Download and configure DATAVIEW as JAVA API</h2>
-Check out tutorial: https://youtu.be/R6A6jreySFc or follow the instructions below:
+Check out tutorial: https://youtu.be/xJikeWptYSw or follow the instructions below: 
 
 <OL>
+    <li> Make sure the JAVA Version is 8 </li>
     <li>Download the DATAVIEW package from https://github.com/shiyonglu/DATAVIEW by clicking the "Clone or Download" button.
     </li> 
      <li> Unzip the DATAVIEW-master.zip file and import the DATAVIEW project into Eclipse as an "Existing Projects into Workspace" by selecting "Projects from Folder or Archive".
     </li> 
     <li> The external dependecies libraries must be added to the Eclipse project from /DATAVIEW/WebContent/WEB-INF/lib </li>
-    <li> Create an Access key ID and a Secret access key in Amazon EC2 following the tutotial: https://youtu.be/9741e4CubMQ </li>
+    <li>/DATAVIEW/src/test.java shows the six steps to create a new workflow and execute it with local executor.</li>
+   <!--
+   <li> Create an Access key ID and a Secret access key in Amazon EC2 following the tutotial: https://youtu.be/9741e4CubMQ </li>
     <li>Replace the accessKey(Access key ID) and the secretKey(Secret access key) in config.properties by the Access key ID and Secret access key created in the previous step. File config.properties is under /DATAVIEW/WebContent/workflowLibDir/. </li>
     <li>/DATAVIEW/src/test.java shows the six steps to create a new workflow and execute it in Amazon EC2.</li>
     <li>After the execution of a workflow completes, please terminate all the EC2 instances from your AWS account manually.</li>
+    -->
 </OL>
 
 
@@ -46,6 +50,8 @@ Check out tutorial: https://youtu.be/R6A6jreySFc or follow the instructions belo
 <h2>DATAVIEW Tutorials</h2>
 <OL>
     <li> Chapter 1: A gentle introduction to DATAVIEW （https://youtu.be/7S4iGKXpaAc) </li>
+    <li> How to download, import DATAVIEW into Eclipse as Java API and run a workflow with local executor (https://youtu.be/xJikeWptYSw)</li>
+    <!--
     <li> How to download and import DATAVIEW into Eclipse as Java API (https://youtu.be/R6A6jreySFc)</li>
     <li> How to create an Access Key ID and a Secret access key in Amazon EC2 (https://youtu.be/9741e4CubMQ)</li>
     <li> How to create a workflow task for DATAVIEW (the linear regression example) (https://youtu.be/BPaoR_zogPA)</li>
@@ -59,5 +65,8 @@ Check out tutorial: https://youtu.be/R6A6jreySFc or follow the instructions belo
     <li> How to debug the functionality of a task (https://youtu.be/N4jIYbYSFd4)</li>
     <li> How to use Dataview.debugger to debug your DATAVIEW applications (https://youtu.be/1d1vJRGPBYs) </li>
     <li> How to develop a new workflow planner (https://youtu.be/R0i2s-LkGV8) </li>
+    <li> An introduction to WowkrlfowExecutor_Beta (<a href="https://www.youtube.com/watch?v=kBIcxWyJgQA&t=2726s">part 1</a>
+        | <a href="https://www.youtube.com/watch?v=Km24otM3rEM&t=582s">part 2</a>)
+        -->
 </OL>
 
