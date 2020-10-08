@@ -9,7 +9,6 @@ import dataview.planners.WorkflowPlanner_LPOD;
 import dataview.planners.WorkflowPlanner_Naive1;
 import dataview.planners.WorkflowPlanner_Naive2;
 import dataview.planners.WorkflowPlanner_T_Cluster;
-import dataview.workflowexecutors.VMProvisioner;
 import dataview.workflowexecutors.WorkflowExecutor;
 import dataview.workflowexecutors.WorkflowExecutor_Beta;
 import dataview.workflowexecutors.WorkflowExecutor_Local;
@@ -28,7 +27,12 @@ public class Test {
 		//SampleWorkflow w = new SampleWorkflow();
 		//Montage_workflow w = new Montage_workflow();
 		//MR w = new MR();
-		Diagnosis w = new Diagnosis();
+		
+		//RAWorkflow w = new RAWorkflow();
+		Dummy_Workflow w = new Dummy_Workflow();
+		//DisKMeansWorkflow w = new DisKMeansWorkflow();
+		// di san ci 
+		//Diagnosis w = new Diagnosis();
 		//DummyWorkflow w = new DummyWorkflow();
 		//WordCount_workflow w = new WordCount_workflow();
 		//Ligo_workflow w = new Ligo_workflow();
@@ -37,7 +41,10 @@ public class Test {
 		frame.drawWorkflowGraph(w);
 	
 		// step 3: choose a workflow planner
-		int whichplanner = WorkflowPlanner.WorkflowPlanner_Naive2;
+		int whichplanner = WorkflowPlanner.WorkflowPlanner_LPOD;
+		//int whichplanner =  WorkflowPlanner.WorkflowPlanner_Naive1;
+		
+		String configurefileLocation = System.getProperty("user.dir") + File.separator + "WebContent" +File.separator+"workflowLibDir"+ File.separator ;
 		
 		WorkflowPlanner wp = null;
 		switch (whichplanner) {
@@ -60,18 +67,22 @@ public class Test {
 			break;
 		}
 		
-
+		
 		// step 4: generate a workflow schedule	
-	
+		
+		
 		GlobalSchedule gsch = wp.plan();
 		System.out.println(gsch.getSpecification());
 		// step 5: select a workflow executor 
 		
+		
 		String fileLocation = System.getProperty("user.dir") + File.separator + "WebContent" +File.separator;
 		
-		//int whichexecutor = WorkflowExecutor.WorkflowExecutor_Local;
 		
-		int whichexecutor = WorkflowExecutor.WorkflowExecutor_Beta;
+		//int whichexecutor = WorkflowExecutor.WorkflowExecutor_Beta;
+		int whichexecutor = WorkflowExecutor.WorkflowExecutor_Local;
+		
+		
 		WorkflowExecutor we = null;
 		
 		
@@ -90,8 +101,10 @@ public class Test {
 		we.execute();	
 		
 		// step 7: VM machine termination.
-		VMProvisioner.vmTerminationAndKeyDelete(fileLocation+"workflowLibDir"+ File.separator);
+		//VMProvisioner.vmTerminationAndKeyDelete(fileLocation+"workflowLibDir"+ File.separator); 
+		   
 
+		
 	}
 
 }

@@ -224,6 +224,7 @@ public class Algorithm2 extends Task {
 					}
 					if(isDataFound) {
 						line = line.split("\"")[1];
+						//System.out.println("----" + line);
 						ArrayList<String> labels = new ArrayList<String>(Arrays.asList(line.split("_")));
 						diagnosisLabels.add(labels);
 					}

@@ -1,17 +1,14 @@
 package dataview.workflowexecutors;
+import java.lang.reflect.Method;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -55,8 +52,8 @@ import dataview.models.Workflow;
 public class WorkflowExecutor_Local extends WorkflowExecutor {
 	public static String workflowTaskDir;
 	public static String workflowLibdir;
-	public ConcurrentHashMap<String, ConcurrentLinkedQueue<TaskRun>> relationMap = new ConcurrentHashMap<>();
-	public static ConcurrentHashMap<String, String> OutputSet = new ConcurrentHashMap<>();
+	public ConcurrentHashMap<String, ConcurrentLinkedQueue<TaskRun>> relationMap = new ConcurrentHashMap<String, ConcurrentLinkedQueue<TaskRun>>();
+	public static ConcurrentHashMap<String, String> OutputSet = new ConcurrentHashMap<String, String>();
 	public static int taskNum = 0;
 	public static long starTime;
 	public Workflow w;
@@ -119,7 +116,7 @@ public class WorkflowExecutor_Local extends WorkflowExecutor {
 				for (String parentInstanceID : taskschedule.getParents()) {
 					ConcurrentLinkedQueue<TaskRun> runChildren = relationMap.get(parentInstanceID);
 					if (runChildren == null) {
-						runChildren = new ConcurrentLinkedQueue<>();
+						runChildren = new ConcurrentLinkedQueue<TaskRun>();
 						relationMap.put(parentInstanceID, runChildren);
 					}
 
@@ -262,7 +259,6 @@ public class WorkflowExecutor_Local extends WorkflowExecutor {
 		public void execute(TaskSchedule taskschedule, SortedMap<String, String> inputportAndFile,
 				SortedMap<String, String> outputportAndFile) throws MalformedURLException {
 			String taskName = taskschedule.getTaskName().replace("\"", "");
-
 			Task t = null;
 			File f ;
 			//Load the taskName.class file
@@ -270,17 +266,20 @@ public class WorkflowExecutor_Local extends WorkflowExecutor {
 				f = new File(workflowTaskDir + taskName + ".jar");
 			}else{
 				f= new File(workflowTaskDir + taskName + ".class");
+				//f =  new File(workflowTaskDir);
 			}
 			try {
-				URL url = f.toURI().toURL();
-				URL[] urls = new URL[] { url };
-				URLClassLoader systemClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+				URL url = null;
+				url = f.toURI().toURL();
+				URL[] urls = new URL[] {url};
+				Thread.currentThread().setContextClassLoader(new URLClassLoader(urls,Thread.currentThread().getContextClassLoader()));
+				ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
 				Class<URLClassLoader> classLoaderClass = URLClassLoader.class;
 				Method method = classLoaderClass.getDeclaredMethod("addURL", new Class[] { URL.class });
 				method.setAccessible(true);
-				method.invoke(systemClassLoader, urls);
+				method.invoke(currentClassLoader, urls);
 				Class<?> taskclass = Class.forName(taskName);
-				t = (Task) taskclass.newInstance();
+				t = (Task) taskclass.getDeclaredConstructor().newInstance();
 			} catch (Exception e) {
 				Dataview.debugger.logException(e);
 				e.printStackTrace();
@@ -299,7 +298,7 @@ public class WorkflowExecutor_Local extends WorkflowExecutor {
 			long startTime = System.nanoTime();
 			t.run();
 			long endTime = System.nanoTime();
-			double duration = (double) (endTime - startTime) / 1_000_000_000.0;
+			double duration = (double) (endTime - startTime) / 1000000000.0;
 			Dataview.debugger.logSuccessfulMessage("Task " + t.taskName + " is finished");
 		}
 
@@ -315,10 +314,11 @@ public class WorkflowExecutor_Local extends WorkflowExecutor {
 					Lock.unlock();
 				}
 				// get taskfile, input data ready for task to execute
+				/*
 				String taskFileLocation = workflowTaskDir + this.taskschdule.getTaskName();
 				if (!new File(taskFileLocation + ".class").exists() && !new File(taskFileLocation + ".jar").exists()) {
 					System.out.println("THE TASK FILE " +  this.taskschdule.getTaskName() + " IS NOT AVAILABLE");
-				}
+				}**/
 				//map inputPortandFile and outputPortAndFile for this task
 				SortedMap<String, String> inputportAndFile = mappingInputAndFile(this.taskschdule);
 			

@@ -1,0 +1,50 @@
+{
+  "DropboxStorage": {
+    "WorkflowInputDir_DropboxFileSystem": "",
+    "WorkflowOutputDir_DropboxFileSystem": ""
+  },
+
+  "LocalStorage": {
+    "workflowTaskDir":"",
+    "workflowLibdir":""
+    },
+  "EC2": {
+    "accessKey": "AKIAUWK7UBFRNPM55ADJ",
+    "secretKey": "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",
+    "imageID": "ami-04c9b62e7f5101d60",
+    "groupName":"dataview1",
+    "keyName":"Dataview_key"
+   },
+  "SecureConfig": {
+    "confidentialTasks": [{
+        "taskName": "Extraction"
+      },
+      {
+        "taskName": "Partitioner"
+      },
+      {
+        "taskName": "SplitDataOnePort"
+      },
+      {
+        "taskName": "Algorithm1"
+      },
+      {
+        "taskName": "Algorithm2"
+      },
+      {
+        "taskName": "Evaluation"
+      }
+    ],
+    "IPPool": [{
+        "SGX": "172.30.18.183"
+      },
+      {
+        "AMD": "172.30.18.193"
+      },
+      {
+        "SGX": "172.30.18.187"
+      }
+
+    ]
+  }
+}

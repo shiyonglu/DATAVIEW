@@ -1,0 +1,13 @@
+ssn,profname,status
+0,Austin,N
+1,Lu,Y
+2,Junwen,Y
+3,Saied,N
+4,John,Y
+5,Jim,N
+6,Blake,Y
+7,Mango,Y
+8,Fiction,Y
+9,Hax,N
+10,Armada,Y
+11,Willian,Y

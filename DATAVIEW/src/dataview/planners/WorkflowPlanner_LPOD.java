@@ -1,5 +1,8 @@
 package dataview.planners;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,10 +16,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.TreeMap;
-
-
+import dataview.models.Dataview;
 import dataview.models.GlobalSchedule;
+import dataview.models.JSONArray;
+import dataview.models.JSONObject;
+import dataview.models.JSONParser;
 import dataview.models.LocalSchedule;
 import dataview.models.Task;
 import dataview.models.TaskSchedule;
@@ -24,66 +28,70 @@ import dataview.models.Workflow;
 import dataview.models.WorkflowEdge;
 
 public class WorkflowPlanner_LPOD extends WorkflowPlanner {
-	/*
-	 * edgeMap: startNode ---> endNode and edge weight execTime: task :
-	 * (resource running time) taskTime: task : double[MES, EST, LST ,LFT] AST
-	 * maybe needed exectime: task execution time in different VM type
+	/**
+	 * The workflow configuration file stores the task execution time and data transfer time based on the real task name, but tasks composing a workflow may have the same task name but different task indexes.
+	 *    execTimeTemp: stores the task execution time extracted from the workflow configuration file, where tasks are indicated by their unique names.
+	 *     edgeMapTemp: stores the data transfer time extracted from the workflow configuration file, where edges are connected between tasks indicated by the real task names.
+	 *        execTime: stores the task execution time of each task instance in a workflow, which is represented by an index.
+	 *         edgeMap: stores the data transfer time of each edge connected in a workflow, which connects two task instances represented by index.
+	 *     nodeParents: stores all the direct parent tasks given a task instance index.
+	 *topoLogicalOrder: stores the topological order information of all the task instances, which determines the task execution order.
+	 *		  taskTime: stores the time information for a task instance, including the MET, EST, EFT and LFT.
+	 *         VMTypes: stores the VM types information. 
+	 * local_schedules: stores a list of local schedule.
+	 *         t_entry: stores the entry task instance index.
+	 *          t_exit: stores the exit task instance index.
+	 *          	 D: stores the user defined deadline of a workflow.
+	 *   time_interval: stores the length of a billing cycle.
+	 *     server_cost: stores the cost of each VM type.
+	 *        VMADelay: stores the VM delay time of each VM instance after the provisioning.
+	 *              VM: represents each VM instance, which stores the VM type information, the available time information, the left time of current billing cycle, the provisioning time, deprovisioning time and all the task instances running on it.
+	 *            TASK: represents each task instance, which stores the task instance index, the actual start time and the actual finish time. 
+	 *             sch: represents the workflow schedule generated based on the workflow planner.
 	 */
-	private Map<Integer, Map<Integer, Double>> edgeMap; // store the edge
-														// information
-	private Map<Integer, Map<String, Double>> execTime; // store the task
-														// execution time for
-														// each VM
+	Map<String, Map<String, Double>> execTimeTemp = new HashMap<String, Map<String, Double>>();
+	Map<String, Map<String, Double>> edgeMapTemp = new HashMap<String, Map<String, Double>>(); 
+	private Map<Integer, Map<Integer, Double>> edgeMap = new HashMap<Integer,  Map<Integer, Double>>(); // store the edge information 
+	private Map<Integer, Map<String, Double>> execTime = new HashMap<Integer, Map<String, Double>>(); // store the task execution time on each VM type
 	private Map<Integer, List<Integer>> nodeParents = new HashMap<Integer, List<Integer>>();
-
-	private Queue<Integer> vertexWithoutIncoming = new LinkedList<Integer>();
 	private List<Integer> topoLogicalOrder = new ArrayList<Integer>();
-	//private Map<Integer, double[]> taskTime = new HashMap<Integer, double[]>();
 	private Map<Integer, List<Double>> taskTime = new HashMap<Integer, List<Double>>();
-	private Map<String,LinkedHashMap<Integer, List<Double>>> VMPool = new HashMap<String, LinkedHashMap<Integer, List<Double>>>();
-	
-	
-	private Map<String, LinkedHashMap<Integer, List<Integer>>> taskAssignedVM = new HashMap<String, LinkedHashMap<Integer, List<Integer>>>();
-	private Map<Integer,Map<String, List<Double>>> actualAssignment = new HashMap<Integer, Map<String, List<Double>>>();
-	private Map<Integer,Integer> combinedTasks = new HashMap<Integer, Integer>();
-	
-	private ArrayList<ArrayList<Integer>> tasksList = new ArrayList<ArrayList<Integer>>();
-	private ArrayList<String> VMS = new ArrayList<String>();
-	private ArrayList<Double[]> ProandDepro = new ArrayList<Double[]>();
-	
-	
-	
-	
-	// record the tasks 
-	
-	// running
-	// time
-	// on
-	// the
-	// VM.
-
-	// private Map<Integer, String> task_assignment = new HashMap<Integer,
-	// String>(); // Task
-	// assigned
-	// to
-	// the
-	// VM
-
-	// private Map<String, List<Double>> running_server = new HashMap<>();
-
+	private ArrayList<String> VMTypes;
 	List<LocalSchedule> local_schedules = new ArrayList<LocalSchedule>();
-
-	private static Integer t_entry = 0; // Assume t_entry has no incoming edge
+	private static Integer t_entry = 0; 
 	private static Integer t_exit = -1;
 	private static double D;
 	private static double time_interval;
 	private static Map<String, Double> server_cost = new HashMap<String, Double>();
 	private static double VMADelay;
-	/*
-	 * Deadline, time_interval and server_cost information provided by the user.
-	 * 
+	class VM{
+		String vmType;
+		double available;
+		double vleft;
+		double pro;
+		double depro;
+		ArrayList<Integer> runTask = new ArrayList<Integer>();
+	}
+	class TASK{
+		Integer t;
+		double ast;
+		double aft;
+	}	
+	static class sch{
+		static ArrayList<TASK> T = new ArrayList<TASK>();
+		static ArrayList<VM> VMpool = new ArrayList<VM>();	
+	}
+	/**
+	 * A constructor for the LPOD planner.
+	 * @param w a workflow object
 	 */
-	static {
+	public WorkflowPlanner_LPOD(Workflow w) {
+		super(w);
+		execTimeTemp = w.getExecutionTime();
+		System.out.println(execTimeTemp);
+		edgeMapTemp = w.getTransferTime();
+		System.out.println(edgeMapTemp);
+		VMTypes = new ArrayList<String>(execTimeTemp.get(execTimeTemp.keySet().iterator().next()).keySet());
 		VMADelay = 1;
 		D = 50;
 		time_interval = 10;
@@ -91,16 +99,89 @@ public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 		server_cost.put("VM2", 2.0);
 		server_cost.put("VM3", 1.0);
 	}
-	
-	public WorkflowPlanner_LPOD(Workflow w) {
+	/**
+	 * A constructor for the LPOD planner fills in the execTimeTemp and edgeMapTemp; assigns the deadline, billing cycle, server_cost and VM delay information.
+	 * @param w a workflow object
+	 * @param location the workflow configuration file location.
+	 * 
+	 */
+	public WorkflowPlanner_LPOD(Workflow w, String location){
 		super(w);
-		execTime = w.getExecutionTime();
-		System.out.println(execTime);
-		edgeMap = w.getTransferTime();
-		System.out.println(edgeMap);
+		String workflowname = w.workflowName;
+		File file = new File(location + workflowname + ".json");
+		if(file.exists()){
+			String content = null;
+			StringBuilder contentBuilder = new StringBuilder();
+			BufferedReader br;
+			try {
+				br = new BufferedReader(new FileReader(file));
+				String sCurrentLine;
+			    while ((sCurrentLine = br.readLine()) != null){
+			        	contentBuilder.append(sCurrentLine).append("\n");
+			    } 
+			    br.close();
+			} catch (Exception e) {
+				Dataview.debugger.logException(e);
+			}
+			content = contentBuilder.toString();
+			JSONParser jsonParser = new JSONParser(content);
+			JSONObject workflowobj = jsonParser.parseJSONObject();
+			JSONObject taskobj = workflowobj.get("Execution").toJSONObject();
+			for(String str: taskobj.keySet()){
+				JSONArray jarraytasks = taskobj.get(str).toJSONArray();
+				for (int i = 0; i < jarraytasks.size(); i++) {
+					JSONObject obj = jarraytasks.get(i).toJSONObject();
+					String vm = (String) obj.keySet().toArray()[0];
+					Double exeTime = Double.parseDouble(obj.get(vm).toString().replace("\"", ""));
+					Map<String, Double> tmp;
+					if (execTimeTemp.containsKey(str)) {
+						tmp = execTimeTemp.get(str);
+						tmp.put(vm, exeTime);
+					} else {
+						tmp = new HashMap<String, Double>();
+						tmp.put(vm, exeTime);
+						execTimeTemp.put(str, tmp);
+					}
+					System.out.println("the task: " + str + " is running on vm " + vm + " :" + exeTime);
+				}
+			}
+			JSONObject jsonedge = workflowobj.get("Tasktransfer").toJSONObject();
+			for(String str: jsonedge.keySet()){
+				JSONArray jarrayedge  = jsonedge.get(str).toJSONArray();
+				
+				for (int i = 0; i < jarrayedge.size(); i++) {
+					JSONObject obj = jarrayedge.get(i).toJSONObject();
+					String childTask = obj.get("To").toString().replace("\"", "");
+					Double transferTime = Double.parseDouble(obj.get("Trans").toString().replace("\"", ""));
+					Map<String, Double> tmp;
+					if (edgeMapTemp.containsKey(str)) {
+						tmp = edgeMapTemp.get(str);
+						tmp.put(childTask, transferTime);
+					} else {
+						tmp = new HashMap<String, Double>();
+						tmp.put(childTask, transferTime);
+						edgeMapTemp.put(str, tmp);
+					}
+				}
+		}
+		String onetaskname = new ArrayList<String>(execTimeTemp.keySet()).get(0);
+		VMTypes = new ArrayList<String>(execTimeTemp.get(onetaskname).keySet());
+		VMADelay = 1;	
+		D =240;
+		time_interval = 10;
+		server_cost.put("t2.xlarge", 5.0);
+		server_cost.put("t2.medium", 2.0);
+		server_cost.put("t2.micro", 1.0);
+		
+		
+		}	
 	}
-
+	
+	/**
+	 * This method sort the task instances indexes in a topological order starting with the entry task index in a recursive way.
+	 */
 	private void doTopologicalSorting() {
+		Queue<Integer> vertexWithoutIncoming = new LinkedList<Integer>();
 		vertexWithoutIncoming.add(t_entry);
 		while (!vertexWithoutIncoming.isEmpty()) {
 			Integer tmp = vertexWithoutIncoming.poll();
@@ -125,11 +206,11 @@ public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 
 	}
 	
-	
-	
-	
-	// Calculate the upward rank value for each task
-	public Map<Integer, Double> getProirityValue() {
+	/**
+	 * This method calculates the upward rank value for each task instance.
+	 * @return a hashmap stores the upward rank value of each task
+	 */
+	private Map<Integer, Double> getProirityValue() {
 		Map<Integer, Double> priorityvalue = new HashMap<Integer, Double>();
 		this.doTopologicalSorting();
 		for (int i = topoLogicalOrder.size()-1; i>=0; i-- ){
@@ -150,14 +231,16 @@ public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 				}
 				Collection<Double> exetimes = execTime.get(topoLogicalOrder.get(i)).values();
 				priorityvalue.put(topoLogicalOrder.get(i), max + ave_exetime(exetimes));
-			}
-			
-			
+			}	
 		}
 		return priorityvalue;
 	}
-
-	public double ave_exetime(Collection<Double> times) {
+	/**
+	 * This method calculates the average execution time for a task instance on all VM types. 
+	 * @param times all the execution times on all VM types
+	 * @return the average task execution time.
+	 */
+	private double ave_exetime(Collection<Double> times) {
 		Double exectime = (double) 0;
 		int number = 0;
 		Iterator<Double> iteroator = times.iterator();
@@ -169,100 +252,64 @@ public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 	}
 
 	// sorted the priority value for all the tasks
-	public Map<Integer, Double> sortPriorityValues(Map<Integer, Double> priorityvalue) {
-		
+	/**
+	 * This method sorts the priority value of each task instance in a decreasing order.
+	 * @param priorityvalue
+	 * @return a sorted priority value
+	 */
+	private Map<Integer, Double> sortPriorityValues(Map<Integer, Double> priorityvalue) {
 		Map<Integer, Double> sortedMap = sortByValue(priorityvalue);
-		
-		/*
-		ValueComparator valuecompator = new ValueComparator(priorityvalue);
-		TreeMap<Integer, Double> sorted_map = new TreeMap<Integer, Double>(valuecompator);
-		 sorted_map.putAll(priorityvalue);
-		 */
 		return sortedMap;
 	}
-	
-	
-	
-	
-	public static Map<Integer, Double> sortByValue(Map<Integer, Double> unsortMap) {
-
+	/**
+	 * This method sorts a hashmap by the value in a decreasing order.
+	 * @param unsortMap
+	 * @return sorted map
+	 */
+	private static Map<Integer, Double> sortByValue(Map<Integer, Double> unsortMap) {
         // 1. Convert Map to List of Map
         List<Map.Entry<Integer, Double>> list =
                 new LinkedList<Map.Entry<Integer, Double>>(unsortMap.entrySet());
-
-        // 2. Sort list with Collections.sort(), provide a custom Comparator
-        //    Try switch the o1 o2 position for a different order
+        // 2. Sort list with Collections.sort(), provide a custom Comparat. Try switch the o1 o2 position for a different order
         Collections.sort(list, new Comparator<Map.Entry<Integer, Double>>() {
             public int compare(Map.Entry<Integer, Double> o1,
                                Map.Entry<Integer, Double> o2) {
                 return (o2.getValue()).compareTo(o1.getValue());
             }
         });
-
         // 3. Loop the sorted list and put it into a new insertion order Map LinkedHashMap
         Map<Integer, Double> sortedMap = new LinkedHashMap<Integer, Double>();
         for (Map.Entry<Integer, Double> entry : list) {
             sortedMap.put(entry.getKey(), entry.getValue());
         }
-
-        /*
-        //classic iterator example
-        for (Iterator<Map.Entry<String, Integer>> it = list.iterator(); it.hasNext(); ) {
-            Map.Entry<String, Integer> entry = it.next();
-            sortedMap.put(entry.getKey(), entry.getValue());
-        }*/
-
-
         return sortedMap;
     }
-	
-	
-	/*
-	class ValueComparator implements Comparator<Integer> {
-		Map<Integer, Double> base;
-
-		public ValueComparator(Map<Integer, Double> base) {
-			this.base = base;
-		}
-
-		// Note: this comparator imposes orderings that are inconsistent with
-		// equals.
-		public int compare(Integer a, Integer b) {
-			if (base.get(a) >= base.get(b)) {
-				return -1;
-			} else {
-				return 1;
-			} // returning 0 would merge keys
-		}
-	}
-	*/
-	public void buildTaskTime(Map<Integer, Double> sortedpriorityvalue) {
+	/**This method fills in the taskTime object based on the topological order of task instances.
+	 * The MET and EST are computed starting from the forward order based on the topological order.
+	 * The LFT is computed starting from the reversed order based on the topological order
+	 * @param sortedpriorityvalue
+	 */
+	private void buildTaskTime(Map<Integer, Double> sortedpriorityvalue) {
 		Set<Integer> orderedTasks = sortedpriorityvalue.keySet();
 		Integer[] tasks = orderedTasks.toArray(new Integer[orderedTasks.size()]);
 		taskTime.put(0, Arrays.asList(0.0,VMADelay,0.0));
 		for (int i = 0; i < tasks.length; i++) {
-			/*
-			double[] tmp = new double[4];
-			tmp[0] = computeMET(tasks[i]);
-			tmp[1] = computeEST(tasks[i]);
-			tmp[2] = tmp[0] + tmp[1];
-			*/
 			List<Double> tmp = Arrays.asList(0.0,0.0,0.0);
 			tmp.set(0,computeMET(tasks[i]));
 			tmp.set(1,computeEST(tasks[i]));
 			taskTime.put(tasks[i], tmp);
-
 		}
-
 		for (int i = tasks.length - 1; i >= 0; i--) {
 			List<Double> value = taskTime.get(tasks[i].intValue());
 			value.set(2,computeLFT(tasks[i]));
-			//taskTime.put(tasks[i], value);
 		}
-
 	}
-
-	public double computeMET(Integer key) {
+	/**
+	 * This method computes the minimum execution time of a task instance
+	 * @param key a task instance
+	 * @return
+	 */
+	private double computeMET(Integer key) {
 		double min = Double.POSITIVE_INFINITY;
 		for (double tmp : execTime.get(key).values()) {
 			if (tmp < min) {
@@ -271,8 +318,12 @@ public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 		}
 		return min;
 	}
-
-	public double computeEST(Integer key) {
+	/**
+	 * This method computes the earliest start time of a task instance
+	 * @param key a task instance
+	 * @return
+	 */
+	private double computeEST(Integer key) {
 		double max = Double.NEGATIVE_INFINITY;
 		if (nodeParents.containsKey(key)) {
 			for (Integer st : nodeParents.get(key)) {
@@ -284,7 +335,11 @@ public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 		}
 		return max;
 	}
-
+	/**
+	 * This method computes the latest execution time of a task instance
+	 * @param key a task instance
+	 * @return
+	 */
 	private double computeLFT(Integer key) {
 		double min = Double.POSITIVE_INFINITY;
 		if (key.equals(t_exit)) {
@@ -299,16 +354,17 @@ public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 		}
 		return min;
 	}
-
+	/**
+	 * This method find all the partial critical paths based on the priority value.
+	 * @param sortedpriorityvalue
+	 * @return an array of list containing all the paths 
+	 */
 	public ArrayList<List<Integer>> findPCPs(Map<Integer, Double> sortedpriorityvalue) {
 		Set<Integer> orderedTasks = sortedpriorityvalue.keySet();
 		List<Integer> taskList = new ArrayList<Integer>();
 		taskList.addAll(orderedTasks);
 		taskList.remove(new Integer(-1));
 		ArrayList<List<Integer>> paths = new ArrayList<List<Integer>>();
-		List<Integer> taskhaspath = new ArrayList<Integer>();
-		taskhaspath.add(new Integer(-1));
-		//for (Integer tmp : taskList) {
 		while(!taskList.isEmpty()){	
 			List<Integer> criticalpath = new ArrayList<Integer>();
 			Integer cur = taskList.get(0);		
@@ -328,228 +384,313 @@ public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 							pvalue = taskvalue;
 							index = tmptask;
 						}
-					}
-					
+					}	
 				}
 				cur = index;
 			}	
 			paths.add(criticalpath);
 		}
-		//}
 		return paths;
-
 	}
-
+	/**
+	 * This method returns the maximum data transfer time among all the transfered edges.
+	 * @param p
+	 * @return
+	 */
+	private double getMaxedge(Integer p){
+		Map<Integer, Double> edges = edgeMap.get(p);
+		double max = Collections.max(edges.values());
+		return max;
+	}
 	
-	public List<Double>  pathsAssignment(ArrayList<List<Integer>> paths) {
-		//Map<Double,Map<String, List<Double>>> actualAssignment = new HashMap<Double, Map<String, List<Double>>>();
+	/**
+	 * This method assigns a single path to the appropriate vm instances, referring to the Algorithm4 in the paper.
+	 * @param path
+	 */
+	private void PathAssign(List<Integer> path){
+		// TB
+		List<Integer> ID = new ArrayList<Integer>();
+		List<Integer> TASK = new ArrayList<Integer>();
+		List<Double> TST = new ArrayList<Double>();
+		List<Double> TFT  = new ArrayList<Double>();
+		List<Double> ACCOST = new ArrayList<Double>();
+		//List<Double> TLEFT = new ArrayList<Double>();
+		List<Integer> IDREF = new ArrayList<Integer>();
+		List<Double> MAXEDGE = new ArrayList<Double>();
+		List<String> VMTYPE = new ArrayList<String>();
+		List<Double> PROV = new ArrayList<Double>();
+		List<Double> DEPROV = new ArrayList<Double>();
 		
-		List<Double> cost = new ArrayList<Double>();
-		for (int i = 0; i < paths.size(); i++) {
-			List<String> vms = new ArrayList<String>();
-			List<Integer> path = paths.get(i);
-			List<Map<Double, Map<String, List<Double>>>> pathMappingStructure = pathAssignment(path);
-			double mincost = Double.MAX_VALUE;
-			double previousIndex = 0;
-			double keyvalue = 0;
-			String assignedvm = "";
-			//  construct the transfer matrix
-			Map<Double, Map<String, List<Double>>> lastlevel = pathMappingStructure.get(path.size()-1);
+		// the first task in a path
+		for(int k = 0; k <VMTypes.size(); k++){
 			
-			for(Double tmp: lastlevel.keySet()){
-				Map<String, List<Double>> assign = lastlevel.get(tmp);
-				for(String vm:assign.keySet()){
-					List<Double> cost_time = assign.get(vm);
-					if(cost_time.get(0)<= mincost){
-						previousIndex = cost_time.get(2);
-						keyvalue = tmp;	
-						assignedvm = vm;
-						mincost = cost_time.get(0);
-					}	
-				}
+			double tst;
+			if(edgeMap.get(0).keySet().contains(path.get(0))){
+				tst = VMADelay; 
+			}else{
+				tst = taskTime.get(path.get(0)).get(1); 
 			}
-			cost.add(mincost);
+			double tft = tst + execTime.get(path.get(0)).get(VMTypes.get(k));
+			if(tft <= taskTime.get(path.get(0)).get(2)){
+				ID.add(ID.size()+1); TASK.add(path.get(0));
+				TST.add(tst);
+				TFT.add(tft);
+				double prov = tst - VMADelay; PROV.add(prov);
+				double maxedge = getMaxedge(path.get(0)); MAXEDGE.add(maxedge);
+				double deprov = prov+ Math.ceil((tft+maxedge-prov)/time_interval)*time_interval; DEPROV.add(deprov);
+				
+				double accost = Math.ceil((deprov-prov)/time_interval)*server_cost.get(VMTypes.get(k)); ACCOST.add(accost);
+				//double tleft = Math.ceil((VMADelay+execTime.get(path.get(0)).get(VMTypes.get(k)))/time_interval)*time_interval - (VMADelay+execTime.get(path.get(0)).get(VMTypes.get(k)));   TLEFT.add(tleft);
+				
+				IDREF.add(-1);
+				
+				VMTYPE.add(VMTypes.get(k));
+			}
 			
-			List<Double> astAndFint = lastlevel.get(keyvalue).get(assignedvm).subList(3, 5);
-			Map<String, List<Double>> vm_astAndFin = new HashMap<String, List<Double>>();
-			vm_astAndFin.put(assignedvm, astAndFint);
-			actualAssignment.put(path.get(path.size()-1), vm_astAndFin );
-			vms.add(assignedvm);			
-			List<Double> tmp = taskTime.get(path.get(path.size()-1));
-			tmp.set(0, execTime.get(path.get(path.size()-1)).get(assignedvm));
-			tmp.set(2, astAndFint.get(1));
-			if(path.size()>=2){
-				for(int j = path.size()-2; j>=0; j--){
-					mincost = Double.MAX_VALUE;
-					String curassignedvm = "";
-					keyvalue = previousIndex;
-					
-					Map<Double, Map<String, List<Double>>> level = pathMappingStructure.get(j);
-					Map<String, List<Double>> assign = level.get(keyvalue);
-					for(String vm:assign.keySet()){
-						List<Double> cost_time = assign.get(vm);
-						if(cost_time.get(0)<= mincost){
-							previousIndex = cost_time.get(2);
-							curassignedvm = vm;
-							mincost = cost_time.get(0);
+			
+		}
+		// the remaining tasks in a path
+		
+		if(path.size() > 1){
+			for(int i = 1; i < path.size(); i++){
+				
+				int firstindex = TASK.indexOf(path.get(i-1));
+				int lastindex = TASK.lastIndexOf(path.get(i-1));
+				double maxedge = getMaxedge(path.get(i));
+				for(int k = 0; k < VMTypes.size(); k++){  
+					double cost1 = Double.MAX_VALUE;
+					double cost2 = Double.MAX_VALUE;
+					double candidate1_tst = -1;
+					double candidate1_tft = -1;
+					double candidate1_prov = -1;
+					double candidate1_deprov = -1;
+					double candidate1_accost = -1;
+					Integer candidate1_idref = null; 
+					String candidate1_vm = "";
+					double candidate2_tst = -1;
+					double candidate2_tft = -1;
+					double candidate2_prov = -1;
+					double candidate2_deprov = -1;
+					double candidate2_accost = -1;
+					String candidate2_vm = "";
+					Integer candidate2_idref = null; 
+					for(int j = firstindex; j <= lastindex; j++){
+						if(VMTYPE.get(j) != VMTypes.get(k)){
+							double tst= Math.max(taskTime.get(path.get(i)).get(1),(TFT.get(j)+edgeMap.get(path.get(i-1)).get(path.get(i))));
+							double tft = tst + execTime.get(path.get(i)).get(VMTypes.get(k)); 
+							double prov = tst - VMADelay;
+							double deprov = prov + Math.ceil((tft+maxedge-prov)/time_interval)*time_interval;
+							double accost = ACCOST.get(j) + ((deprov-prov)/time_interval)*server_cost.get(VMTypes.get(k));
+							if(tft <= taskTime.get(path.get(i)).get(2)){
+								if (accost < cost1){
+									cost1 = accost;
+									candidate1_tst = tst;
+									candidate1_tft = tft;
+									candidate1_prov = prov;
+									candidate1_deprov = deprov;
+									candidate1_accost = accost; 
+									candidate1_vm = VMTypes.get(k);
+									candidate1_idref = j;
+								}
+							}
+							
+						}else{
+							double tst= Math.max(taskTime.get(path.get(i)).get(1),TFT.get(j));
+							double tft = tst + execTime.get(path.get(i)).get(VMTypes.get(k)); 
+							double prov = PROV.get(j);
+							double deprov;
+							if(tft + maxedge <= DEPROV.get(j)) {
+								 deprov = DEPROV.get(j);
+							} else{
+								 deprov = DEPROV.get(j) + Math.ceil((tft + maxedge - DEPROV.get(j))/time_interval)* time_interval;
+							}
+							double accost = ACCOST.get(j) + ( (deprov - DEPROV.get(j))/time_interval)*server_cost.get(VMTypes.get(k));
+							if(tft <= taskTime.get(path.get(i)).get(2)){
+								if (accost < cost2){
+									cost2 = accost;
+									candidate2_tst = tst;
+									candidate2_tft = tft;
+									candidate2_prov = prov;
+									candidate2_deprov = deprov;
+									candidate2_accost = accost; 
+									candidate2_vm = VMTypes.get(k);
+									candidate2_idref = j;
+								}
+							}
 						}	
 					}
-					 astAndFint = level.get(keyvalue).get(curassignedvm).subList(3, 5);
-					 vm_astAndFin = new HashMap<String, List<Double>>();
-					vm_astAndFin.put(curassignedvm, astAndFint);
-					vms.add(curassignedvm);
-					actualAssignment.put(path.get(j), vm_astAndFin );
-					tmp = taskTime.get(path.get(j));
-					tmp.set(0, execTime.get(path.get(j)).get(curassignedvm));
-					tmp.set(2, astAndFint.get(1));
-				}
-				
-				
-			}
-			
-			// check the taskAssignment to see whether the edge can be updated as 0
-			Collections.reverse(vms);
-			
-			int index1 = 0;
-			boolean append = false;
-			for(int k = 0; k < path.size(); k++){
-				String assignedVM = vms.get(k);
-				String neighborassignedVM = "";
-				List<Double> assignperiod = actualAssignment.get(path.get(k)).get(assignedVM);
-				if(k+1 < path.size()){
-					neighborassignedVM =  vms.get(k+1);
-					if(assignedVM ==neighborassignedVM){
-						Map<Integer, Double> value = edgeMap.get(path.get(k));
-						value.put(path.get(k+1), 0.0);
-						edgeMap.put(path.get(k), value);
-						append = true;
-						index1++;
-						continue;		
+					if (candidate1_tst != -1){
+						ID.add(ID.size()+1); TASK.add(path.get(i)); 
+						TST.add(candidate1_tst);
+						TFT.add(candidate1_tft);
+						PROV.add(candidate1_prov);
+						DEPROV.add(candidate1_deprov);
+						ACCOST.add(candidate1_accost);
+						IDREF.add(candidate1_idref);
+						VMTYPE.add(candidate1_vm);
+						MAXEDGE.add(maxedge);
+						
 					}
-				}
-				if(!append){
-					VMS.add(assignedVM);
-					ArrayList<Integer> subtasks = new ArrayList<Integer>();
-					subtasks.add(path.get(k));
-					tasksList.add(subtasks);
-					Double[] vmproAnddepro = {0.0,0.0};
-					vmproAnddepro[0] = assignperiod.get(0) - VMADelay;
-					Map<Integer,Double> edgeTransfer = edgeMap.get(path.get(k));
-					double maxedge =Collections.max(edgeTransfer.values());
-					vmproAnddepro[1] = assignperiod.get(1) + maxedge;
-					ProandDepro.add(vmproAnddepro);
+					if (candidate2_tst != -1){
+						ID.add(ID.size()+1); TASK.add(path.get(i)); 
+						TST.add(candidate2_tst);
+						TFT.add(candidate2_tft);
+						PROV.add(candidate2_prov);
+						DEPROV.add(candidate2_deprov);
+						ACCOST.add(candidate2_accost);
+						IDREF.add(candidate2_idref);
+						VMTYPE.add(candidate2_vm);
+						MAXEDGE.add(maxedge);
+					}
 					
+				}
+			}
+		}
+		
+			Integer lastTask = path.get(path.size()-1);
+			int lastTaskfirstIndex = TASK.indexOf(lastTask);
+			int lastTaskLastIndex = TASK.lastIndexOf(lastTask);
+			List<Double> sublist = ACCOST.subList(lastTaskfirstIndex, lastTaskLastIndex+1);
+			int smallest = ACCOST.lastIndexOf(Collections.min(sublist));
+			int preindex = IDREF.get(smallest); 
+			TASK lastask = new TASK(); 
+			lastask.t=lastTask; lastask.ast = TST.get(smallest); lastask.aft = TFT.get(smallest);
+			VM lastvm = new VM(); 
+			String prevm = VMTYPE.get(smallest);
+			lastvm.vmType = prevm; lastvm.runTask.add(lastTask); lastvm.available = TFT.get(smallest); lastvm.vleft = DEPROV.get(smallest) - TFT.get(smallest);
+			lastvm.pro = PROV.get(smallest); lastvm.depro = DEPROV.get(smallest); 
+			sch.T.add(lastask); sch.VMpool.add(lastvm);
+			for (int i = path.size() - 2; i >= 0; i--){
+				TASK ctTask = new TASK();
+				ctTask.t = path.get(i);
+				ctTask.ast = TST.get(preindex);
+				ctTask.aft = TFT.get(preindex);
+				sch.T.add(ctTask);
+				String ctvm = VMTYPE.get(preindex);
+				if (prevm == ctvm) {
+					int vmindex = getVMIndex(path.get(i + 1));
+					VM ctVM = sch.VMpool.get(vmindex);
+					ctVM.runTask.add(path.get(i));
 				}else{
-					VMS.add(assignedVM);
-					ArrayList<Integer> subtasks = new ArrayList<Integer>();
-					for(int j=index1; j>=0; j--){
-						subtasks.add(path.get(k-j));
-						
-					}
-					tasksList.add(subtasks);
-					List<Double> assignperiod1 = actualAssignment.get(path.get(k-index1)).get(assignedVM);
-					Double[] vmproAnddepro = {0.0,0.0};
-					vmproAnddepro[0] = assignperiod1.get(0) - VMADelay;
-					Map<Integer,Double> edgeTransfer = edgeMap.get(path.get(k));
-					double maxedge =Collections.max(edgeTransfer.values());
-					vmproAnddepro[1] = assignperiod.get(1) + maxedge;
-					ProandDepro.add(vmproAnddepro);
-					index1 = 0;
-					append = false;
+					VM vm = new VM(); 
+					vm.runTask.add(path.get(i));
+					vm.pro = PROV.get(preindex);
+					vm.depro = DEPROV.get(preindex);
+					vm.available = TFT.get(preindex);
+					vm.vleft = DEPROV.get(preindex) - TFT.get(preindex);
+					vm.vmType = VMTYPE.get(preindex);
+					sch.VMpool.add(vm);
 				}
-						
-				
-			}
-			
-			
-			
-			
-			
-			//Collections.reverse(vms);
-			if(path.size()>=2){
-				for(int k = 0; k < path.size()-1; k++){
-					if(vms.get(k)==vms.get(k+1)){
-						Map<Integer, Double> value = edgeMap.get(path.get(k));
-						value.put(path.get(k+1), 0.0);
-						edgeMap.put(path.get(k), value);
-						combinedTasks.put(path.get(k+1), path.get(k));	
-					}
-				}
-			}
-			
-			
-			for(Integer taskindex:path){
-				Map<String, List<Double>> taskAssign = actualAssignment.get(taskindex);
-				String assignedVM="";
-				for(String vm:taskAssign.keySet()){
-					assignedVM = vm;
-				}
-				List<Double> assignperiod = actualAssignment.get(taskindex).get(assignedVM);
-				Double startime = assignperiod.get(0);
-				int index=0;
-				if(taskAssignedVM.containsKey(assignedVM)){
-					LinkedHashMap<Integer, List<Integer>> tmp1 = taskAssignedVM.get(assignedVM);
-					if(!combinedTasks.containsKey(taskindex)){
-						
-						for(Integer vmindex : tmp1.keySet()){
-							List<Integer> tasks = tmp1.get(vmindex);
-							Integer lastask = tasks.get(tasks.size()-1);
-							
-							if(startime >= actualAssignment.get(lastask).get(assignedVM).get(1)){
-								tasks.add(taskindex);
-								tmp1.put(vmindex, tasks);
-								taskAssignedVM.put(assignedVM, tmp1);
-								break;
-							}
-							else{
-								index++;
-								continue;
-							}
-						}
-						if(index == taskAssignedVM.get(assignedVM).keySet().size()){
-							List<Integer> tasks = new ArrayList<Integer>();
-							tasks.add(taskindex);
-							tmp1.put(index+1, tasks);					
-						}
-					}
-					else{
-						Integer directParent = combinedTasks.get(taskindex);
-						for(Integer vmindex : tmp1.keySet()){
-							List<Integer> tasks = tmp1.get(vmindex);
-							if(!tasks.contains(directParent)){
-								continue;
-							}
-							tasks.add(taskindex);
-							tmp1.put(vmindex, tasks);
-							taskAssignedVM.put(assignedVM, tmp1);
-							break;
-						}
-					}
-						
-				}
-				
-				
-				else{
-					List<Integer> tasks = new ArrayList<Integer>();
-					tasks.add(taskindex);
-					LinkedHashMap<Integer, List<Integer>> tmp1 = new LinkedHashMap<Integer, List<Integer>>();
-					tmp1.put(0, tasks);
-					taskAssignedVM.put(assignedVM, tmp1);
-					
-				}
+				preindex = IDREF.get(preindex);
 			}
 		
-			
-			
-			for(int k = 0; k < path.size(); k++){
-				Integer task = path.get(k);
-				updateSuccessor(task);
-				updatePredecessor(task);
-			}	
+		 
+		
+	}
+	/**
+	 * This method returns the VM instance index in the VM pool for a specific task instance.
+	 * @param t
+	 * @return
+	 */
+	private int getVMIndex(Integer t){
+		int found = -1;
+		for(int i =0; i < sch.VMpool.size(); i++){
+			if(sch.VMpool.get(i).runTask.contains(t)){
+				found = i;
+			}
 		}
-		return cost;
+		return found;
+	}
+	/** This method tries to assign a partial part of a path to free VM instance in the VM pool, then assign the remaining path to the appropriate VM instances, referring to the Algorithm3 in the paper.
+	 * 
+	 * @param paths
+	 */
+	private void  pathsAssignment(ArrayList<List<Integer>> paths) {
+		for (int i = 0; i < paths.size(); i++){
+			List<Integer> path = paths.get(i);
+			int lj = 0;
+			for(int j = 0; j < path.size(); j++){
+				boolean found = false;
+				for(int k = 0; k< sch.VMpool.size(); k++){
+					double ast;
+					if (sch.VMpool.get(k).available<=taskTime.get(path.get(j)).get(1)){
+						ast = taskTime.get(path.get(j)).get(1);
+					}else{
+						ast = sch.VMpool.get(k).available;
+					}
+					
+					if( sch.VMpool.get(k).depro >= (execTime.get(path.get(j)).get(sch.VMpool.get(k).vmType) + ast)
+						&& taskTime.get(path.get(j)).get(2) >= (execTime.get(path.get(j)).get(sch.VMpool.get(k).vmType) + ast)){
+						TASK t = new TASK();
+						t.t = path.get(j);
+						t.ast = ast;
+						t.aft = t.ast + execTime.get(path.get(j)).get(sch.VMpool.get(k).vmType);
+						sch.T.add(t);  
+						VM vm = sch.VMpool.get(k);
+						vm.vmType = sch.VMpool.get(k).vmType;
+						vm.available = t.aft;
+						vm.vleft = sch.VMpool.get(k).vleft - execTime.get(path.get(j)).get(sch.VMpool.get(k).vmType);
+						vm.runTask.add(path.get(j));
+						lj = j +1;
+						found = true;
+						break;
+					}
+				}
+				if(found == false){
+					break;
+				}
+			}
+			List<Integer> subpath = path.subList(lj, path.size());
+			if(subpath.size()!=0){
+				PathAssign(subpath);
+			}
+			for(int j = 0; j < path.size(); j++){
+				double ast = sch.T.get(index(path.get(j))).ast;
+				double aft = sch.T.get(index(path.get(j))).aft;
+				taskTime.get(path.get(j)).set(1,ast);
+				taskTime.get(path.get(j)).set(2,aft );
+				taskTime.get(path.get(j)).set(0,aft-ast);
+				updateSuccessor(path.get(j));
+				updatePredecessor(path.get(j));
+			}
+		}
+		
+	}
+	/**
+	 * Output the workflow schedule generated from the workflow planner LPOD. 
+	 */
+	private static void print(){
+		for(int i= 0; i< sch.T.size(); i++){
+			System.out.println("The task is "+ sch.T.get(i).t + " with start time "+ sch.T.get(i).ast + " and finished at " + sch.T.get(i).aft);
+		}
+		double totalCost = 0;
+		for(int i = 0; i < sch.VMpool.size(); i++){
+			System.out.println("Tasks: "+ sch.VMpool.get(i).runTask + "on "+sch.VMpool.get(i).vmType);
+			System.out.println("VM provisioning time: " + sch.VMpool.get(i).pro);
+			System.out.println("VM deprovisioning time: "+ sch.VMpool.get(i).depro);
+			System.out.println("Avaliable time: "+ sch.VMpool.get(i).available);
+			System.out.println("Current left time: "+ sch.VMpool.get(i).vleft);
+			totalCost += (Math.ceil((sch.VMpool.get(i).depro-sch.VMpool.get(i).pro)/time_interval))*server_cost.get(sch.VMpool.get(i).vmType);
+		}
+		System.out.println("The final total cost is " + totalCost);
+	}
+	/**
+	 * This method returns the task instance index in an assigned VM instance.
+	 * @param t
+	 * @return
+	 */
+	private int index(Integer t){
+		for(int i = 0; i < sch.T.size(); i++){
+			if (t.equals(sch.T.get(i).t))
+				return i;
+		}
+		return 0;
 	}
 	
+	/**
+	 * This method updates the earliest start time after one path is assigned.
+	 * @param key
+	 */
 	private void updateEST(Integer key) {
 		double max = Double.NEGATIVE_INFINITY;
 		if (nodeParents.containsKey(key)) {
@@ -564,277 +705,124 @@ public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 		value.set(1, max);
 		taskTime.put(key, value);
 	}
-	
-	
-	
-
+	/**
+	 * This method check if a task instance is already assigned.
+	 * @param str
+	 * @return
+	 */
+	private boolean alreadAssign(Integer str){
+		for(int i =0; i < sch.T.size(); i++){
+			if(sch.T.get(i).t.equals(str)){
+				return true;
+			}	
+		}
+		return false;
+	}
+	/**
+	 * Update the EST of all the successors of assigned task instances.
+	 * @param key
+	 */
 	private void updateSuccessor(Integer key) {
 		List<Integer> q = new LinkedList<Integer>();
 		q.add(key);
-
 		while (!q.isEmpty()) {
 			Integer task = q.get(0);
 			q.remove(0);
-			updateEST(task);
+			if(!alreadAssign(task)){
+				updateEST(task);
+			}
 			if (edgeMap.containsKey(task)) {
-				for (Integer str : edgeMap.get(task).keySet()) {
-					if (!q.contains(str)&& !actualAssignment.containsKey(q))
+ 				for (Integer str : edgeMap.get(task).keySet()) {
+					if (!q.contains(str)&& !alreadAssign(str))
 						q.add(str);
 				}
 			}
 		}
 	}
-	
+	/**
+	 * Update the LFT of all the predecessors of assigned task instances.
+	 * @param key
+	 */
 	private void updatePredecessor(Integer key) {
 		List<Integer> q = new LinkedList<Integer>();
 		q.add(key);
 		while (!q.isEmpty()) {
 			Integer task = q.get(0);
 			q.remove(0);
-			if(!actualAssignment.containsKey(task)){
+			if(!alreadAssign(task)){
 				updateLFT(task);
 			}
 			//this.computeLFT(task);
 			if (nodeParents.containsKey(task)) {
 				for (Integer str : nodeParents.get(task)) {
-					if (!q.contains(str) && !actualAssignment.containsKey(q))
+					if (!q.contains(str) && !alreadAssign(str))
 						q.add(str);
 				}
 			}
 		}
 	}
-	 
+	/**
+	 * Update the LFT of a task instance.
+	 * @param key
+	 */
 	private void updateLFT(Integer key){
 		List<Double> value = taskTime.get(key);
 		value.set(2,computeLFT(key));
 	}
-
-	
-	public List<Map<Double, Map<String, List<Double>>>>  pathAssignment(List<Integer> path){
-
-		List<Map<Double, Map<String, List<Double>>>> cost_types = new ArrayList<>();
-		for (int i = 0; i < path.size(); i++){
-			TreeMap<Double, Map<String, List<Double>>> cost_type = new TreeMap<Double,Map<String, List<Double>>>();
-			Map<Integer,Double> edgeTransfer = edgeMap.get(path.get(i));
-			double maxedge =Collections.max(edgeTransfer.values());
-			if(i == 0){
-				double taskLFT = taskTime.get(path.get(i)).get(2);
-				double taskEST = taskTime.get(path.get(i)).get(1);
-				Map<String, Double> taskExecTime = execTime.get(path.get(i));
-				for(String tmp : taskExecTime.keySet()){
-					double keyvalue = taskEST + taskExecTime.get(tmp);
-					Map<String, List<Double>> assign = new HashMap<String, List<Double>>();
-					if( keyvalue <= taskLFT){
-						/*
-						 *  cost, current billing time left; reference, AST, AFT, maxtransfer,
-						 */
-						List<Double> cost_time = Arrays.asList(0.0,0.0,0.0,0.0,0.0,0.0);
-						if(i==path.size()-1){
-							double totalperiod = Math.ceil((VMADelay+taskExecTime.get(tmp)+maxedge)/time_interval);
-							cost_time.set(0, totalperiod * server_cost.get(tmp));
-							cost_time.set(1, totalperiod * time_interval - (VMADelay+taskExecTime.get(tmp)+maxedge));
-							cost_time.set(2,(double) -1);
-							cost_time.set(3, keyvalue-taskExecTime.get(tmp));
-							cost_time.set(4, keyvalue);
-							cost_time.set(5,maxedge);
-						}else{
-							
-							cost_time.set(0, Math.ceil((taskExecTime.get(tmp)+VMADelay)/time_interval)*server_cost.get(tmp));
-							cost_time.set(1, Math.ceil((taskExecTime.get(tmp)+VMADelay)/time_interval)*time_interval - taskExecTime.get(tmp));
-							cost_time.set(2,(double) -1);
-							cost_time.set(3, keyvalue-taskExecTime.get(tmp));
-							cost_time.set(4, keyvalue);
-							cost_time.set(5,maxedge);
-							
-						}
-						assign.put(tmp, cost_time );
-						cost_type.put(keyvalue, assign);
-					} 
-					
-				}
-				cost_types.add(cost_type);	
-			}
-			else{
-				double taskLFT = taskTime.get(path.get(i)).get(2);
-				double taskEST = taskTime.get(path.get(i)).get(1);
-				Map<Double,Map<String,List<Double>>> previous = cost_types.get(i-1);
-				Map<String, Double> taskExecTime = execTime.get(path.get(i));
-				for(String tmp: taskExecTime.keySet()){
-					for(Double pretime:previous.keySet()){
-						Map<String,List<Double>> pre_cost_time = previous.get(pretime);
-						for(String selctedvm: pre_cost_time.keySet()){
-							double keyvalue;
-							List<Double> cost_time = Arrays.asList(0.0,0.0,0.0,0.0,0.0,0.0);
-							Map<String, List<Double>> assign = new HashMap<String, List<Double>>();
-							
-							if(tmp==selctedvm){
-									if(pretime.doubleValue() <= taskEST){
-										keyvalue = taskEST + taskExecTime.get(tmp);
-										if(keyvalue <= taskLFT){
-											double extratime = taskEST - pretime + taskExecTime.get(tmp) - pre_cost_time.get(tmp).get(1);
-											// extratime bigger than 0 means more billing cycle needs to be added 
-											// we assume that the data communication is smaller than the computation for each task
-											if(extratime >=0) {
-												cost_time.set(0, Math.ceil(extratime/time_interval)*server_cost.get(tmp)+ pre_cost_time.get(selctedvm).get(0));
-												cost_time.set(1, Math.ceil(extratime/time_interval)*time_interval - extratime);
-												
-											}else{
-												cost_time.set(0, pre_cost_time.get(selctedvm).get(0));
-												cost_time.set(1, Math.abs(extratime));
-											}
-								
-											cost_time.set(2, pretime.doubleValue());
-											cost_time.set(3, keyvalue-taskExecTime.get(tmp));
-											cost_time.set(4, keyvalue);
-											cost_time.set(5, maxedge);
-											if(cost_type.containsKey(keyvalue)){
-												assign = cost_type.get(keyvalue);
-												assign.put(tmp, cost_time );
-											}else{
-												assign.put(tmp, cost_time );
-												cost_type.put(keyvalue, assign);
-											}	
-										}	
-									}else{
-										keyvalue = pretime.doubleValue() + taskExecTime.get(tmp);
-										if(keyvalue <= taskLFT){
-											
-											double extratime = taskExecTime.get(tmp) - pre_cost_time.get(tmp).get(1);
-											if(extratime > 0){
-												cost_time.set(0, Math.ceil(extratime/time_interval)*server_cost.get(tmp) + pre_cost_time.get(selctedvm).get(0));
-												cost_time.set(1, Math.ceil(extratime/time_interval)*time_interval-extratime);
-											}else{
-												cost_time.set(0, pre_cost_time.get(selctedvm).get(0));
-												cost_time.set(1, Math.abs(extratime));
-											}
-											cost_time.set(2, pretime.doubleValue());
-											cost_time.set(3, keyvalue-taskExecTime.get(tmp));
-											cost_time.set(4, keyvalue);
-											cost_time.set(5, maxedge);
-											if(cost_type.containsKey(keyvalue)){
-												assign = cost_type.get(keyvalue);
-												assign.put(tmp, cost_time );
-											}else{
-												assign.put(tmp, cost_time );
-												cost_type.put(keyvalue, assign);
-											}	
-											
-										}
-										
-										
-									}
-									
-						
-							}
-							
-							// Assign the adjacent task into two different VMs
-							
-							else{
-								if(pretime.doubleValue() <= taskEST){
-									keyvalue = taskEST + taskExecTime.get(tmp) + edgeMap.get(path.get(i-1)).get(path.get(i));
-								}
-								else{
-									keyvalue = pretime.doubleValue() + taskExecTime.get(tmp) + edgeMap.get(path.get(i-1)).get(path.get(i));
-								}
-								if(keyvalue < taskLFT){
-									cost_time = Arrays.asList(0.0,0.0,0.0,0.0,0.0,0.0);
-									/*
-									double extratime;
-									extratime = pre_cost_time.get(selctedvm).get(4)-pre_cost_time.get(selctedvm).get(0);
-									extratime = extratime > 0? extratime:0;
-									double cost = Math.ceil((taskExecTime.get(tmp) + VMADelay)/time_interval)*server_cost.get(tmp) + pre_cost_time.get(selctedvm).get(0) + Math.ceil(extratime/time_interval)*server_cost.get(tmp);
-									if(i==path.size()-1){
-										double transfer = maxedge - (Math.ceil(taskExecTime.get(tmp)/time_interval)*time_interval - taskExecTime.get(tmp) - VMADelay);
-										transfer = transfer > 0? transfer:0;
-										
-										cost = cost + Math.ceil(transfer/time_interval)*server_cost.get(tmp);
-									}
-									*/
-									double transfernewBilling;
-									transfernewBilling = pre_cost_time.get(selctedvm).get(5)-pre_cost_time.get(selctedvm).get(1);
-									transfernewBilling = transfernewBilling > 0? transfernewBilling:0;
-									double cost = Math.ceil((taskExecTime.get(tmp) + VMADelay)/time_interval)*server_cost.get(tmp) + pre_cost_time.get(selctedvm).get(0) + Math.ceil(transfernewBilling/time_interval)*server_cost.get(tmp);
-									
-									cost_time.set(0, cost);
-									cost_time.set(1,Math.ceil((taskExecTime.get(tmp)+ VMADelay)/time_interval)*time_interval - taskExecTime.get(tmp));
-									cost_time.set(2, pretime.doubleValue());
-									cost_time.set(3, keyvalue-taskExecTime.get(tmp));
-									cost_time.set(4, keyvalue);
-									cost_time.set(5, maxedge);
-									
-									if(i==path.size()-1){
-										if(cost_time.get(5)-cost_time.get(1)>0){
-											double totalcost = cost_time.get(0);
-											totalcost += Math.ceil((cost_time.get(5)-cost_time.get(1))/time_interval)*server_cost.get(tmp);
-											cost_time.set(0,  totalcost);
-										}
-											
-									}
-									if(cost_type.containsKey(keyvalue)){
-										assign = cost_type.get(keyvalue);
-										assign.put(tmp, cost_time );
-									}else{
-										assign.put(tmp, cost_time );
-										cost_type.put(keyvalue, assign);
-									}	
-									
-								}
-							}	
-							
-						}
-					}
-				}
-				cost_types.add(cost_type);	
-				//cost_type.clear();
-				
-			}
-			
-		}
-		
-		return cost_types;
-		}
-		
-		
-		 //cost_types;
-	
-	
 	
 
 	public GlobalSchedule plan() {
-		nodeParents = this.getNodeParents(w);
+		edgeProcessing(w);
+		getTaskExecutionTime(w);
 		Map<Integer, Double> prorityvalue =	getProirityValue();
 		Map<Integer, Double> sorted_map = sortPriorityValues(prorityvalue);
 		buildTaskTime(sorted_map);	
 		ArrayList<List<Integer>> pcps = findPCPs(sorted_map);
 		System.out.println(pcps);
-		
-		List<Double> cost = pathsAssignment(pcps);
-		
-		
-		System.out.println(VMS);
-		System.out.println(tasksList);
-		System.out.println(actualAssignment);
-		System.out.println("The cost for each path is"+ cost);
-		
-		GlobalSchedule gsch = new GlobalSchedule();
-		for(String str: taskAssignedVM.keySet()){
-			LinkedHashMap<Integer, List<Integer>> tmp = taskAssignedVM.get(str);
-			for(Integer index : tmp.keySet()){
-				List<Integer> ls = tmp.get(index);
-				LocalSchedule lsch = new LocalSchedule();
-				lsch.setVmType(str);
-				for(int i = 0; i < ls.size(); i++){
-					TaskSchedule tsch = w.getTaskSchedule(w.getTask(ls.get(i)-1));
-					lsch.addTaskSchedule(tsch);
-				}
-				gsch.addLocalSchedule(lsch);
-			}
-		}
+		pathsAssignment(pcps);
+		print();
+		GlobalSchedule gsch = new GlobalSchedule(w);
+ 		for(VM vm : sch.VMpool){
+ 			LocalSchedule lsch = new LocalSchedule();
+ 			lsch.setVmType(vm.vmType);
+ 			for(int i = 0; i<vm.runTask.size(); i++){
+ 				TaskSchedule tsch = w.getTaskSchedule(w.getTask(vm.runTask.get(i)-1));
+ 				lsch.addTaskSchedule(tsch);
+ 			}
+ 			gsch.addLocalSchedule(lsch);
+ 		}
 		return gsch;
 	}
-	public Map<Integer, List<Integer>> getNodeParents(Workflow w) {
+	
+	public void getTaskExecutionTime(Workflow w){
+		for(int i = 1; i<= w.getNumOfTasks(); i++){
+			Task t = w.getTask(i-1);
+			Map<String, Double> exectime = execTimeTemp.get(t.taskName);
+			execTime.put(i, exectime);
+		}
+		Map<String, Double> entryExecTime = new HashMap<String, Double>();
+		for(String tmp: VMTypes){
+			entryExecTime.put(tmp, 0.0);
+		}
+		execTime.put(0, entryExecTime);
+		execTime.put(-1, entryExecTime);
+	}
+	/**
+	 * This method fills in the edgeMap based on the workflow structure and edgeMapTemp objects together.
+	 * The nodeParents is filled in with the workflow structure only.
+	 * @param w
+	 */
+	private void edgeProcessing(Workflow w) {		
 		for (WorkflowEdge e : w.getEdges()) {
 			if (e.srcTask == null) {
+				if (edgeMap.containsKey(0)) {
+					Map<Integer, Double> tmp = edgeMap.get(0);
+					tmp.put(w.getIndexOfTask(e.destTask) + 1, 0.0);
+				}else{
+					Map<Integer, Double> tmp = new HashMap<Integer, Double>();
+					tmp.put(w.getIndexOfTask(e.destTask) + 1, 0.0);
+					edgeMap.put(0, tmp);
+				}
 				if (nodeParents.containsKey(w.getIndexOfTask(e.destTask) + 1)) {
 					nodeParents.get(w.getIndexOfTask(e.destTask) + 1).add(0);
 				} else {
@@ -842,8 +830,11 @@ public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 					tmp.add(0);
 					nodeParents.put(w.getIndexOfTask(e.destTask) + 1, tmp);
 				}
-			} 
-			else if (e.destTask == null) {
+			} else if (e.destTask == null) {
+				Map<Integer, Double> edge = new HashMap<Integer, Double>();
+				edge.put(-1, 0.0);
+				edgeMap.put(w.getIndexOfTask(e.srcTask) + 1, edge);
+				
 				if (nodeParents.containsKey(-1)) {
 					nodeParents.get(-1).add(w.getIndexOfTask(e.srcTask) + 1);
 				} else {
@@ -852,8 +843,22 @@ public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 					nodeParents.put(-1, tmp);
 				}
 			} else {
+				String source = e.srcTask.taskName;
+				String to= e.destTask.taskName;
+				double transfertime = edgeMapTemp.get(source).get(to);
+				if(!edgeMap.containsKey(w.getIndexOfTask(e.srcTask) + 1)){
+					Map<Integer, Double> tmp = new HashMap<Integer, Double>();
+					tmp.put(w.getIndexOfTask(e.destTask) + 1, transfertime);
+					edgeMap.put(w.getIndexOfTask(e.srcTask)+1, tmp);
+				}else{
+					Map<Integer, Double> tmp = edgeMap.get(w.getIndexOfTask(e.srcTask) + 1);
+					tmp.put(w.getIndexOfTask(e.destTask) + 1, transfertime);
+					
+				}
 				if (nodeParents.containsKey(w.getIndexOfTask(e.destTask) + 1)) {
-					nodeParents.get(w.getIndexOfTask(e.destTask) + 1).add(w.getIndexOfTask(e.srcTask) + 1);
+					if (!nodeParents.get(w.getIndexOfTask(e.destTask) + 1).contains(w.getIndexOfTask(e.srcTask) + 1)) {
+						nodeParents.get(w.getIndexOfTask(e.destTask) + 1).add(w.getIndexOfTask(e.srcTask) + 1);
+					}
 				} else {
 					List<Integer> tmp = new ArrayList<Integer>();
 					tmp.add(w.getIndexOfTask(e.srcTask) + 1);
@@ -861,7 +866,8 @@ public class WorkflowPlanner_LPOD extends WorkflowPlanner {
 				}
 			}
 		}
-		return nodeParents;
+		
 	}
+	
 
 }

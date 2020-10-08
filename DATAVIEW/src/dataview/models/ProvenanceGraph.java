@@ -29,10 +29,10 @@ public class ProvenanceGraph {
 	public ProvenanceGraph(String workflowName, String workflowRunID){
 		this.workflowName = workflowName;
 		this.workflowRunID = workflowRunID;
-		this.myEntities = new ArrayList<>();
-		this.myActivities = new ArrayList<>();
-		this.myAgents  = new ArrayList<>();
-		this.myEdges  = new ArrayList<>();
+		this.myEntities = new ArrayList<String>();
+		this.myActivities = new ArrayList<ProvenanceNode>();
+		this.myAgents  = new ArrayList<String>();
+		this.myEdges  = new ArrayList<ProvenanceEdge>();
 		this.provname = workflowName+"_"+workflowRunID+".prov";
 	}
 
@@ -126,10 +126,12 @@ public class ProvenanceGraph {
 		myEdges.add(new ProvenanceEdge("ActedOnBehalfOf", dest, src));
 	}
 	// workflow edge type:
-	public void addEdge_TransTime(String src, String dest, int inputPortIndex, Double transTime)
+	public void addEdge_TransTime(String src, String dest, int inputPortIndex, Double transTime, Double outputDatasize)
 	{
-		myEdges.add(new ProvenanceEdge("Transfer", src, dest, inputPortIndex, transTime));
+		myEdges.add(new ProvenanceEdge("Transfer", src, dest, inputPortIndex, transTime, outputDatasize));
 	}
+	
+	
 	
 	
 	
@@ -167,7 +169,7 @@ public class ProvenanceGraph {
 	{
 		String str = "";
 		for(ProvenanceNode n:myActivities){
-			str = str + n.activityname + " was executed within " + n.exetime +"\n";
+			str = str + n.activityname + " was executed within " + n.exetime + " on " + n.vmtype +"\n";
 		}
 		
 		for(ProvenanceEdge e: myEdges) {
@@ -176,7 +178,7 @@ public class ProvenanceGraph {
 			else if(e.edgeType.equals("WasGeneratedBy")) 
 				str = str + e.destNode+"."+e.outputPort+ " <=WasGeneratedBy " + e.srcNode + "\n";
 			else if(e.edgeType.equals("Transfer"))
-				str = str + e.destNode+ "."+e.outputPort + " <=WasTransferFrom " + e.srcNode + " within " + e.transTime+ "(S)"+  "\n";
+				str = str + e.destNode+ "."+ e.outputPort + " with the output data size " + e.outputdatasize + " MB "+ " <=WasTransferTo " + e.srcNode + " within " + e.transTime+ "(S)"+  "\n";
 			else				
 				str = str + e.destNode+ " <="+e.edgeType+ " " + e.srcNode + "\n";
 			

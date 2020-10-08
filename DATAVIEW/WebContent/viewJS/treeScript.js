@@ -3,9 +3,10 @@
  * treeview for both workflow and data product repository.
  * @author  Aravind Mohan, Andrey Kashlev.
 */
-var tvAppKey = "";
-var tvAppSecret = "";
+
 var tvAppToken = "";
+var DropboxIDs = []; 
+var workflowAndTaskIDs = [];
 
 function createTreeLeftAndRight(){
 	var userIDForTreeView = document.getElementById("usrId").value;
@@ -16,8 +17,7 @@ function createTreeLeftAndRight(){
 	treeLeft.setImagePath("./viewJS/dhtmlxTree/codebase/imgs/dhxtreeview_material/");
 	treeLeft.enableTreeImages(true);
 	treeLeft.enableDragAndDrop(false);
-	
-	
+	 
 	
 	treeRight = new dhtmlXTreeObject("treeboxbox_treeRight", "100%", "92%", 0);
 	treeRight.deleteChildItems(0);
@@ -41,8 +41,7 @@ var params = "action=getDropboxDetails&userId="+ userID;
 	
 	function responseHandler(argArray, jsonMetadataFromRepositoryAsString){
 		var jsonMetadataFromRepository = eval('(' + jsonMetadataFromRepositoryAsString + ')');
-		var tvAppToken = jsonMetadataFromRepository['token'];
-		//tvAppToken = tvAppToken + lsOfDropbox[0];
+		 	tvAppToken = jsonMetadataFromRepository['token'];
 		
 		if(tvAppToken.length == 0){
 			alert("Dropbox Token Should Be Filled to Show Tasks and Workflows");
@@ -50,38 +49,20 @@ var params = "action=getDropboxDetails&userId="+ userID;
 		
 		
 		else{
-			
-			treeLeft.setXMLAutoLoading("http://40.117.212.81/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
-					+ tvAppToken 
-					+ "&name=/dataview/tasks");
-			treeLeft.setDataMode("json");
-			
-			treeLeft.load("http://40.117.212.81/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
-					+ tvAppToken + "&name=/dataview/tasks","json");
-			
-			
-			treeLeft.setXMLAutoLoading("http://40.117.212.81/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
-					+ tvAppToken 
-					+ "&name=/dataview/workflows");
-			treeLeft.setDataMode("json");
-			
-			treeLeft.load("http://40.117.212.81/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
-					+ tvAppToken + "&name=/dataview/workflows","json");
-			
-			
-			treeRight.setXMLAutoLoading("http://40.117.212.81/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
-					+ tvAppToken + "&name=");
-			
-			treeRight.setDataMode("json");
-			treeRight.load("http://40.117.212.81/JavaBridge/dhtmltree/php/readDropbox.php?id=0&apptoken="
-					+ tvAppToken + "&name=","json");
-			treeRight.attachEvent("onXLS", function(id){
-				setTimeout(function() {
-					convertDropboxItemsToArray(getAllDropboxItemsFromTree('Dropbox'));
-				}, 3000);
-			});
-			
-			
+			treeRight.attachEvent("onClick",onRightNodeSelect);
+	    	var im1 = "folderOpen.gif"; 
+	        treeRight.insertNewChild(0,"dropbox","Dropbox",0,im1,0,0,"CHILD");
+	    	
+	    	
+
+	    	treeLeft.attachEvent("onClick",onLeftNodeSelect);
+	    	
+	        treeLeft.insertNewChild(0,"/dataview/tasks","Tasks",0,im1,0,0,"CHILD");
+	    	
+	    	
+	        treeLeft.attachEvent("onClick",onLeftNodeSelect);
+	        treeLeft.insertNewChild(0,"/dataview/workflows","Workflows",0,im1,0,0,"CHILD");
+	    	
 			
 		}		
 	}
@@ -92,7 +73,109 @@ var params = "action=getDropboxDetails&userId="+ userID;
 	
 }
 
+function onRightNodeSelect(id){
+	var im0 = "icon_file.gif"; // the icon for a leaf node
+	var im1 = "folderOpen.gif"; // the icon for an expanded parent node
+	var im2 = "folderClosed.gif"; // the icon for a collapsed parent node
+	var selectid = treeRight.getSelectedItemId();
+	if (DropboxIDs.includes(selectid)){
+		return;
+	}else{
+		DropboxIDs.push(selectid);
+	}
+	console.log("SELECTID:"+ selectid);
+	$(function(){  
+	    $.ajax({  
+	        async : false,  
+	        cache:false,  
+	        type: 'POST', 
+	        data:{
+	        	index:selectid,
+	        	dropboxToken:tvAppToken,
+	        	action:"createTree"
+	        },
+	        dataType : "json",  
+	        url: "./Mediator?",//The action path of the request  
+	        error: function () {//Request Failure Handler  
+	             alert(error);
+	             console.log(error);	 
+	        },  
+	        success:function(data){ //Successful post-processing functions are requested.     
+	          	if (data == null){
+	          		return;
+	          	}  //Assign treeNodes a simple Json format encapsulated in the background 
+	            for (var index in data ){
+	            	var obj = data[index];
+	            	if (obj.isParent == "true"){
+	            		treeRight.insertNewChild(obj.pId,obj.id,"<span id=\"" + obj.id +  "\"> "
+	            				+ obj.text + " </span>",0,im2,0,0,"CHILD");
+	            	}else{
+	            		treeRight.insertNewItem(obj.pId,obj.id,"<span id=\"" + obj.id +  "\"> "
+	            				+ obj.text + " </span>");
+	            	}
+	            } 
+	            var result = getAllDropboxItemsFromTree(0);
+	      
+	           convertDropboxItemsToArray(getAllDropboxItemsFromTree("dropbox"));
+	        }  
+	    });  
+	  
+	});  
+}	
 
+
+function onLeftNodeSelect(id){
+	var im0 = "icon_file.gif"; // the icon for a leaf node
+	var im1 = "folderOpen.gif"; // the icon for an expanded parent node
+	var im2 = "folderClosed.gif"; // the icon for a collapsed parent node
+	var selectid = treeLeft.getSelectedItemId();
+	if (workflowAndTaskIDs.includes(selectid)){
+		return;
+	}else{
+		workflowAndTaskIDs.push(selectid);
+	}
+	console.log("dropboxToken: "+ tvAppToken);
+	
+	$(function(){  
+	    $.ajax({  
+	        async : false,  
+	        cache:false,  
+	        type: 'POST', 
+	        data:{
+	        	index:selectid,
+	        	dropboxToken:tvAppToken,
+	        	action:"createTree"
+	        },
+	        dataType : "json",  
+	        url: "./Mediator?",//The action path of the request  
+	        error: function () {//Request Failure Handler  
+	             alert(error);
+	        	 
+	        },  
+	        success:function(data){ //Successful post-processing functions are requested.     
+	          	if (data == null){
+	          		return;
+	          	}  //Assign treeNodes a simple Json format encapsulated in the background 
+	            for (var index in data ){
+	            	var obj = data[index];
+	            	if (obj.isParent == "true"){
+	            		treeLeft.insertNewChild(obj.pId,obj.id,"<span id=\"" + obj.id +  "\"> "
+	            				+ obj.text + " </span>",0,im2,0,0,"CHILD");
+	            	}else{
+	            		treeLeft.insertNewItem(obj.pId,obj.id,"<span id=\"" + obj.id +  "\"> "
+	            				+ obj.text + " </span>");
+	            	}
+	            }
+	            if (id == '/dataview/tasks'){
+	            	setTimeout(function() {convertTaskItemsToArray(getAllTasksItemsFromTree('/dataview/tasks'))},1000);
+	            }else{
+	            	setTimeout(function() {
+					   convertWorkflowsItemsToArray(getAllWorkflowItemsFromTree('/dataview/workflows'))},1000);
+	            }   
+	        }
+	    });  
+	});  
+}	
 
 
 

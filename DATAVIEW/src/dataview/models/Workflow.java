@@ -41,9 +41,9 @@ public class Workflow {
 		//System.out.println("000000000000000000");
 		this.workflowName = workflowName;
 		this.workflowDescription = workflowDescription;
-		myTasks = new ArrayList<>();
-		myEdges = new ArrayList<>();
-		myStages = new ArrayList<>();
+		myTasks = new ArrayList<Task>();
+		myEdges = new ArrayList<WorkflowEdge>();
+		myStages = new ArrayList<Stage>();
 	}
 	
 	public int getNumOfNodes()
@@ -166,60 +166,44 @@ public class Workflow {
 	}
     
     /* add a single task */
-    public Task addTask(String taskTypeName, String location)
-    {
+    public Task addTask(String taskTypeName, String location){
     	Task  newtask = null;
-    	
     	System.out.println("Attemp to add one task of type "+taskTypeName);
 		if(new File(location + taskTypeName + ".jar").exists()){
 			location = location + taskTypeName + ".jar";
 		}
-    	
-    	File clazzPath = new File(location);
-    	//File clazzPath = new File("/Users/changxinbai/Documents/DATAVIEW/Interface/WebContent/WEB-INF/systemFiles/DATAVIEW/Tasks");
-    	//File clazzPath = new File("/Users/changxinbai/Documents/DATAVIEW/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/Interface/WEB-INF/systemFiles/DATAVIEW/Tasks");
-		//File clazzPath = new File("/Users/changxinbai/Documents/DATAVIEW/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/Interface/WEB-INF/systemFiles/baichangxin@gmail.com");
-    	Method method = null;
-		
+		File clazzPath = new File(location);
+    	URL url = null;
 		try {
-			method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-			boolean accessible = method.isAccessible();
-			if(accessible == false){
-				method.setAccessible(true);
-			}
-			
-			 URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-			 try {
-				method.invoke(classLoader, clazzPath.toURI().toURL());
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			 
-		} catch (NoSuchMethodException | SecurityException |  IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally {
-			method.setAccessible(false);
-		}
-	 	
-    	
-    	Class<?> taskclass;
-		try {
-			taskclass = Class.forName(taskTypeName);
-			newtask =  (Task) taskclass.newInstance();
-				
+			url = clazzPath.toURI().toURL();
+			URL[] urls = new URL[] {url};
+			Thread.currentThread().setContextClassLoader(new URLClassLoader(urls,Thread.currentThread().getContextClassLoader()));
+			ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+			Class<URLClassLoader> classLoaderClass = URLClassLoader.class;
+			Method method = classLoaderClass.getDeclaredMethod("addURL", new Class[] { URL.class });
+			method.setAccessible(true);
+			method.invoke(currentClassLoader, urls);
+			Class<?> taskclass = Class.forName(taskTypeName);
+			newtask = (Task) taskclass.getDeclaredConstructor().newInstance();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Dataview.debugger.logException(e);
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
+		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			Dataview.debugger.logException(e);
 		} catch (IllegalAccessException e) {
-			System.out.println("Exception, possible reason: the constructor of class "+ taskTypeName+" is not public.");
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Dataview.debugger.logException(e);
+		}catch (InstantiationException e) {
+			e.printStackTrace();
+			Dataview.debugger.logException(e);
+		}catch (InvocationTargetException e) {
+			e.printStackTrace();
+			Dataview.debugger.logException(e);
+		}catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			Dataview.debugger.logException(e);
+		}catch (SecurityException e) {
 			e.printStackTrace();
 			Dataview.debugger.logException(e);
 		}
@@ -458,10 +442,10 @@ public class Workflow {
 		return tsch;		
 	}	
 	
-	public Map<Integer, Map<String, Double >> getExecutionTime(){
+	public Map<String, Map<String, Double >> getExecutionTime(){
 			return null;
 		}
-	public Map<Integer, Map<Integer, Double>> getTransferTime(){
+	public Map<String, Map<String, Double>> getTransferTime(){
 		return null;
 	}
 }

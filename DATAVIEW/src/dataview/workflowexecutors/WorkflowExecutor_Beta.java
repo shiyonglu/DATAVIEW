@@ -53,7 +53,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 	
 	
 	// The key is the taskRunID, the value is the list of its child TaskRuns.
-	public ConcurrentHashMap<String, ConcurrentLinkedQueue<TaskRun>> relationMap = new ConcurrentHashMap<>();
+	public ConcurrentHashMap<String, ConcurrentLinkedQueue<TaskRun>> relationMap = new ConcurrentHashMap<String, ConcurrentLinkedQueue<TaskRun>>();
 	public  int taskNum = 0; 
 	public  long starTime;
 	public String dropboxToken="";         
@@ -76,7 +76,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		taskNum = gsch.getNumberOfTasks();
 		this.workflowTaskDir = workflowTaskDir;
 		this.workflowLibdir =  workflowLibDir;
-		VMProvisioner.parametersetting(workflowLibDir);
+		VMProvisionerAWS.parametersetting(workflowLibDir);
 		init();
 		this.w = gsch.getWorkflow();
 		System.out.println("the total number of tasks are "+ taskNum);
@@ -99,7 +99,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		this.w = gsch.getWorkflow();
 		this.workflowTaskDir = workflowTaskDir;
 		this.workflowLibdir = workflowLibDir;
-		VMProvisioner.initializeProvisioner(accessKey, secretKey,"dataview1","Dataview_key","ami-064ab7adf0e30b152");
+		VMProvisionerAWS.initializeProvisioner(accessKey, secretKey,"dataview1","Dataview_key","ami-064ab7adf0e30b152");
 		this.dropboxToken = dropboxToken;
 		init();
 	}
@@ -117,7 +117,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		this.workflowTaskDir = obj.get("LocalStorage").toJSONObject().get("workflowTaskDir").toString().replace("\"", "");
 		this.workflowLibdir = obj.get("LocalStorage").toJSONObject().get("workflowLibdir").toString().replace("\"", "");
 //		VMProvisioner.parametersetting(workflowLibdir);
-		VMProvisioner.parametersetting(obj.get("EC2").toJSONObject());
+		VMProvisionerAWS.parametersetting(obj.get("EC2").toJSONObject());
 		init();
 		this.w = gsch.getWorkflow();
 		
@@ -147,7 +147,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		Dataview.debugger.logObjectValue("VMnumbers", VMnumbers);
 		
 		ArrayList<String> ips = new ArrayList<String>();
-		VMProvisioner m = new VMProvisioner();	
+		VMProvisionerAWS m = new VMProvisionerAWS();	
 		for(String str : VMnumbers.keySet()){
 			m.provisionVMs(str,VMnumbers.get(str), workflowLibdir);
 			
@@ -164,7 +164,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		
 		
 		// get the pem file generated from the VM provisioning process. 
-		String pemFileLocation = workflowLibdir + VMProvisioner.keyName + ".pem";
+		String pemFileLocation = workflowLibdir + VMProvisionerAWS.keyName + ".pem";
 		
 		// configure each VM instance with confidential information instead of using pem 
 		// Use SSH to send the pem file to each VM instance
@@ -242,7 +242,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 					ConcurrentLinkedQueue<TaskRun> runChildren = relationMap
 							.get(parentInstanceID);
 					if (runChildren == null) {
-						runChildren = new ConcurrentLinkedQueue<>();
+						runChildren = new ConcurrentLinkedQueue<TaskRun>();
 						relationMap.put(parentInstanceID, runChildren);
 					}
 					runChildren.add(taskRunner);

@@ -1,11 +1,18 @@
-import java.util.Random;
+import java.io.BufferedReader;
+import java.io.File;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import dataview.models.DATAVIEW_BigFile;
 import dataview.models.Dataview;
 import dataview.models.InputPort;
 import dataview.models.OutputPort;
 import dataview.models.Port;
 import dataview.models.Task;
-
 
 /*The number of mProjectPP jobs (which re-project the input image) is equal to the number of input FITS images processed. 
  * Two inputs and two outputs are included in the task. 
@@ -15,70 +22,121 @@ import dataview.models.Task;
  * @output: FITS format file and FITS area 
  */
 
-public class mProjectPP extends Task{
-	public mProjectPP(){
-		super("mProjectPP","re-project the input image");
+public class mProjectPP extends Task {
+	public mProjectPP() {
+		super("mProjectPP", "re-project the input image");
 		ins = new InputPort[1];
 		outs = new OutputPort[1];
-		ins[0] = new InputPort("in0", Port.DATAVIEW_String, "region.hdr and the FITS format file");
+		ins[0] = new InputPort("in0", Port.DATAVIEW_BigFile, "region.hdr and the FITS format file");
 		outs[0] = new OutputPort("out1", Port.DATAVIEW_String, "FITS format file and the FITS area ");
 	}
-	
+
 	@Override
 	public void run() {
-		Random rand = new Random(1000);
-		int totalNumber = 50000;
-		/*
-		int arr[] = new int[totalNumber];
-		int arr1[] = new int[totalNumber];
-		for (int i = 0; i < totalNumber; i++) {
-			arr[i] = rand.nextInt(Integer.MAX_VALUE) + 1;
-			arr1[i] = rand.nextInt(Integer.MAX_VALUE) + 1;
+		DATAVIEW_BigFile input = (DATAVIEW_BigFile) ins[0].read();
+		File input0 = input.getFile();
+		long countOfLines = 0;
+		try {
+			FileReader fr = new FileReader(input0);
+			LineNumberReader lnr = new LineNumberReader(fr);
+			while (lnr.readLine() != null) {
+				countOfLines++;
+			}
+			lnr.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
-		int arr2[] = new int[totalNumber];
-		for(int i = 0; i < totalNumber; i++){
-			arr2[i] = arr[i] + arr1[i]; 
+		int availableThreads = (Runtime.getRuntime().availableProcessors());
+		long partLines = countOfLines / availableThreads;
+		List<Thread> threadList = new ArrayList<Thread>();
+		for (int i = 0; i < availableThreads; i++) {
+			threadList.add(new Thread(new MyRunnable(partLines, input0)));
+
 		}
-		*/
-		int arr1[] = new int[totalNumber];
-		for (int i = 0; i < totalNumber; i++) {
-			arr1[i] = rand.nextInt(Integer.MAX_VALUE) + 1;
+		for (int i = 0; i < availableThreads; i++) {
+			threadList.get(i).start();
 		}
-		int temp1;
-		for (int i = 0; i < totalNumber; i++) {
-			for (int j = 0; j < totalNumber; j++) {
-				if (arr1[i] > arr1[j]) {
-					temp1 = arr1[i];
-					arr1[i] = arr1[j];
-					arr1[j] = temp1;
-				}
+		for (int i = 0; i < availableThreads; i++) {
+			try {
+				threadList.get(i).join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
-		
-		int arr[] = new int[totalNumber];
-		for (int i = 0; i < totalNumber; i++) {
-			arr[i] = rand.nextInt(Integer.MAX_VALUE) + 1;
-		}
-		int temp;
-		for (int i = 0; i < totalNumber; i++) {
-			for (int j = 0; j < totalNumber; j++) {
-				if (arr[i] > arr[j]) {
-					temp = arr[i];
-					arr[i] = arr[j];
-					arr[j] = temp;
+
+		StringBuilder output = new StringBuilder();
+		try {
+			BufferedReader obuffer = new BufferedReader(new FileReader(input0));
+			int ncount = 0;
+			String line = obuffer.readLine();
+			while (line != null) {
+				ncount++;
+
+				for (int i = 0; i < 2; i++) {
+					output.append(line);
+					output.append("\n");
 				}
+
+				if (ncount > countOfLines / 4) {
+					break;
+				}
+
 			}
+			obuffer.close();
+		} catch (IOException e) {
 		}
-		
-		//outs[0].write(toString(arr));
+		outs[0].write(output.toString());
 	}
-	private static String toString(int[] array) {
-	      StringBuilder sb = new StringBuilder();
-	      for (int i = 0; i < array.length; i++) {
-	         sb.append(array[i]);
-	         sb.append(" ");
-	      }
-	      return sb.toString();
-	   }
+
+	public static class MyRunnable implements Runnable {
+		long partLines;
+		File inputFile;
+
+		public MyRunnable(long partLines, File inputFile) {
+			this.partLines = partLines;
+			this.inputFile = inputFile;
+		}
+
+		@Override
+		public void run() {
+			try {
+				BufferedReader obuffer = new BufferedReader(new FileReader(inputFile));
+				int ncount = 0;
+				String line = obuffer.readLine();
+				while (line != null) {
+					ncount++;
+					calculate(line);
+					if (ncount > partLines)
+						break;
+				}
+				obuffer.close();
+			} catch (IOException e) {
+			}
+		}
+
+		private void calculate(String line) {
+			String[] parts = line.split(",");
+			for (int i = 0; i < parts.length; i++) {
+				int element = Integer.parseInt(parts[i]);
+				isPrime(element);
+			}
+		}
+
+		private static boolean isPrime(Integer num) {
+			int i, m = 0;
+			m = num / 2;
+			if (num == 0 || num == 1) {
+				return true;
+			} else {
+				for (i = 2; i <= m; i++) {
+					if (num % i == 0) {
+						return true;
+					}
+				}
+				return false;
+			}
+		}
+
+	}
+
 }

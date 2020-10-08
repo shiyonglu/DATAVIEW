@@ -20,6 +20,7 @@ public class ProvenanceEdge {
 	public String inputPort;
 	public String outputPort;
 	public double transTime;
+	public double outputdatasize;
 	
 	public ProvenanceEdge(String edgeType,  String destNode,  String srcNode)
 	{
@@ -51,12 +52,13 @@ public class ProvenanceEdge {
 		}		
 	}
 	// transfer means data movement time
-	public ProvenanceEdge(String edgeType,  String destNode, String srcNode,  int portIndex, Double transTime)
+	public ProvenanceEdge(String edgeType,  String destNode, String srcNode,  int portIndex, Double transTime, Double outputDatasize)
 	{
 		this.edgeType = edgeType;
 		this.destNode = destNode;
 		this.srcNode = srcNode;
 		this.transTime = transTime;
+		this.outputdatasize = outputDatasize;
 		
 		if(edgeType.equals("Used")){
 			this.inputPort = "ins["+ portIndex+"]";
@@ -70,6 +72,7 @@ public class ProvenanceEdge {
 			this.outputPort = "outs["+ portIndex+"]";
 			this.inputPort = null;	
 			this.transTime = transTime;
+			this.outputdatasize = outputDatasize;
 		}
 		
 		

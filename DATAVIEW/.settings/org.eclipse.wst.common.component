@@ -3,6 +3,7 @@
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <wb-resource deploy-path="/WEB-INF/classes/" source-path="/ImportedClasses"/>
+        <wb-resource deploy-path="/" source-path="/WebContent/WEB-INF/lib"/>
         <property name="context-root" value="DATAVIEW"/>
         <property name="java-output-path" value="/DATAVIEW/build/classes"/>
     </wb-module>

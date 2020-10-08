@@ -2,6 +2,14 @@ package dataview.models;
 import java.io.*;
 import java.util.*;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+
 /** 
  * This class supports the date type of DATAVIEW_BigFile.
  * 
@@ -59,7 +67,7 @@ public class DATAVIEW_BigFile {
 	 */
 	public DATAVIEW_MathMatrix getMathMatrix()
 	{
-		List<String> lines  = new ArrayList<>(); 
+		List<String> lines  = new ArrayList<String>(); 
 		String st = null;
 		BufferedReader br;
 		try {	
@@ -227,32 +235,92 @@ public class DATAVIEW_BigFile {
 	 */
 	DATAVIEW_Table getTable()
 	{
+		
 		BufferedReader br = null;
 		DATAVIEW_Table tb = null;
 		String st = null;
-		
+		int headerLength = 0;
 		try {
+		if(filename.endsWith(".xls") || filename.endsWith(".xlsx") || filename.endsWith(".xlsm"))
+			tb = getTableExcel();
+		else {
 			br = new BufferedReader(new FileReader(file));
 			st = br.readLine();
 			if(st == null ) {br.close(); return null;}
 			
-			String [] row = st.split(":");
-			tb = new DATAVIEW_Table(row.length);
-			tb.appendRow(row); // append the first row
-			
-			
+			// append the header
+			String [] row = st.split(",");
+			tb = new DATAVIEW_Table(row);
+			headerLength = row.length;
 			while((st = br.readLine()) != null) {
-				row  = st.split(":");
-				tb.appendRow(row); // append more rows
+				row  = st.split(",");
+				if(row.length != headerLength)
+					{br.close(); return null;}
+				tb.appendRow(Arrays.asList(row)); // append rows
 			
-			} 
+			}
+			
 			br.close();
+		}
 		}
 		catch (IOException e) {
 				e.printStackTrace();
 				Dataview.debugger.logException(e);
 		}
+		catch(IllegalArgumentException e) 
+		{
+			e.printStackTrace();
+			Dataview.debugger.logException(e);
+		}
 				
+		return tb;
+	}
+	/**
+	 * Returns a DATAVIEW_Table object. 
+	 * Gets the table from an excel file. 
+	 * @return a reference to an DATAVIEW_Table object
+	 * @throws IOException
+	 */
+	DATAVIEW_Table getTableExcel() throws IOException 
+	{
+		Workbook workbook = WorkbookFactory.create(file);
+		Sheet sheet = workbook.getSheetAt(0);
+		DataFormatter dataFormatter = new DataFormatter();
+		Iterator<Row> rowIterator = sheet.rowIterator();
+		Row firstRow = rowIterator.next();
+		Iterator<Cell> cellIterator = firstRow.cellIterator();
+		int size = 0;
+		Cell cell;
+		while(cellIterator.hasNext()) 
+		{
+			cell = cellIterator.next();
+			size++;
+		}
+		cellIterator = firstRow.cellIterator();
+		String[] header = new String[size];
+		for(int i = 0; i < header.length;i++) 
+		{
+			cell = cellIterator.next();
+			header[i] = dataFormatter.formatCellValue(cell);  
+		}
+		DATAVIEW_Table tb = new DATAVIEW_Table(header);
+		while (rowIterator.hasNext()) 
+		{
+            Row row = rowIterator.next();
+            cellIterator = row.cellIterator();
+            cell = row.getCell(0);
+            //TODO: hasNext doesn't work  in libreOffice so this was added. Test if needed in traditional excel or find more elegant solution.
+            if(cell == null || cell.getCellType() == CellType.BLANK)
+            	break;
+            String[] list = new String[size];
+            for(int i = 0; i < size; i++) 
+            {
+            	cell = cellIterator.next();
+                list[i] = dataFormatter.formatCellValue(cell);
+            }
+            tb.appendRow(Arrays.asList(list));
+        }
+		workbook.close();
 		return tb;
 	}
 	

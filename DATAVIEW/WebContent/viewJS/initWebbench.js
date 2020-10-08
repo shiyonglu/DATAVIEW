@@ -19,24 +19,45 @@ function createTreeInTheSidebar() {
 	treeDivRight.setAttribute("style", styleOfTreeRight);
 	sidebarRight.appendChild(treeDivRight);
 	 
+	
+	
 	createTreeLeftAndRight();
+
 	addStubToTree(("outputDP"+ numberOfOutputDataProducts),"Output Stub");
 	makeOutputStubDraggable();
 	
-	
-	
-	
-	
-	setTimeout(function() {
-		//addWorkflowsAndDataProducts();
-		
-		convertDropboxItemsToArray(getAllDropboxItemsFromTree('Dropbox'));
-		convertTaskItemsToArray(getAllTasksItemsFromTree('Tasks'));
-		convertWorkflowsItemsToArray(getAllWorkflowItemsFromTree('Workflows'))
-	}, 10000);
-	
 	createMenu();
 };
+
+
+function convertDropboxItemsToArray(items){
+	
+	var itemsarray = items.split(",");
+	var jsonString = "{\"Dropbox\":[";
+	for (temp in itemsarray ) {
+		//alert(itemsarray[temp]);
+		jsonString += "{\"dataType\":\"Dropbox\",\"dataDescription\":\"" 
+	    	+ itemsarray[temp] + "\",\"dataName\":\""
+	    	+ itemsarray[temp] + "\"},";
+	}
+	jsonString = jsonString.replace(/,\s*$/, "");
+	jsonString += "]}";
+	
+	console.log(jsonString);
+	var jsonMetadataForDropboxItems = eval('('
+			+ jsonString + ')');
+	var dropboxMetadata = jsonMetadataForDropboxItems['Dropbox'];
+	
+	for ( var i= 0; i < getAllKeysFromJSONMap(dropboxMetadata).length; i++) {
+		makeDropboxDraggable(dropboxMetadata[i]);
+		
+	}
+		
+		
+}
+
+
+
 
 function convertWorkflowsItemsToArray(items){
 	var itemsarray = items.split(",");
@@ -74,7 +95,6 @@ function convertWorkflowsItemsToArray(items){
 function convertTaskItemsToArray(items){
 	//console.log(items);
 	var itemsarray = items.split(",");
-	
 	var jsonString = "{\"Tasks\":[";
 	for (temp in itemsarray ) {
 		//alert(itemsarray[temp]);
@@ -105,34 +125,6 @@ function convertTaskItemsToArray(items){
 
 
 
-
-function convertDropboxItemsToArray(items){
-	if(Object.keys(items).length==0){
-		alert("Please Enable the CORS Plugin in the Browser");
-	}
-	var itemsarray = items.split(",");
-	var jsonString = "{\"Dropbox\":[";
-	for (temp in itemsarray ) {
-		//alert(itemsarray[temp]);
-		jsonString += "{\"dataType\":\"Dropbox\",\"dataDescription\":\"" 
-	    	+ itemsarray[temp] + "\",\"dataName\":\""
-	    	+ itemsarray[temp] + "\"},";
-	}
-	jsonString = jsonString.replace(/,\s*$/, "");
-	jsonString += "]}";
-	
-	//console.log(jsonString);
-	var jsonMetadataForDropboxItems = eval('('
-			+ jsonString + ')');
-	var dropboxMetadata = jsonMetadataForDropboxItems['Dropbox'];
-	
-	for ( var i= 0; i < getAllKeysFromJSONMap(dropboxMetadata).length; i++) {
-		makeDropboxDraggable(dropboxMetadata[i]);
-		
-	}
-		
-		
-}
 
 
 

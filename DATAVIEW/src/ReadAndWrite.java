@@ -54,7 +54,7 @@ public class ReadAndWrite {
 				 String[] informationItem = information.split(",");
 				 if(informationItem[1].equals(userId)){
 					 	token = encrypt.encrypt(token);
-					 	if(informationItem.length < index){
+					 	if(informationItem.length <= index){
 					 		String tmp = information + token + ",";
 							inputBuffer.append(tmp);
 					 	}else{

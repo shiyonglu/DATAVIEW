@@ -50,10 +50,10 @@ public class WorkflowPlanner {
 			if(e.srcTask != null && e.destTask != null) { // add an edge in the adjacency list
 				
 				int i = w.getIndexOfTask(e.srcTask);
-				//System.out.print("====== " + e.srcTask.toString() + " " + i);
+				System.out.print("====== " + e.srcTask.toString() + " " + i);
 				
 				int j = w.getIndexOfTask(e.destTask);
-				//System.out.println("   " + e.destTask.toString() + " " + j);
+				System.out.println("   " + e.destTask.toString() + " " + j);
 				alist[i].add(j);
 			}
 		}		

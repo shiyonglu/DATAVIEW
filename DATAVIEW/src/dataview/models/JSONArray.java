@@ -35,7 +35,7 @@ public class JSONArray
 	 
 		@Override
 		public String toString() {
-			System.out.println("Get an array:\n"+toString(0));
+			//System.out.println("Get an array:\n"+toString(0));
 			return toString(0);
 		}
 		

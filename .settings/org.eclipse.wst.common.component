@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="DATAVIEW">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/DATAVIEW/src"/>
+        <property name="context-root" value="DATAVIEW"/>
+        <property name="java-output-path" value="/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir"/>
+    </wb-module>
+</project-modules>

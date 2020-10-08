@@ -112,7 +112,7 @@ public class JSONParser {
 			
 		    if(!eat('}')){
 		    	Dataview.debugger.logErrorMessage("A JSONObject should end with a }.");
-		    	return null;
+		    	//return null;
 		    }
 
 			//System.out.println("Got a jason object:\n" + obj);

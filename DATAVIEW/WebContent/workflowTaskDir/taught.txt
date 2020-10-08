@@ -1,0 +1,10 @@
+crscode,semester,ssn
+0,summer2016,1
+2,summer2017,2
+5,summer2018,4
+3,summer2019,5
+4,winter2010,2
+5,winter2011,4
+4,winter2018,6
+7,summer2018,1
+10,winter2000,9
