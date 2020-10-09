@@ -10,11 +10,11 @@ DATAVIEW supports two programing interfaces to develop and run workflows:
 * The accessKey and secretKey should be updated in config.properties under /DATAVIEW/WebContent/workflowLibDir/
 * After finishing the workflow, please terminate all the EC2 instances from your AWS account manually.
 
-2. <b>Visual Programming</b>: DATAVIEW is deployed as a web site in Tomcat and a user can drag and drop tasks and link them into a workflow in a visual workflow design and execution environment called <b>Webbench</b>. 
+2. <b>Visual Programming</b>: DATAVIEW is deployed as a Web site in Tomcat and a user can drag and drop tasks and link them into a workflow in a visual workflow design and execution environment called <b>Webbench</b>. 
 
-* A dropbox accout is necessary to store all the input data and each tasks and the final output file when a workflow execution is finished. The user needs to create <b>Three</b> default folders 
-Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Dropbox/DATAVIEW/Workflows which stores the mxgraph file for the generated workflow; Dropbox/DATAVIEW-INPUT stores the input files for a workflow. 
-Four relational algebra tasks (jar files) and input files are already stored under DATAVIEW/WebContent/workflowTaskDir folder. 
+* A dropbox accout is necessary to store all the input data,  workflow tasks, the final output files produced by the workflow execution. The user needs to create <b>Three</b> default folders 
+Dropbox/DATAVIEW/Tasks,  which stores the task file (class file or jar file); Dropbox/DATAVIEW/Workflows, which stores the mxgraph file for the generated workflow; Dropbox/DATAVIEW-INPUT, which stores the input files for a workflow. 
+Four relational algebra tasks (jar files) and input files are already stored under the DATAVIEW/WebContent/workflowTaskDir folder. 
 * A local account needs to be registered to show a visualized workflow.
 * A dropbox token should be provided in the main interface when you login in, which can be generated based on this tutorial:https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/
 
