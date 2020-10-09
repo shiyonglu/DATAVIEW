@@ -12,7 +12,7 @@ DATAVIEW supports two programing interfaces to develop and run workflows:
 
 2. <b>Visual Programming</b>: DATAVIEW is deployed as a web site in Tomcat and a user can drag and drop tasks and link them into a workflow in a visual workflow design and execution environment called <b>Webbench</b>. 
 
-* A dropbox accout is necessary to store all the input data and each tasks and the final output file when a workflow execution is finished. The user needs to create some default folders 
+* A dropbox accout is necessary to store all the input data and each tasks and the final output file when a workflow execution is finished. The user needs to create <b>Three</b> default folders 
 Dropbox/DATAVIEW/Tasks which stores the task file (class file or jar file); Dropbox/DATAVIEW/Workflows which stores the mxgraph file for the generated workflow; Dropbox/DATAVIEW-INPUT stores the input files for a workflow. 
 * A local account needs to be registered to show a visualized workflow.
 * A dropbox token should be provided in the main interface when you login in, which can be generated based on this tutorial:https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/
