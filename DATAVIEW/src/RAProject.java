@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 import dataview.models.DATAVIEW_Table;
 import dataview.models.Dataview;
 import dataview.models.InputPort;
@@ -13,7 +15,7 @@ public class RAProject extends Task
 {
 	public RAProject() 
 	{
-		super("RAProjector Project", "This is the the relational algenbra operator projection. It has2 2 inputs and 1 output ");
+		super("RAProjector Project", "This is the the relational algenbra operator projection. It has 2 inputs and 1 output ");
 		ins = new InputPort[2];
 		outs = new OutputPort[1];
 		ins[0] = new InputPort("in0", Port.DATAVIEW_Table, "This is the table which we are using to get the projection");
@@ -29,6 +31,7 @@ public class RAProject extends Task
 		DATAVIEW_Table initalTable = (DATAVIEW_Table) ins[0].read();
 		String projector = (String) ins[1].read();
 		String[] projectors = projector.replace("\n", "").split(",");
+		System.out.println(Arrays.toString(projectors));
 		try 
 		{
 			initalTable.project(projectors);

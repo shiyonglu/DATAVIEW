@@ -12,7 +12,7 @@ public class RASelect extends Task
 {
 	public RASelect() 
 	{
-		super("RASelector", "This is the the relational algenbra operator selector. It has one input and 1 output ");
+		super("RASelector", "This is the the relational algenbra operator selector. It has two inputs and 1 output ");
 		ins = new InputPort[2];
 		outs = new OutputPort[1];
 		ins[0] = new InputPort("in0", Port.DATAVIEW_Table, "This is the table which we are selecting from");

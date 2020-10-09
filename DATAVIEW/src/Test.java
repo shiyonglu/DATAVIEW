@@ -28,8 +28,8 @@ public class Test {
 		//Montage_workflow w = new Montage_workflow();
 		//MR w = new MR();
 		
-		//RAWorkflow w = new RAWorkflow();
-		Dummy_Workflow w = new Dummy_Workflow();
+		RAWorkflow w = new RAWorkflow();
+		//Dummy_Workflow w = new Dummy_Workflow();
 		//DisKMeansWorkflow w = new DisKMeansWorkflow();
 		// di san ci 
 		//Diagnosis w = new Diagnosis();
@@ -41,8 +41,8 @@ public class Test {
 		frame.drawWorkflowGraph(w);
 	
 		// step 3: choose a workflow planner
-		int whichplanner = WorkflowPlanner.WorkflowPlanner_LPOD;
-		//int whichplanner =  WorkflowPlanner.WorkflowPlanner_Naive1;
+		//int whichplanner = WorkflowPlanner.WorkflowPlanner_LPOD;
+		int whichplanner =  WorkflowPlanner.WorkflowPlanner_Naive1;
 		
 		String configurefileLocation = System.getProperty("user.dir") + File.separator + "WebContent" +File.separator+"workflowLibDir"+ File.separator ;
 		
