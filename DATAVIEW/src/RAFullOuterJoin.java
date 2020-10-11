@@ -12,7 +12,7 @@ public class RAFullOuterJoin extends Task
 {
 	public RAFullOuterJoin() 
 	{
-		super("RAFullOuterJoin", "This is the the relational algenbra operator selector. It has one input and 1 output ");
+		super("RAFullOuterJoin", "This is the the relational algenbra operator selector. It has three inputs and 1 output ");
 		ins = new InputPort[3];
 		outs = new OutputPort[1];
 		ins[0] = new InputPort("in0", Port.DATAVIEW_Table, "This is the first table");

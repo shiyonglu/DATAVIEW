@@ -37,7 +37,7 @@ public class RADivision extends Task
 				if(dividendHeader[colPosDividend].contentEquals(divisorHeader[colPosDivisor])) 
 					nameFound = true;
 			}
-			if(!nameFound) 
+			if(!nameFound && newHeaderPos < newTableHeader.length) 
 			{
 				newTableHeader[newHeaderPos] = dividendHeader[colPosDividend];
 				newHeaderPos++;

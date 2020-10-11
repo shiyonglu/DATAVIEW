@@ -79,6 +79,7 @@ public class DATAVIEW_Table {
 	{
 		for(int i = 0; i < this.header.length; i++) 
 		{
+			
 			if (colName.contentEquals(this.header[i])) 
 				return i;
 		}
@@ -233,22 +234,12 @@ public class DATAVIEW_Table {
 	  * @throws IllegalArgumentException if the tables don't have the same number of columns. We do this instead of returning false so we can have a better error message
 	  */
 	public static boolean hasSameColumns(String[] table1Header,String[] table2Header) throws IllegalArgumentException 
-	{
+	{	
+		
+		
 		if(table1Header.length != table2Header.length)
 			throw new IllegalArgumentException("Tables must have the same number of columns");
-		boolean colFound = false;
-		for (int i = 0; i < table1Header.length; i++) 
-		{
-			colFound = false;
-			for(int j =0; j < table2Header.length; j++) 
-			{
-				if(table1Header[j].contentEquals(table2Header[i]))
-					colFound = true;
-			}
-			if(!colFound)
-				return false;
-		}
-		return true;
+		return  Arrays.asList(table1Header).containsAll(Arrays.asList(table2Header));
 	}
 	
 	/**
@@ -341,6 +332,7 @@ public class DATAVIEW_Table {
 		int i;
 		int colPos1;
 		//Get both headers to set the new header of the table.
+		
 		for(i = 0; i < table1Header.length; i++)
 			newHeader[i] = table1Header[i];
 		for(int j = 0; j < table2Header.length; j++)

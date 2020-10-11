@@ -24,8 +24,9 @@ public class RAWorkflow extends Workflow{
 //		wins[1] = new DATAVIEW_BigFile("tables/4Col.txt");
 //		wins[2] = new DATAVIEW_BigFile("conditionalJoin/case2.txt");
 //		wins[1] = new DATAVIEW_BigFile("tables/4Col2.txt");
-		wins[0] = new DATAVIEW_BigFile("prof.txt");
+		wins[0] = new DATAVIEW_BigFile("course.txt");
 		wins[1] = new DATAVIEW_BigFile("taught.txt");
+	//	wins[2] = new DATAVIEW_BigFile("conditionalJoinInput3.txt");
 		
 		//wins[1] = new String("profname==\"Lu\"");
 		//wins[1] = new DATAVIEW_BigFile("selectByName.txt");
@@ -97,27 +98,30 @@ public class RAWorkflow extends Workflow{
 //		String currentTask = "RACartesianProduct";
 //		String currentTask = "RAUnion";
 //		String currentTask = "RASelect";
-		//String currentTask = "RADivision";
+//		String currentTask = "RADivision";
 //		String currentTask = "RASetDifference";
 //		String currentTask = "RAIntersection";
-//		String currentTask = "RAConditionalJoin";
+		//String currentTask = "RAConditionalJoin";
 //		String currentTask = "RAEquijoin";
 //		String currentTask = "RATest";
-//		String currentTask = "RANaturalJoin";
+		String currentTask = "RANaturalJoin";
 //		String currentTask = "RALeftJoin";
 //		String currentTask = "RARightJoin";
 //		String currentTask = "RAFullOuterJoin";
-		/*
+	
 		Task RA = addTask(currentTask);
+		/*
 		addEdge(0,RA,0);
 		addEdge(1,RA,1);
 		addEdge(RA,0,0); */
 		//Task RA = addTask("RASelect");
 		//Task RA = addTask("RAProject");
 		//Task RA = addTask("RARename");
-		Task RA = addTask("RANaturalJoin");
+		//Task RA = addTask("RANaturalJoin");
+		
 		addEdge(0,RA,0);
 		addEdge(1,RA,1);
+	//	addEdge(2,RA,2);
 		addEdge(RA,0,0);
 		
 //		Task RAJoin = addTask(currentTask);

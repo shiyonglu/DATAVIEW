@@ -9,8 +9,8 @@
     "workflowLibdir":""
     },
   "EC2": {
-    "accessKey": "AKIAUWK7UBFRNPM55ADJ",
-    "secretKey": "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",
+    "accessKey": "",
+    "secretKey": "",
     "imageID": "ami-04c9b62e7f5101d60",
     "groupName":"dataview1",
     "keyName":"Dataview_key"

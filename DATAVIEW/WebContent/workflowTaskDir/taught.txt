@@ -1,4 +1,4 @@
-crscode,semester,ssn
+crscode,semester,ssn1
 0,summer2016,1
 2,summer2017,2
 5,summer2018,4

@@ -1,0 +1,149 @@
+2020/10/10 17:12:39.155, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt}
+2020/10/10 17:12:39.156, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@2957fcb0}
+2020/10/10 17:12:39.158, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:14:38.378, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt}
+2020/10/10 17:14:38.379, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@2957fcb0}
+2020/10/10 17:14:38.380, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:15:12.890, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt}
+2020/10/10 17:15:12.891, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@2957fcb0}
+2020/10/10 17:15:12.893, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:15:46.596, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt}
+2020/10/10 17:15:46.598, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@2957fcb0}
+2020/10/10 17:15:46.600, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:16:55.316, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/10 17:16:55.317, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@2957fcb0}
+2020/10/10 17:16:55.320, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:16:55.329, Level: 1, Exception: Column 3 is not in the table
+2020/10/10 17:18:50.064, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/10 17:18:50.065, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@2957fcb0}
+2020/10/10 17:18:50.068, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:18:50.074, Level: 1, Exception: Column 3 is not in the table
+2020/10/10 17:24:42.757, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/10 17:24:42.759, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@2957fcb0}
+2020/10/10 17:24:42.762, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:24:42.766, Level: 1, Exception: Invalid string value: . Negation can only be used directly outside of parenthesis
+2020/10/10 17:29:24.206, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/10 17:29:24.207, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@2957fcb0}
+2020/10/10 17:29:24.209, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:29:24.214, Level: 1, Exception: Invalid string value: . Negation can only be used directly outside of parenthesis
+2020/10/10 17:29:53.088, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/10 17:29:53.089, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@2957fcb0}
+2020/10/10 17:29:53.091, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:29:53.095, Level: 1, Exception: Invalid string value: Operator is incorrect
+2020/10/10 17:31:28.653, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/10 17:31:28.655, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@2957fcb0}
+2020/10/10 17:31:28.657, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:31:28.661, Level: 1, Exception: Invalid string value: Operator is incorrect
+2020/10/10 17:32:40.264, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/10 17:32:40.265, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@2957fcb0}
+2020/10/10 17:32:40.267, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:32:40.271, Level: 1, Exception: Column 3 is not in the table
+2020/10/10 17:33:52.467, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/10 17:33:52.469, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@d44fc21}
+2020/10/10 17:33:58.335, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:35:26.445, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/10 17:35:26.445, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@2957fcb0}
+2020/10/10 17:35:26.448, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:35:26.454, Level: 1, Exception: Column 3 is not in the table
+2020/10/10 17:35:45.813, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/10 17:35:45.815, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@d44fc21}
+2020/10/10 17:35:52.915, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:36:22.969, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/10 17:36:22.970, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@d44fc21}
+2020/10/10 17:36:22.973, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:38:50.558, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/10 17:38:50.559, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@d44fc21}
+2020/10/10 17:38:50.561, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:43:35.764, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/10 17:43:35.766, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@2957fcb0}
+2020/10/10 17:43:35.767, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:43:35.772, Level: 3, We reached here:  Task RAConditonalJoin is finished
+2020/10/10 17:53:37.949, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/taught.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/10 17:53:37.951, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAConditionalJoin@2957fcb0}
+2020/10/10 17:53:37.952, Level: 3, We reached here:  Task RAConditonalJoin start to run
+2020/10/10 17:53:37.956, Level: 3, We reached here:  Task RAConditonalJoin is finished
+2020/10/11 00:09:16.013, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_taken.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_require.txt}
+2020/10/11 00:09:16.014, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRADivision@2957fcb0}
+2020/10/11 00:09:16.016, Level: 3, We reached here:  Task RADivision start to run
+2020/10/11 00:12:19.483, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_taken.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_require.txt}
+2020/10/11 00:12:19.484, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRADivision@d44fc21}
+2020/10/11 00:12:19.487, Level: 3, We reached here:  Task RADivision start to run
+2020/10/11 00:14:52.378, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_taken.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_require.txt}
+2020/10/11 00:14:52.379, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRADivision@d44fc21}
+2020/10/11 00:14:52.381, Level: 3, We reached here:  Task RADivision start to run
+2020/10/11 00:19:56.542, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_taken.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_require.txt}
+2020/10/11 00:19:56.544, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRADivision@2957fcb0}
+2020/10/11 00:19:56.546, Level: 3, We reached here:  Task RADivision start to run
+2020/10/11 00:21:02.377, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_taken.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_require.txt}
+2020/10/11 00:21:02.378, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRADivision@2957fcb0}
+2020/10/11 00:21:02.384, Level: 3, We reached here:  Task RADivision start to run
+2020/10/11 00:22:01.441, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_taken.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_require.txt}
+2020/10/11 00:22:01.442, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRADivision@d44fc21}
+2020/10/11 00:22:01.445, Level: 3, We reached here:  Task RADivision start to run
+2020/10/11 00:24:43.534, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_taken.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_require.txt}
+2020/10/11 00:24:43.535, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRADivision@2957fcb0}
+2020/10/11 00:24:43.538, Level: 3, We reached here:  Task RADivision start to run
+2020/10/11 00:25:16.707, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_taken.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_require.txt}
+2020/10/11 00:25:16.708, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRADivision@2957fcb0}
+2020/10/11 00:25:16.710, Level: 3, We reached here:  Task RADivision start to run
+2020/10/11 00:25:16.712, Level: 1, Exception: Column names must be equal. You may use rename operator to accomplish this
+2020/10/11 00:28:23.220, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_taken.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_require.txt}
+2020/10/11 00:28:23.221, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRADivision@d44fc21}
+2020/10/11 00:28:23.224, Level: 3, We reached here:  Task RADivision start to run
+2020/10/11 00:28:52.058, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_taken.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_require.txt}
+2020/10/11 00:28:52.060, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRADivision@d44fc21}
+2020/10/11 00:28:52.062, Level: 3, We reached here:  Task RADivision start to run
+2020/10/11 00:34:01.903, Level: 1, Exception: Column names must be equal. You may use rename operator to accomplish this
+2020/10/11 00:34:34.537, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_taken.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_require.txt}
+2020/10/11 00:34:34.538, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRADivision@d44fc21}
+2020/10/11 00:34:34.540, Level: 3, We reached here:  Task RADivision start to run
+2020/10/11 00:44:35.284, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_taken.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_require.txt}
+2020/10/11 00:44:35.286, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRADivision@d44fc21}
+2020/10/11 00:44:35.288, Level: 3, We reached here:  Task RADivision start to run
+2020/10/11 00:45:02.317, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_taken.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_require.txt}
+2020/10/11 00:45:02.320, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRADivision@d44fc21}
+2020/10/11 00:45:02.322, Level: 3, We reached here:  Task RADivision start to run
+2020/10/11 00:56:58.940, Level: 1, Exception: Column names must be equal. You may use rename operator to accomplish this
+2020/10/11 00:57:38.017, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_taken.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_require.txt}
+2020/10/11 00:57:38.019, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRADivision@d44fc21}
+2020/10/11 00:57:38.022, Level: 3, We reached here:  Task RADivision start to run
+2020/10/11 01:02:15.548, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_taken.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course_require.txt}
+2020/10/11 01:02:15.549, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRADivision@2957fcb0}
+2020/10/11 01:02:15.550, Level: 3, We reached here:  Task RADivision start to run
+2020/10/11 01:02:15.554, Level: 3, We reached here:  Task RADivision is finished
+2020/10/11 12:02:20.767, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/taught.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/11 12:02:20.769, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAFullOuterJoin@2957fcb0}
+2020/10/11 12:02:20.771, Level: 3, We reached here:  Task RAFullOuterJoin start to run
+2020/10/11 12:02:20.779, Level: 3, We reached here:  Task RAFullOuterJoin is finished
+2020/10/11 12:12:16.504, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/profCopy.txt}
+2020/10/11 12:12:16.507, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAIntersection@2957fcb0}
+2020/10/11 12:12:16.509, Level: 3, We reached here:  Task RAIntersection start to run
+2020/10/11 12:12:16.511, Level: 3, We reached here:  Task RAIntersection is finished
+2020/10/11 12:16:14.593, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/taught.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/11 12:16:14.594, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRALeftJoin@2957fcb0}
+2020/10/11 12:16:14.597, Level: 3, We reached here:  Task RALeftJoin start to run
+2020/10/11 12:16:14.603, Level: 3, We reached here:  Task RALeftJoin is finished
+2020/10/11 12:16:41.765, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/taught.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/11 12:16:41.766, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRARightJoin@2957fcb0}
+2020/10/11 12:16:41.768, Level: 3, We reached here:  Task RARightJOin start to run
+2020/10/11 12:16:41.774, Level: 3, We reached here:  Task RARightJOin is finished
+2020/10/11 12:17:07.614, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/taught.txt, 2=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/conditionalJoinInput3.txt}
+2020/10/11 12:17:07.615, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRANaturalJoin@2957fcb0}
+2020/10/11 12:17:07.617, Level: 3, We reached here:  Task RA Natural Join start to run
+2020/10/11 12:17:07.620, Level: 2, Error message: To have a natural join you must have one common attributes between tables
+2020/10/11 12:20:40.358, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/taught.txt}
+2020/10/11 12:20:40.359, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRANaturalJoin@2957fcb0}
+2020/10/11 12:20:40.362, Level: 3, We reached here:  Task RA Natural Join start to run
+2020/10/11 12:20:40.366, Level: 3, We reached here:  Task RA Natural Join is finished
+2020/10/11 12:22:54.480, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/profCopy.txt}
+2020/10/11 12:22:54.481, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRASetDifference@2957fcb0}
+2020/10/11 12:22:54.483, Level: 3, We reached here:  Task RASetDifference start to run
+2020/10/11 12:22:54.486, Level: 3, We reached here:  Task RASetDifference is finished
+2020/10/11 12:24:27.053, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/prof.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/profCopy.txt}
+2020/10/11 12:24:27.054, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRAUnion@2957fcb0}
+2020/10/11 12:24:27.056, Level: 3, We reached here:  Task RAUnion start to run
+2020/10/11 12:24:27.058, Level: 3, We reached here:  Task RAUnion is finished
+2020/10/11 22:29:24.689, Level: 3, The value for variable/object: the inputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/course.txt, 1=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/taught.txt}
+2020/10/11 22:29:24.690, Level: 3, The value for variable/object: the outputportAndFile value is  is {0=/Users/changxinbai/Downloads/DATAVIEW/DATAVIEW/WebContent/workflowTaskDir/RAresult.txtRANaturalJoin@2957fcb0}
+2020/10/11 22:29:24.692, Level: 3, We reached here:  Task RA Natural Join start to run
+2020/10/11 22:29:24.699, Level: 3, We reached here:  Task RA Natural Join is finished
