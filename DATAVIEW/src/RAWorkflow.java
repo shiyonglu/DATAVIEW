@@ -24,8 +24,8 @@ public class RAWorkflow extends Workflow{
 //		wins[1] = new DATAVIEW_BigFile("tables/4Col.txt");
 //		wins[2] = new DATAVIEW_BigFile("conditionalJoin/case2.txt");
 //		wins[1] = new DATAVIEW_BigFile("tables/4Col2.txt");
-		wins[0] = new DATAVIEW_BigFile("course.txt");
-		wins[1] = new DATAVIEW_BigFile("taught.txt");
+		wins[0] = new DATAVIEW_BigFile("number1.txt");
+		wins[1] = new DATAVIEW_BigFile("number2.txt");
 	//	wins[2] = new DATAVIEW_BigFile("conditionalJoinInput3.txt");
 		
 		//wins[1] = new String("profname==\"Lu\"");
@@ -104,7 +104,8 @@ public class RAWorkflow extends Workflow{
 		//String currentTask = "RAConditionalJoin";
 //		String currentTask = "RAEquijoin";
 //		String currentTask = "RATest";
-		String currentTask = "RANaturalJoin";
+//		String currentTask = "RANaturalJoin";
+		String currentTask = "Task1";
 //		String currentTask = "RALeftJoin";
 //		String currentTask = "RARightJoin";
 //		String currentTask = "RAFullOuterJoin";

@@ -33,7 +33,7 @@ public class Task1 extends Task{
 		
 		// step 3: write to the output port
 		Integer oo = Integer.valueOf(o0);
-		// outs[0].write(oo);
-		write(0, 00);
+	    outs[0].write(oo);
+		
 	}
 }
