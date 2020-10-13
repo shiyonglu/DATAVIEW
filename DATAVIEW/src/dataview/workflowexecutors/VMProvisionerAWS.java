@@ -2,8 +2,12 @@ package dataview.workflowexecutors;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,6 +48,8 @@ import com.amazonaws.services.rds.AmazonRDSClient;
 
 import dataview.models.Dataview;
 import dataview.models.JSONObject;
+import dataview.models.JSONParser;
+import dataview.models.JSONValue;
 
 /**
  * The VMProvisioner class will launch the enough VMs number based on different VM types. It can also reuse existing available
@@ -77,24 +83,30 @@ public class VMProvisionerAWS {
 			//System.out.println("#Initialized successfully....");
 		}
 	
-	public static Properties getPropValues(String workflowlibdir) throws IOException {
-		 Properties properties = new Properties();
+	public static JSONObject getPropValues(String workflowlibdir) throws IOException {
+		JSONObject configureJson = null;
 		 try {
-		       properties.load(new FileInputStream(workflowlibdir+ File.separator+"config.properties"));
+			 Path path  = Paths.get(workflowlibdir);  
+			 String configure = ""; 
+			 		configure = new String(Files.readAllBytes(Paths.get(path.getParent()+ File.separator+"config.json"))); 
+			 JSONParser p = new JSONParser(configure);
+			  configureJson = p.parseJSONObject();
+			 
+			 // properties.load(new FileInputStream(path.getParent() + File.separator+"config.json"));
 		   } catch (IOException e) {
 		   }
-		   return properties;
+		   return configureJson;
 	}
 	
 	
 	public static void parametersetting(String workflowlibdir) throws IOException{
-		Properties prop = VMProvisionerAWS.getPropValues(workflowlibdir);
-		accessKey = prop.getProperty("accessKey");
-		secretKey = prop.getProperty("secretKey");
-		groupName = prop.getProperty("groupName");
-		keyName = prop.getProperty("keyName");
-		imageID = prop.getProperty("imageID");
-		//instanceType = prop.getProperty("instanceType");
+		JSONObject prop = VMProvisionerAWS.getPropValues(workflowlibdir);
+		JSONObject ec2Parameters = prop.get("EC2").toJSONObject();
+		accessKey = ec2Parameters.get("accessKey").toString().replace("\"", "");
+		secretKey = ec2Parameters.get("secretKey").toString().replace("\"", "");
+		groupName = ec2Parameters.get("groupName").toString().replace("\"", "");
+		keyName = ec2Parameters.get("keyName").toString().replace("\"", "");
+		imageID = ec2Parameters.get("imageID").toString().replace("\"", "");
 	}
 	
 	public static void parametersetting(JSONObject obj){
