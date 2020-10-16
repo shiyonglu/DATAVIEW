@@ -42,7 +42,9 @@ Check out tutorial: https://youtu.be/xJikeWptYSw or follow the instructions belo
 <OL>
     <li>Download the DATAVIEW package from https://github.com/shiyonglu/DATAVIEW by clicking the "Clone or Download" button.
     </li> 
-   
+     <li> Unzip the DATAVIEW-master.zip file and import the DATAVIEW project into Eclipse as an "Existing Projects into Workspace" by selecting "Projects from Folder or Archive".
+    </li> 
+    <li> The external dependecies libraries must be added to the Eclipse project from /DATAVIEW/WebContent/WEB-INF/lib </li>
     
 </OL>
 
