@@ -45,7 +45,8 @@ Check out tutorial: https://youtu.be/xJikeWptYSw or follow the instructions belo
      <li> Unzip the DATAVIEW-master.zip file and import the DATAVIEW project into Eclipse as an "Existing Projects into Workspace" by selecting "Projects from Folder or Archive".
     </li> 
     <li> The external dependecies libraries must be added to the Eclipse project from /DATAVIEW/WebContent/WEB-INF/lib </li>
-    
+    <li>  Create three default folders Dropbox/DATAVIEW/Tasks, which stores the task file (class file or jar file); Dropbox/DATAVIEW/Workflows, which stores the mxgraph file for the generated workflow; Dropbox/DATAVIEW-INPUT, which stores the input files for a workflow in your dropbox. </li>
+    <li> Get a dropbox token. </li>
 </OL>
 
 
