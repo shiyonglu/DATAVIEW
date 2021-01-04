@@ -51,6 +51,7 @@ Check out tutorial: https://youtu.be/7Sz4PSD6Cs or follow the instructions below
 <OL>
     <li> Chapter 1: A gentle introduction to DATAVIEW （https://youtu.be/7S4iGKXpaAc) </li>
     <li> How to download, import DATAVIEW into Eclipse as Java API and run a workflow with local executor (https://youtu.be/xJikeWptYSw)</li>
+    <li> How to create a relational algebra workflow in DATAVIEW through the interface (https://youtu.be/AQw0S_QO8zg) </li>
     <!--
     <li> How to download and import DATAVIEW into Eclipse as Java API (https://youtu.be/R6A6jreySFc)</li>
     <li> How to create an Access Key ID and a Secret access key in Amazon EC2 (https://youtu.be/9741e4CubMQ)</li>
