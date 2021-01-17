@@ -204,9 +204,9 @@ public class VMProvisionerAWS {
 		if (initialVMTypeIntances.size() < noOfInstances) {
 			VMProvisionerAWS.justLaunchVMs(vmType, noOfInstances - initialVMTypeIntances.size(), path);
 		}
-		//ArrayList<String> runningAndPendingVMs = VMProvisioner.getAvailableAndPendingInstIds();
-		//VMProvisioner.waitUntilAllPendingBecomeRunning(runningAndPendingVMs);
-		System.out.println("#Provisioned machines successfully....");
+		//ArrayList<String> runningAndPendingVMs = VMProvisionerAWS.getAvailableAndPendingInstIds();
+		//VMProvisionerAWS.waitUntilAllPendingBecomeRunning(runningAndPendingVMs);
+		//System.out.println("#Provisioned machines successfully....");
 	}
 	
 	

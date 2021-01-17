@@ -14,7 +14,7 @@ public class MoveToCloud {
 		for (int i = 0; i < ips.size(); i++) {
 			String strCommand = "sudo kill -9 $(sudo lsof -t -i:2004)";
 			CmdLineDriver.executeCommands(ips.get(i), strCommand);
-			String strCommand1 = "nohup java -Xmx700m -jar TaskExecutor.jar > /dev/null 2>&1 &";
+			String strCommand1 = "nohup java -Xmx700m -jar TaskExecutor_BetaCaller.jar > /dev/null 2>&1 &";
 			CmdLineDriver.executeCommands(ips.get(i), strCommand1);
 			String strCommand2 = "rm *.txt";
 			CmdLineDriver.executeCommands(ips.get(i), strCommand2);
