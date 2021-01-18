@@ -28,11 +28,11 @@ public class Test {
 		//Montage_workflow w = new Montage_workflow();
 		//MR w = new MR();
 		
-		RAWorkflow w = new RAWorkflow();
+		//RAWorkflow w = new RAWorkflow();
 		//Dummy_Workflow w = new Dummy_Workflow();
 		//DisKMeansWorkflow w = new DisKMeansWorkflow();
 		// di san ci 
-		//Diagnosis w = new Diagnosis();
+		Diagnosis w = new Diagnosis();
 		//DummyWorkflow w = new DummyWorkflow();
 		//WordCount_workflow w = new WordCount_workflow();
 		//Ligo_workflow w = new Ligo_workflow();
@@ -42,8 +42,8 @@ public class Test {
 	
 		// step 3: choose a workflow planner
 		//int whichplanner = WorkflowPlanner.WorkflowPlanner_LPOD;
-		int whichplanner =  WorkflowPlanner.WorkflowPlanner_Naive1;
-		
+		//int whichplanner =  WorkflowPlanner.WorkflowPlanner_Naive1;
+		int whichplanner =  WorkflowPlanner.WorkflowPlanner_T_Cluster;
 		String configurefileLocation = System.getProperty("user.dir") + File.separator + "WebContent" +File.separator+"workflowLibDir"+ File.separator ;
 		
 		WorkflowPlanner wp = null;
@@ -79,8 +79,8 @@ public class Test {
 		String fileLocation = System.getProperty("user.dir") + File.separator + "WebContent" +File.separator;
 		
 		
-		//int whichexecutor = WorkflowExecutor.WorkflowExecutor_Beta;
-		int whichexecutor = WorkflowExecutor.WorkflowExecutor_Local;
+		int whichexecutor = WorkflowExecutor.WorkflowExecutor_Beta;
+		//int whichexecutor = WorkflowExecutor.WorkflowExecutor_Local;
 		
 		
 		WorkflowExecutor we = null;

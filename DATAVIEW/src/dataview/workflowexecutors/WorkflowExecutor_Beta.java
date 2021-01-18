@@ -99,7 +99,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		this.w = gsch.getWorkflow();
 		this.workflowTaskDir = workflowTaskDir;
 		this.workflowLibdir = workflowLibDir;
-		VMProvisionerAWS.initializeProvisioner(accessKey, secretKey,"dataview1","Dataview_key","ami-064ab7adf0e30b152");
+		VMProvisionerAWS.initializeProvisioner(accessKey, secretKey,"dataview1","Dataview_key","ami-02dbd0a3537ac6367");
 		this.dropboxToken = dropboxToken;
 		init();
 	}
@@ -152,7 +152,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			m.provisionVMs(str,VMnumbers.get(str), workflowLibdir);
 			
 		}
-		//Thread.sleep(90000);
+		Thread.sleep(90000);
 		
 		// We introduce ipsAndType (also called IPPool) to store the IPs of VM instances for each VM type
 		// Here, VM type is the key, and the list of IPs is the value.

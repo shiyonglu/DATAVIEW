@@ -15,6 +15,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -214,10 +216,14 @@ public class TaskExecutor_Beta {
 					public void run() {
 						try {
 							long start = System.nanoTime();
-							MoveDataToCloud.getDataReady(taskInstanceID.replaceAll("\"", "")+"_"+
-									outputPortIndex.replaceAll("\"", "")+".txt", 
+							String fileName = taskInstanceID.replaceAll("\"", "")+"_"+
+									outputPortIndex.replaceAll("\"", "")+".txt";
+							MoveDataToCloud.getDataReady(fileName, 
 									destIP.replaceAll("\"", ""));
 							outdc.put("dataTransferTime", new JSONValue(Double.toString((double)(System.nanoTime() - start) / 1000000000.0)));
+							long fileSize = Files.size(Paths.get("/home/ubuntu/" + fileName));
+							outdc.put("outputDatasize", new JSONValue(Double.toString(fileSize)));
+							
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -255,6 +261,17 @@ public class TaskExecutor_Beta {
 				
 			}else {
 				outdc.put("transTime", new JSONValue(Double.toString(0.0)));
+				String taskInstanceID = taskSpec.get("taskInstanceID").toString();
+				String outputPortIndex = outdc.get("myOutputPortIndex").toString();
+				String fileName = taskInstanceID.replaceAll("\"", "")+"_"+
+						outputPortIndex.replaceAll("\"", "")+".txt";
+				try{
+					long fileSize = Files.size(Paths.get("/home/ubuntu/" + fileName));
+					outdc.put("outputDatasize", new JSONValue(Double.toString(fileSize)));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
 			}
 			
 		}
