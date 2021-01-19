@@ -200,7 +200,7 @@ public class TaskExecutor_Beta {
 	 * @param dropboxToken
 	 * @throws InterruptedException
 	 */
-	public void dataMove(JSONObject taskSpec,String dropboxToken) throws InterruptedException{
+	public void dataMove(JSONObject taskSpec,String dropboxToken,String keyName) throws InterruptedException{
 		String taskID = taskSpec.get("taskInstanceID").toString().replace("\"", "");
 		JSONArray outdcs = taskSpec.get("outgoingDataChannels").toJSONArray();
 		//ArrayList<DataTrasnferThread> threads = new ArrayList<DataTrasnferThread>();
@@ -219,7 +219,7 @@ public class TaskExecutor_Beta {
 							String fileName = taskInstanceID.replaceAll("\"", "")+"_"+
 									outputPortIndex.replaceAll("\"", "")+".txt";
 							MoveDataToCloud.getDataReady(fileName, 
-									destIP.replaceAll("\"", ""));
+									destIP.replaceAll("\"", ""), keyName);
 							outdc.put("dataTransferTime", new JSONValue(Double.toString((double)(System.nanoTime() - start) / 1000000000.0)));
 							long fileSize = Files.size(Paths.get("/home/ubuntu/" + fileName));
 							outdc.put("outputDatasize", new JSONValue(Double.toString(fileSize)));
@@ -307,6 +307,8 @@ public class TaskExecutor_Beta {
 					// the dropbox token information will be record in dropboxToken.
 					String dropboxToken = message.getA();
 					
+					String keyName = message.getC();
+					
 					// step 3: parse the task specification 
 					Dataview.debugger.logSuccessfulMessage("receive the task specification:");
 					Dataview.debugger.logSuccessfulMessage(message.getB());
@@ -335,7 +337,7 @@ public class TaskExecutor_Beta {
 			
 					// step 6: Transfer all the data products produced by this task to the VMs of their child tasks in parallel
 					
-					dataMove(taskSpec,dropboxToken);
+					dataMove(taskSpec,dropboxToken,keyName);
 					
 					
 					// step 7: send back the execution status of the task back to the WorkflowExecutor and close the connection. 

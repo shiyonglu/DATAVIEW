@@ -25,9 +25,46 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
 public class CmdLineDriver {
-	public static String prvkey = WorkflowExecutor_Beta.workflowLibdir + VMProvisionerAWS.keyName + ".pem";	
 	public static void copyFile(String SourceDIR, String DestinationDIR,
 			String strHostName) {
+		String prvkey = WorkflowExecutor_Beta.workflowLibdir + VMProvisionerAWS.keyName + ".pem";
+		System.out.println(prvkey);
+		String SFTPHOST = strHostName;
+		int SFTPPORT = 22;
+		String SFTPUSER = "ubuntu";
+		String SFTPWORKINGDIR = DestinationDIR;
+		String FILETOTRANSFER = SourceDIR;
+		Session session = null;
+		Channel channel = null;
+		ChannelSftp channelSftp = null;
+		try {
+			JSch jsch = new JSch();
+			jsch.addIdentity(prvkey);
+			session = jsch.getSession(SFTPUSER, SFTPHOST, SFTPPORT);
+			java.util.Properties config = new java.util.Properties();
+			config.put("StrictHostKeyChecking", "no");
+			session.setConfig(config);
+			session.setPort(22);
+			session.connect();
+			channel = session.openChannel("sftp");
+			channel.connect();
+			channelSftp = (ChannelSftp) channel;
+			channelSftp.cd(SFTPWORKINGDIR);
+			File f = new File(FILETOTRANSFER);
+			channelSftp.put(new FileInputStream(f), f.getName());
+			channel.disconnect();
+			session.disconnect();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+		}
+
+	}
+	
+	
+	public static void copyFile(String SourceDIR, String DestinationDIR,
+			String strHostName, String keyName) {
+		String prvkey = "/home/ubuntu/" + keyName + ".pem";
 		System.out.println(prvkey);
 		String SFTPHOST = strHostName;
 		int SFTPPORT = 22;
@@ -64,6 +101,7 @@ public class CmdLineDriver {
 
 	public static File getFile(String Source, String DestinationDIR,
 			String strHostName) {
+		String prvkey = WorkflowExecutor_Beta.workflowLibdir + VMProvisionerAWS.keyName + ".pem";
 		File f = null;
 		String SFTPHOST = strHostName;
 		int SFTPPORT = 22;
@@ -116,6 +154,7 @@ public class CmdLineDriver {
 	
 	
 	public static void executeCommands(String strHostName, String strCommand) {
+		String prvkey = WorkflowExecutor_Beta.workflowLibdir + VMProvisionerAWS.keyName + ".pem";
 		String SFTPHOST = strHostName;
 		int SFTPPORT = 22;
 		String SFTPUSER = "ubuntu";
