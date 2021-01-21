@@ -650,7 +650,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			inputDataChanleFilesMapping (indcs);
 			JSONArray outdcs = taskscheduleJson.get("outgoingDataChannels").toJSONArray();
 			outputDataChanleFilesMapping (outdcs);
-			Message m = new Message(dropboxToken,taskscheduleJson.toString());
+			Message m = new Message(dropboxToken,taskscheduleJson.toString(),VMProvisionerAWS.keyName);
 			MSGClient client = new MSGClient(ownerLocalScheduleRun.lsc.getIP(), m );
 			client.run();
 			return client.getResp();
@@ -674,11 +674,13 @@ class Message implements Serializable {
 
     private String A;
     private String B;
+    private String C;
    
 
-    public Message(String A, String B ){
+    public Message(String A, String B, String C ){
         this.A = A; 
         this.B = B;
+        this.C = C;
     }
 
     public String getA() {
@@ -689,6 +691,10 @@ class Message implements Serializable {
         return B;
     }
     
+    
+    public String getC() {
+        return C;
+    }
     
     
 }
