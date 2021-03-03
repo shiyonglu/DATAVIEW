@@ -12,7 +12,6 @@ import dataview.planners.WorkflowPlanner_T_Cluster;
 import dataview.workflowexecutors.WorkflowExecutor;
 import dataview.workflowexecutors.WorkflowExecutor_Beta;
 import dataview.workflowexecutors.WorkflowExecutor_Local;
-import dataview.workflowexecutors.WorkflowExecutor_Local2;
 
 /** 
  * six steps shows the whole process to creat a workflow, design a workflow, generate a workflow schedule, and execute a workfow in EC2.
@@ -28,11 +27,7 @@ public class Test {
 		//SampleWorkflow w = new SampleWorkflow();
 		//Montage_workflow w = new Montage_workflow();
 		//MR w = new MR();
-<<<<<<< HEAD
-		AddWorkflow w = new AddWorkflow();
-=======
 		
->>>>>>> ae214013fe78dd607e40bf9d71b9df6e9f4a2c09
 		//RAWorkflow w = new RAWorkflow();
 		//Dummy_Workflow w = new Dummy_Workflow();
 		//DisKMeansWorkflow w = new DisKMeansWorkflow();
@@ -84,14 +79,8 @@ public class Test {
 		String fileLocation = System.getProperty("user.dir") + File.separator + "WebContent" +File.separator;
 		
 		
-<<<<<<< HEAD
-		/*
-		//int whichexecutor = WorkflowExecutor.WorkflowExecutor_Beta;
-		int whichexecutor = WorkflowExecutor.WorkflowExecutor_Local;
-=======
 		int whichexecutor = WorkflowExecutor.WorkflowExecutor_Beta;
 		//int whichexecutor = WorkflowExecutor.WorkflowExecutor_Local;
->>>>>>> ae214013fe78dd607e40bf9d71b9df6e9f4a2c09
 		
 		
 		WorkflowExecutor we = null;
@@ -106,8 +95,8 @@ public class Test {
 			break;
 		default:
 			we = new WorkflowExecutor_Beta(fileLocation+"workflowTaskDir"+ File.separator, fileLocation + "workflowLibDir"+ File.separator , gsch);
-		} */
-		WorkflowExecutor we = new WorkflowExecutor_Local2(fileLocation+"workflowTaskDir"+ File.separator, fileLocation + "workflowLibDir"+ File.separator , gsch);
+		}
+		
 		// step 6: execute a workflow
 		we.execute();	
 		
