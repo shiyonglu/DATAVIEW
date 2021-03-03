@@ -9,8 +9,8 @@ public class Diagnosis extends Workflow {
 		wins = new Object[2];
 		wouts = new Object[1];
 		wins[0] = new DATAVIEW_BigFile("originalInput.txt");
-		//wins[1] = new DATAVIEW_BigFile("parameter.txt");
-		wins[1] = new Double(0.3);
+		wins[1] = new DATAVIEW_BigFile("parameter.txt");
+		//wins[1] = new Double(0.3);
 		wouts[0] =new DATAVIEW_BigFile("DGoutput0.txt");
 		
 	}

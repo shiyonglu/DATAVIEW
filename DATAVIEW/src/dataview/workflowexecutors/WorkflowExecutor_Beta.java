@@ -99,7 +99,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 		this.w = gsch.getWorkflow();
 		this.workflowTaskDir = workflowTaskDir;
 		this.workflowLibdir = workflowLibDir;
-		VMProvisionerAWS.initializeProvisioner(accessKey, secretKey,"dataview1","Dataview_key","ami-064ab7adf0e30b152");
+		VMProvisionerAWS.initializeProvisioner(accessKey, secretKey,"dataview1","Dataview_key","ami-02dbd0a3537ac6367");
 		this.dropboxToken = dropboxToken;
 		init();
 	}
@@ -152,7 +152,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			m.provisionVMs(str,VMnumbers.get(str), workflowLibdir);
 			
 		}
-		//Thread.sleep(90000);
+		Thread.sleep(90000);
 		
 		// We introduce ipsAndType (also called IPPool) to store the IPs of VM instances for each VM type
 		// Here, VM type is the key, and the list of IPs is the value.
@@ -650,7 +650,7 @@ public class WorkflowExecutor_Beta extends WorkflowExecutor {
 			inputDataChanleFilesMapping (indcs);
 			JSONArray outdcs = taskscheduleJson.get("outgoingDataChannels").toJSONArray();
 			outputDataChanleFilesMapping (outdcs);
-			Message m = new Message(dropboxToken,taskscheduleJson.toString());
+			Message m = new Message(dropboxToken,taskscheduleJson.toString(),VMProvisionerAWS.keyName);
 			MSGClient client = new MSGClient(ownerLocalScheduleRun.lsc.getIP(), m );
 			client.run();
 			return client.getResp();
@@ -674,11 +674,13 @@ class Message implements Serializable {
 
     private String A;
     private String B;
+    private String C;
    
 
-    public Message(String A, String B ){
+    public Message(String A, String B, String C ){
         this.A = A; 
         this.B = B;
+        this.C = C;
     }
 
     public String getA() {
@@ -689,6 +691,10 @@ class Message implements Serializable {
         return B;
     }
     
+    
+    public String getC() {
+        return C;
+    }
     
     
 }

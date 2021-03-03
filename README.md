@@ -22,7 +22,6 @@ Four relational algebra tasks (jar files) and input files are already stored und
 Check out tutorial: https://youtu.be/xJikeWptYSw or follow the instructions below: 
 
 <OL>
-    <li> Make sure the JAVA Version is 8 </li>
     <li>Download the DATAVIEW package from https://github.com/shiyonglu/DATAVIEW by clicking the "Clone or Download" button.
     </li> 
      <li> Unzip the DATAVIEW-master.zip file and import the DATAVIEW project into Eclipse as an "Existing Projects into Workspace" by selecting "Projects from Folder or Archive".
@@ -39,11 +38,11 @@ Check out tutorial: https://youtu.be/xJikeWptYSw or follow the instructions belo
 
 
 <h2>Download, configure, and deploy DATAVIEW as a Website</h2>
+Check out tutorial: https://youtu.be/7Sz4PSD_6Cs or follow the instructions below: 
 <OL>
-    <li>Download the DATAVIEW package from https://github.com/shiyonglu/DATAVIEW by clicking the "Clone or Download" button.
-    </li> 
-   
-    
+    <li> Follow the first three steps from <h3>Download and configure DATAVIEW as JAVA API</h3> </li>
+    <li>  Create three default folders Dropbox/DATAVIEW/Tasks, which stores the task file (class file or jar file); Dropbox/DATAVIEW/Workflows, which stores the mxgraph file for the generated workflow; Dropbox/DATAVIEW-INPUT, which stores the input files for a workflow in your dropbox. </li>
+    <li> Get a dropbox token. </li>
 </OL>
 
 
@@ -52,6 +51,7 @@ Check out tutorial: https://youtu.be/xJikeWptYSw or follow the instructions belo
 <OL>
     <li> Chapter 1: A gentle introduction to DATAVIEW （https://youtu.be/7S4iGKXpaAc) </li>
     <li> How to download, import DATAVIEW into Eclipse as Java API and run a workflow with local executor (https://youtu.be/xJikeWptYSw)</li>
+    <li> How to create a relational algebra workflow in DATAVIEW through the interface (https://youtu.be/AQw0S_QO8zg) </li>
     <!--
     <li> How to download and import DATAVIEW into Eclipse as Java API (https://youtu.be/R6A6jreySFc)</li>
     <li> How to create an Access Key ID and a Secret access key in Amazon EC2 (https://youtu.be/9741e4CubMQ)</li>

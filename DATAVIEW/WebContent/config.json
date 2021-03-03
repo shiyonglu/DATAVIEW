@@ -11,7 +11,7 @@
   "EC2": {
     "accessKey": "",
     "secretKey": "",
-    "imageID": "ami-0ce9880a78047d8ce",
+    "imageID": "ami-0f747dc305291d3a8",
     "groupName":"dataview1",
     "keyName":"Dataview_key"
    },
