@@ -494,6 +494,7 @@ H2 {
 					>
 						<option value="DATAVIEW-Server" selected>DATAVIEW-Server</option>
 						<option value="EC2-Cloud">EC2-Cloud</option>
+						<option value="local-nv-GPU">Local-NVIDIA-GPU</option>
 				</select></td>
 			</tr>
 			

@@ -32,10 +32,12 @@ public class Test {
 		//Dummy_Workflow w = new Dummy_Workflow();
 		//DisKMeansWorkflow w = new DisKMeansWorkflow();
 		// di san ci 
-		Diagnosis w = new Diagnosis();
+		//Diagnosis w = new Diagnosis();
 		//DummyWorkflow w = new DummyWorkflow();
 		//WordCount_workflow w = new WordCount_workflow();
 		//Ligo_workflow w = new Ligo_workflow();
+		NNExecutor_workflow w = new NNExecutor_workflow();
+		
 		// step 2: design a workflow
 		w.design();
 		frame.drawWorkflowGraph(w);
@@ -61,7 +63,7 @@ public class Test {
 			wp = new WorkflowPlanner_ICPCP(w);
 			break;
 		case WorkflowPlanner.WorkflowPlanner_LPOD:
-			wp = new WorkflowPlanner_LPOD(w,configurefileLocation);
+			wp = new WorkflowPlanner_LPOD(w);
 		default:
 			wp = new WorkflowPlanner_T_Cluster(w);
 			break;
@@ -79,8 +81,8 @@ public class Test {
 		String fileLocation = System.getProperty("user.dir") + File.separator + "WebContent" +File.separator;
 		
 		
-		int whichexecutor = WorkflowExecutor.WorkflowExecutor_Beta;
-		//int whichexecutor = WorkflowExecutor.WorkflowExecutor_Local;
+		//int whichexecutor = WorkflowExecutor.WorkflowExecutor_Beta;
+		int whichexecutor = WorkflowExecutor.WorkflowExecutor_Local;
 		
 		
 		WorkflowExecutor we = null;

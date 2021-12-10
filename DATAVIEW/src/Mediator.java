@@ -10,6 +10,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
 import org.apache.commons.codec.binary.Base64;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -24,7 +26,9 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -51,6 +55,7 @@ import com.dropbox.core.v2.files.WriteMode;
 
 import Utility.MXGraphToSWLTranslator;
 import dataview.models.*;
+import dataview.nntrainers.NNWorkflowTrainer_CrossValOnLocalGPU;
 import dataview.planners.WorkflowPlanner;
 import dataview.planners.WorkflowPlanner_Naive2;
 import dataview.planners.WorkflowPlanner_T_Cluster;
@@ -59,6 +64,7 @@ import dataview.workflowexecutors.WorkflowExecutor;
 import dataview.workflowexecutors.WorkflowExecutor_Beta;
 import dataview.workflowexecutors.WorkflowExecutor_Local;
 
+import dataview.nntrainers.*;
 
 /**
  * This is the main servlet that receives and responds to requests from Webbench.
@@ -131,6 +137,9 @@ public class Mediator extends HttpServlet {
 		}  else if (action.equals("serverRunWorkflows")){
 			System.out.println("Run Workflow in local");
 			serverRunWorkflows(request.getParameter("userID"),request.getParameter("name"),response);
+		}  else if (action.equals("localGPURunNNWorkflows")){
+			System.out.println("Run NNWorkflow in local NVIDIA GPU");
+			localGPURunNNWorkflows(request.getParameter("userID"),request.getParameter("name"),response);
 		}  else if (action.equals("createTree")){
 			createTree(request.getParameter("index"),request.getParameter("dropboxToken"), response);
 		}
@@ -352,6 +361,7 @@ public class Mediator extends HttpServlet {
 	public void serverRunWorkflows(String userId, String name, HttpServletResponse response ) throws Exception{
 		String localFileAbsolutePath = fileLocation + File.separator + name;
 		DATAVIEW_BigFile bf = new DATAVIEW_BigFile(localFileAbsolutePath);
+		System.out.println(bf.toString());
 		Document diagram = Utility.XMLParser.getDocument(bf.toString());
 		Document spec = MXGraphToSWLTranslator.translateExperiment(name, diagram);
 		GenericWorkflow GW = new GenericWorkflow(spec,fileLocation);
@@ -379,6 +389,48 @@ public class Mediator extends HttpServlet {
 		token = ReadAndWrite.read(tableLocation + "users.table", strUser,6);
 		WorkflowExecutor we = new WorkflowExecutor_Local(fileLocation+ File.separator,fileLocation+ File.separator,token, gsch);
 		we.execute();	
+	}
+	
+	/**
+	 * Run the NNWorkflow on a Local GPU. 
+	 * @param userId
+	 * @param name
+	 * @param response
+	 * @throws Exception
+	 * 
+	 */
+	public void localGPURunNNWorkflows(String userId, String name, HttpServletResponse response ) throws Exception{
+		token = ReadAndWrite.read(tableLocation + "users.table", strUser, 6);
+		DbxRequestConfig config = new DbxRequestConfig("en_US");
+		DbxClientV2 client = new DbxClientV2(config, token);
+		String localFileAbsolutePath = fileLocation + File.separator + name;
+		DATAVIEW_BigFile bf = new DATAVIEW_BigFile(localFileAbsolutePath);
+		System.out.println(bf.toString());
+		Document diagram = Utility.XMLParser.getDocument(bf.toString());
+		Document spec = MXGraphToSWLTranslator.translateExperiment(name, diagram);
+		GenericNNWorkflow GW = new GenericNNWorkflow(spec,fileLocation, token);
+		GW.design();
+		NNWorkflowTrainer_LocalGPU trainer = new NNWorkflowTrainer_LocalGPU(GW, fileLocation, 5, 1000);
+		
+		String outputfile = GW.workflowName + "@" + GW.hashCode();
+		String dataFileLocation = fileLocation + File.separator + outputfile;
+		//System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream(dataFileLocation)), true));
+		String result = trainer.train();
+		System.out.print("this is the return value:\n" + result);
+		
+		//save the result as a file which can be retrieve from website
+		if(!new File(dataFileLocation).exists()){
+			BufferedWriter	writer = new BufferedWriter(new FileWriter(dataFileLocation));
+			writer.write(result);	
+			writer.close();
+			outputMapping.put("outputDP0.txt", outputfile);
+		}
+		
+		//upload the outputfile to the dropbox DATAVIEW-OUTPUT folder
+		String dropboxPath = "/DATAVIEW-OUTPUT/" + outputfile;
+		InputStream in = new FileInputStream(localFileAbsolutePath);
+		client.files().uploadBuilder(dropboxPath).withMode(WriteMode.ADD).uploadAndFinish(in);
+	
 	}
 	
 	/** design a workflow based on the workflow mxgraph information. T_cluster planner is used to generate a workflow planner, on which the execute method of beta executor is called.
@@ -614,7 +666,7 @@ public static void getData(String dataName, HttpServletResponse response) throws
 		}
 		File file =new File(localFileAbsolutePath);
 		PrintWriter out = response.getWriter();
-		if(file.length()<1024){
+		if(file.length()<2048){
 			DATAVIEW_BigFile bf = new DATAVIEW_BigFile(localFileAbsolutePath);
 			out.println(bf.toString());
 		}else{

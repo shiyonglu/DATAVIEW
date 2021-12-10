@@ -14,6 +14,8 @@ public abstract class Task {
 	public String taskDescription;   // a description of the task object
 	public InputPort [] ins;         // an array of InputPorts
 	public OutputPort [] outs;       // an array of OutputPorts
+	public int in_features;          // the number of input features/neurons
+	public int out_features;         // the number of output features/neurons
 	
 	/**
 	 * A constructor that constructs an object of a task without any information.

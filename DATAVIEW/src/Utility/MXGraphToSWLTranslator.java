@@ -808,6 +808,7 @@ public class MXGraphToSWLTranslator {
 		}
 
 		//System.out.println("%%%%%%% result experiment:\n" + Utility.nodeToString(doc));
+		//System.out.println("result experiment:\n" + XMLParser.nodeToString(doc));
 
 		return doc;
 	}

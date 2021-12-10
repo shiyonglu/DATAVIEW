@@ -180,7 +180,15 @@ function onLeftNodeSelect(id){
 
 
 function getPortsNumber(dropboxMetadata){
-	var params = "action=getPortsNumber&filename="+ dropboxMetadata.dataName;
+	
+	//distinguish NNTasks to keep consistant with actual class name
+	if(dropboxMetadata.dataName.indexOf('Linear')!=-1){
+		var params = "action=getPortsNumber&filename=/dataview/Tasks/Linear.jar";
+	}else{
+		var params = "action=getPortsNumber&filename="+ dropboxMetadata.dataName;
+	}
+	
+	//var params = "action=getPortsNumber&filename="+ dropboxMetadata.dataName;
 	var url = "./Mediator?";
 	if (window.XMLHttpRequest) {
 		xmlhttp = new XMLHttpRequest();

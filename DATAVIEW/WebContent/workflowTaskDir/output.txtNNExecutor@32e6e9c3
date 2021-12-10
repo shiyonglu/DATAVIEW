@@ -1,0 +1,5 @@
+{
+	"Accuracy" : 0.86017704010009766,
+	"DeviceInfo" : "CUDA Device0: GeForce RTX 2080 SUPER7.5: \nGlobal memory:   8192mb\nShared memory:   48kb\nConstant memory: 64kb\nBlock registers: 65536\nWarp size:         32\nThreads per block: 1024\nMax block dimensions: [ 1024, 1024, 64 ]\nMax grid dimensions:  [ 2147483647, 65535, 65535 ]\n\n"
+}
+

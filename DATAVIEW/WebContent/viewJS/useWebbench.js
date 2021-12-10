@@ -1,7 +1,7 @@
 /**
  * The following functions are used to manage the 
  * webench amd wprkflow engine interactions. 
- * @author  Aravind Mohan, Andrey Kashlev, Mahdi Ebrahimi.
+ * @author  Aravind Mohan, Andrey Kashlev, Mahdi Ebrahimi， Junwen Liu.
 */
 
 function workflowRunConfigureDetail(userid){
@@ -49,7 +49,7 @@ function workflowRunConfigureDetail(userid){
 		ajaxCall(params, responseHandler, null);
 
 		
-	}else{
+	}else if(document.getElementById('wfrunconfig_executiontype').value == "DATAVIEW-Server"){
 		console.log("run the serverrun workflow");
 		createRunningWorkflowSplash();
 		var params = "action=serverRunWorkflows&userID=" + userid + "&name=" + currentWorkflowName ;
@@ -73,6 +73,30 @@ function workflowRunConfigureDetail(userid){
 		
 		ajaxCall(params, responseHandler, null);
 		
+		
+	}else{
+		console.log("run NNWorkflow on local NVIDIA GPU");
+		createRunningWorkflowSplash();
+		var params = "action=localGPURunNNWorkflows&userID=" + userid + "&name=" + currentWorkflowName ;
+		function responseHandler(argArray,
+				response) {
+			
+		var allStubNames = getAllStubNames();	
+		
+		for (var i = 0; i < allStubNames.length; i++) {
+			fillStubWithNewDP(allStubNames[i]);
+		}
+		removeRunningWorkflowSplash();
+		var params = "action=initializeUserFolder";
+
+		function responseHandler(argArray, someObject) {
+			createTreeInTheSidebar();
+			generateUniqueRunID();
+		}
+		ajaxCall(params, responseHandler, null);
+		}
+		
+		ajaxCall(params, responseHandler, null);
 		
 	}
 	

@@ -10,6 +10,7 @@ function main(banner, container, outline, toolbar, sidebarL, status, sidebarR) {
 		// Displays an error message if the browser is not supported.
 		mxUtils.error('Browser is not supported!', 200, false);
 	} else {
+		
 		// Assigns some global constants for general behaviour, eg. minimum
 		// size (in pixels) of the active region for triggering creation of
 		// new connections, the portion (100%) of the cell area to be used
@@ -163,10 +164,12 @@ function main(banner, container, outline, toolbar, sidebarL, status, sidebarR) {
 			// consume the event and start the in-place editor.
 			if (this.isEnabled() && !mxEvent.isConsumed(evt) && cell != null
 					&& this.isCellEditable(cell)) {
+						
 				if (this.model.isEdge(cell) || !this.isHtmlLabel(cell)) {
 					this.startEditingAtCell(cell);
 				} else {
 					//var content = document.createElement('div');
+					//alert("inner: " + this.convertValueToString(cell));
 					createCustomDialogWindow(this.convertValueToString(cell));
 					//alert("inner: " + this.convertValueToString(cell));
 				}

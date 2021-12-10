@@ -1,8 +1,10 @@
 package dataview.workflowexecutors;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -40,13 +42,14 @@ import dataview.models.Task;
 import dataview.models.TaskSchedule;
 import dataview.models.Workflow;
 
-/* 
+/**
  * A general introduction to WorkflowExecutor_Local version:
  * This workflowExecutor Local version will have each task running as individual threads locally
  * Each Task periodically checks its readiness until all its parents completed
  * InputPort and OutputPort of a task will be mapped with corresponding files through mappingInputAndFile and mappingOutputAndFile methods
  * Intermediate and final results will be saved as individual .txt files under root repository
  * A right-click on "Refresh" the project may be needed in order to see these files after execution
+ * @author:Junwen Liu
  */
 
 public class WorkflowExecutor_Local extends WorkflowExecutor {
@@ -253,6 +256,32 @@ public class WorkflowExecutor_Local extends WorkflowExecutor {
 
 		}
 		
+		public void downloadFileFromDropBox(String filename, String inputfilepath) {
+				DbxRequestConfig config = new DbxRequestConfig("en_US");
+				DbxClientV2 client = new DbxClientV2(config, dropboxToken);
+				DbxDownloader<FileMetadata> dl = null;
+				try {
+				dl = client.files().download("/DATAVIEW-INPUT/"+filename);
+			} catch (DbxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				FileOutputStream fOut = null;
+			try {
+				fOut = new FileOutputStream(inputfilepath);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				try {
+				dl.download(fOut);
+			} catch (DbxException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
+		}
+		
 		/* 
 		 * execute method is used to execute the Task after inputPort and outputPort mappings are ready
 		 */
@@ -278,8 +307,30 @@ public class WorkflowExecutor_Local extends WorkflowExecutor {
 				Method method = classLoaderClass.getDeclaredMethod("addURL", new Class[] { URL.class });
 				method.setAccessible(true);
 				method.invoke(currentClassLoader, urls);
-				Class<?> taskclass = Class.forName(taskName);
-				t = (Task) taskclass.getDeclaredConstructor().newInstance();
+				
+				//distinguish nnexecutor task and pass the file location to it
+				if(taskName == "NNExecutor") {
+					if(!dropboxToken.isEmpty()){
+					// download ExecutorDLLs from dropbox
+			 		  String inputfilepath = workflowTaskDir + "\\ExecutorDLLs\\";
+			 		  File directory = new File(inputfilepath);
+			 		  if(!directory.exists()) {
+			 			  directory.mkdir();
+			 			  downloadFileFromDropBox("jsoncpp.dll", inputfilepath + "jsoncpp.dll");
+				 		  downloadFileFromDropBox("nnExecutor.dll", inputfilepath + "nnExecutor.dll");
+							/*
+							 * try { Thread.sleep(3000); } catch (InterruptedException e) { // TODO
+							 * Auto-generated catch block e.printStackTrace(); }
+							 */
+			 		  }
+					}
+					Class cl = Class.forName(taskName);
+					Constructor c = cl.getConstructor(String.class);
+					t = (Task) c.newInstance(workflowTaskDir);
+				}else {
+					Class<?> taskclass = Class.forName(taskName);
+					t = (Task) taskclass.getDeclaredConstructor().newInstance();
+				}
 			} catch (Exception e) {
 				Dataview.debugger.logException(e);
 				e.printStackTrace();

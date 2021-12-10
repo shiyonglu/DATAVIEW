@@ -2,7 +2,7 @@
  * low-level code that invokes mxGraph API to manipulate visual element of webbench (data products,
  * workflow boxes, ports, output stubs etc. ) 
  * 
- * @author  Aravind Mohan, Andrey Kashlev.
+ * @author  Aravind Mohan, Andrey Kashlev, Junwen Liu.
  */
 
 function makePortDraggable(direction) {
@@ -227,13 +227,26 @@ function makeTaskDraggable(jsonMetadata){
 			var currentYcoordinate = minRatio;
 			var label = '<div style="visibility:hidden;width:0px;height:0px;">workflowComponent ' + jsonMetadata.dataDescription + '</div>';
 			try {
-			v1 = graph.insertVertex(parent, null, label, x, y, blockWidth, blockHeight);
-			v1.setConnectable(false);
-			
-			var nameOfWorkflow = '<p style="font-size:11pt;">' + jsonMetadata.dataDescription + '</p>';
-			
-			
-			var nameAboveBox = graph.insertVertex(v1, null, nameOfWorkflow, blockWidth/2, blockHeight - 60, null, null, "opacity=0");
+				var taskName = jsonMetadata.dataDescription;
+				var specs = "";
+				if(taskName.indexOf("Linear")!=-1){
+					specs = taskName.substring(6, taskName.length);
+				}
+				
+				v1 = graph.insertVertex(parent, null, label + specs, x, y, blockWidth, blockHeight);
+				//v1 = graph.insertVertex(parent, null, label+"5X3", x, y, blockWidth, blockHeight);
+				
+				v1.setConnectable(false);
+				
+				//var nameOfWorkflow = '<p style="font-size:11pt;">' + jsonMetadata.dataDescription + '</p>';
+				if(taskName.indexOf("Linear")!=-1){
+					var nameOfWorkflow = '<p style="font-size:11pt;">Linear</p>';
+				}else{
+					var nameOfWorkflow = '<p style="font-size:11pt;">' + jsonMetadata.dataDescription + '</p>';
+				}
+				//var nameOfWorkflow = '<p style="font-size:11pt;">' + jsonMetadata.dataDescription + '</p><input type="number" value="0" style="width: 25px" "id="infeature"/>X<input type="number" value="0" style="width: 25px" "id="outfeature"/>';
+				
+				var nameAboveBox = graph.insertVertex(v1, null, nameOfWorkflow, blockWidth/2, blockHeight - 60, null, null, "opacity=0");
 			nameAboveBox.geometry.offset = new mxPoint(-5, +85);
 			
 			

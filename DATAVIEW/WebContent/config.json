@@ -3,15 +3,14 @@
     "WorkflowInputDir_DropboxFileSystem": "",
     "WorkflowOutputDir_DropboxFileSystem": ""
   },
-
   "LocalStorage": {
     "workflowTaskDir":"",
     "workflowLibdir":""
     },
   "EC2": {
-    "accessKey": "",
-    "secretKey": "",
-    "imageID": "ami-0f747dc305291d3a8",
+    "accessKey": "AKIA44MBSYHSCBNY27XV",
+    "secretKey": "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",
+    "imageID": "ami-02dbd0a3537ac6367",
     "groupName":"dataview1",
     "keyName":"Dataview_key"
    },
@@ -46,5 +45,13 @@
       }
 
     ]
+  },
+  "GPUCluster":{
+	  "masterNode": "192.168.1.51",
+	  "singleXavier": "192.168.1.51",
+	  "singleNano": "192.168.1.53"
+  },
+  "NNExecutor":{
+  	"type": "LocalGPU"
   }
 }

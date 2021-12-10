@@ -32,9 +32,10 @@ public class Workflow {
 	public Object [] wouts;         // an array of workflow outputs
 	
 	// the following fields are private, subject to change during implementation
-	private List<Task> myTasks;
-	private List<WorkflowEdge> myEdges;
-	private List<Stage> myStages;
+	//change to protected for subclass to inherit
+	protected List<Task> myTasks;
+	protected List<WorkflowEdge> myEdges;
+	protected List<Stage> myStages;
 	
 	public Workflow(String workflowName, String workflowDescription)
 	{
@@ -83,8 +84,6 @@ public class Workflow {
 	{
 		return myEdges;
 	}
-	
-
 	
 	public int getIndexOfTask(Task t)
 	{
@@ -442,12 +441,34 @@ public class Workflow {
 		return tsch;		
 	}	
 	
+	public void Sequential(NNTask[] nntasks) {
+
+		//add Tasks to myTasks
+		for (NNTask t: nntasks) {
+			myTasks.add((Task)t);
+		}
+
+					
+		// add edge by a single edge 
+		for(int i =0; i< nntasks.length; i++) {
+			if(i==0) {
+				addEdge(0, nntasks[i], 0);
+			}else if(i==nntasks.length-1){
+				addEdge(nntasks[i-1], 0, nntasks[i], 0);
+				addEdge(nntasks[i], 0, 0);
+			}else {
+				addEdge(nntasks[i-1], 0, nntasks[i], 0);
+			}	
+		}
+	}
+	
 	public Map<String, Map<String, Double >> getExecutionTime(){
 			return null;
 		}
 	public Map<String, Map<String, Double>> getTransferTime(){
 		return null;
 	}
+	
 }
 
 
