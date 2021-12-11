@@ -1,14 +1,14 @@
 # DATAVIEW
-DATAVIEW (www.dataview.org) is a big data workflow management system. It uses Dropbox as the data cloud and Amazon EC2 as the compute cloud. Current research focuses on the performance and cost optimization for running workflows in clouds.
+DATAVIEW (www.dataview.org) is a big data workflow management system. It uses Dropbox as the data cloud and Amazon EC2 as the compute cloud. It also provides a workflow_LocalExecutor for users to run their local machine off the cloud. Current research focuses on the 1) infrastructual-level support on GPU-enabled deep learning workflows, and 2) the performance and cost optimization for running workflows in clouds. For deep learning workflows, it currently supports GPU infrastructures including 1) the Local NVIDIA GPU of a PC, 2) GPU Xavier and Nano SoMs and 3) the Heterogeneous GPU Cluster.
 
 
 
 DATAVIEW supports two programing interfaces to develop and run workflows:
 
-1. <b>JAVA API:</b> A programmer can develop various workflow tasks and workflows based on the DATAVIWE libraries. /DATAVIEW/src/test.java shows the six steps to create a customized workflow and execute it in Amazon EC2.
+1. <b>JAVA API:</b> A programmer can develop various workflow tasks and workflows based on the DATAVIEW libraries. /DATAVIEW/src/test.java shows the six steps to create a customized workflow and execute it in Amazon EC2 or Local PC environment.
 * The external dependecies libraries must be added to the Eclipse project from /DATAVIEW/WebContent/WEB-INF/lib
-* The accessKey and secretKey should be updated in config.properties under /DATAVIEW/WebContent/workflowLibDir/
-* After finishing the workflow, please terminate all the EC2 instances from your AWS account manually.
+* To utilize the Amazon EC2, the accessKey and secretKey should be updated in config.properties under /DATAVIEW/WebContent/workflowLibDir/
+* After finishing the workflow, please terminate all the EC2 instances from your AWS account manually (in the case of running worklfow in Amazon EC2).
 
 2. <b>Visual Programming</b>: DATAVIEW is deployed as a Web site in Tomcat and a user can drag and drop tasks and link them into a workflow in a visual workflow design and execution environment called <b>Webbench</b>. 
 
@@ -29,7 +29,7 @@ Check out tutorial: https://youtu.be/xJikeWptYSw or follow the instructions belo
     <li> The external dependecies libraries must be added to the Eclipse project from /DATAVIEW/WebContent/WEB-INF/lib </li>
     <li>/DATAVIEW/src/test.java shows the six steps to create a new workflow and execute it with local executor.</li>
    <!--
-   <li> Create an Access key ID and a Secret access key in Amazon EC2 following the tutotial: https://youtu.be/9741e4CubMQ </li>
+   <li> To use the EC2-Cloud, create an Access key ID and a Secret access key in Amazon EC2 following the tutotial: https://youtu.be/9741e4CubMQ </li>
     <li>Replace the accessKey(Access key ID) and the secretKey(Secret access key) in config.properties by the Access key ID and Secret access key created in the previous step. File config.properties is under /DATAVIEW/WebContent/workflowLibDir/. </li>
     <li>/DATAVIEW/src/test.java shows the six steps to create a new workflow and execute it in Amazon EC2.</li>
     <li>After the execution of a workflow completes, please terminate all the EC2 instances from your AWS account manually.</li>
@@ -40,16 +40,26 @@ Check out tutorial: https://youtu.be/xJikeWptYSw or follow the instructions belo
 <h2>Download, configure, and deploy DATAVIEW as a Website</h2>
 Check out tutorial: https://youtu.be/7Sz4PSD_6Cs or follow the instructions below: 
 <OL>
-    <li> Follow the first three steps from <h3>Download and configure DATAVIEW as JAVA API</h3> </li>
+    <li> Follow the first three steps from <b>Download and configure DATAVIEW as JAVA API</b> </li>
     <li>  Create three default folders Dropbox/DATAVIEW/Tasks, which stores the task file (class file or jar file); Dropbox/DATAVIEW/Workflows, which stores the mxgraph file for the generated workflow; Dropbox/DATAVIEW-INPUT, which stores the input files for a workflow in your dropbox. </li>
     <li> Get a dropbox token. </li>
 </OL>
 
+<h2>Run Deep Learning workflow (NNWorkflow) in DATAVIEW on Local NVIDIA GPU</h2>
+Check out The introduction of DlaaW (Deep-learning-as-a-workflow) in DATAVIEW : https://www.youtube.com/watch?v=3KDq5CTcrGE.
 
+Below are some extra tips aside from instructions in <b>Download, configure, and deploy DATAVIEW as a Website</b> and <b>Download, configure, and deploy DATAVIEW as a Website</b>:
+1. <b>JAVA API:</b> A programmer can utilize various workflow NNasks and NNWorkflows based on the DATAVIEW libraries. /DATAVIEW/src/<b>NNTest.java</b> shows the 4 steps to create a customized NNWorkflow and execute it in one of NNTrainers (each corresponding to one specific execution plan and GPU infrastructure).
+* There is no need to install extra libraries or driver (e.g. CUDA toolkit) as long as you have a local NVIDIA GPU on your PC. 
+* In order to run NNWorkflow Java API version, need tomcat version lower than or equal to tomcat 9 (Our recommendation is tomcat 9). 
+
+2. <b>Visual Programming</b>: DATAVIEW is deployed as a Web site in Tomcat and a user can drag and drop tasks and link them into a NNWorkflow in a visual workflow design and execution environment called <b>Webbench</b>. 
+* In order to run NNWorkflow Website version on your Local PC, need java jdk version less than or equal to 15 (Our recommendation is JAVA JDK 15). 
+* To run NNWorkflow in web GUIs, you should copy following files from your local DATAVIEW TrainerDLLs and ExecutorDLLs folders from /DATAVIEW/WebContent/workflowTaskDir repository to the DATAVIEW-INPUT folder in your dropbox, files including jsoncpp.dll, maintest.dll, nnExecutor.dll
 
 <h2>DATAVIEW Tutorials</h2>
 <OL>
-    <li> Chapter 1: A gentle introduction to DATAVIEW （https://youtu.be/7S4iGKXpaAc) </li>
+    <li> Chapter 1: A gentle introduction to DATAVIEW 锛坔ttps://youtu.be/7S4iGKXpaAc) </li>
     <li> How to download, import DATAVIEW into Eclipse as Java API and run a workflow with local executor (https://youtu.be/xJikeWptYSw)</li>
     <li> How to create a relational algebra workflow in DATAVIEW through the interface (https://youtu.be/AQw0S_QO8zg) </li>
     <!--
@@ -70,4 +80,3 @@ Check out tutorial: https://youtu.be/7Sz4PSD_6Cs or follow the instructions belo
         | <a href="https://www.youtube.com/watch?v=Km24otM3rEM&t=582s">part 2</a>)
         -->
 </OL>
-
