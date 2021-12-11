@@ -5,7 +5,7 @@ DATAVIEW (www.dataview.org) is a big data workflow management system. It uses Dr
 
 DATAVIEW supports two programing interfaces to develop and run workflows:
 
-1. <b>JAVA API:</b> A programmer can develop various workflow tasks and workflows based on the DATAVIEW libraries. /DATAVIEW/src/test.java shows the six steps to create a customized workflow and execute it in Amazon EC2 or Local PC environment.
+1. <b>JAVA API:</b> A programmer can develop various workflow tasks and workflows based on the DATAVIEW libraries. /DATAVIEW/src/<b>test.java</b> shows the six steps to create a customized workflow and execute it in Amazon EC2 or Local PC environment.
 * The external dependecies libraries must be added to the Eclipse project from /DATAVIEW/WebContent/WEB-INF/lib
 * To utilize the Amazon EC2, the accessKey and secretKey should be updated in config.properties under /DATAVIEW/WebContent/workflowLibDir/
 * After finishing the workflow, please terminate all the EC2 instances from your AWS account manually (in the case of running worklfow in Amazon EC2).
