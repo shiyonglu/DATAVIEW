@@ -1,5 +1,5 @@
 # DATAVIEW
-DATAVIEW (www.dataview.org) is a big data workflow management system. It uses Dropbox as the data cloud and Amazon EC2 as the compute cloud. It also provides a workflow_LocalExecutor for users to run their local machine off the cloud. Current research focuses on the 1) infrastructual-level support on GPU-enabled deep learning workflows, and 2) the performance and cost optimization for running workflows in clouds. For deep learning workflows, it currently supports GPU infrastructures including 1) the Local NVIDIA GPU of a PC, 2) GPU Xavier and Nano SoMs and 3) the Heterogeneous GPU Cluster.
+DATAVIEW (www.dataview.org) is a big data workflow management system. It uses Dropbox as the data cloud and Amazon EC2 as the compute cloud. It also provides a workflow_LocalExecutor for users to run their local machine off the cloud. Current research focuses on the 1) performance and cost optimization for running workflows in clouds and 2) infrastructual-level support on GPU-enabled deep learning workflows. For deep learning workflows, it currently supports GPU infrastructures including 1) the Local NVIDIA GPU of a PC, 2) GPU Xavier and Nano SoMs (System-on-Module) and 3) the Heterogeneous GPU Cluster.
 
 
 
