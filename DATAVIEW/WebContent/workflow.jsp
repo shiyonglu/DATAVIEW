@@ -13,7 +13,7 @@
 </script>
 <title>DATAVIEW</title>
 <script type="text/javascript" src="./viewJS/dropdown/menuh.js"></script>
-<link rel="stylesheet" href="./viewJS/dropdown/menu.css" type="text/css"
+<link rel="stylesheet" href="./viewJS/dropdownmMenu.css" type="text/css"
 	media="screen" />
 <!--  <link rel="STYLESHEET" type="text/css"
 	href="../../../dhtmlxGrid/codebase/skins/dhtmlxgrid_dhx_skyblue.css">

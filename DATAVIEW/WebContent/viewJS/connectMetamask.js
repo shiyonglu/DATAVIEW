@@ -41,16 +41,6 @@ connectWallet.addEventListener('click', async () => {
             await ethereum.enable();
             var accounts = await web3.eth.getAccounts();
             account = accounts[0]
-            statusBar.innerHTML = ('<b>Wallet connected!</b>')
-            sessionStorage.setItem("connected", "true");
-            ethBalance = await web3.eth.getBalance(account)
-            contract = new web3.eth.Contract(contractABI,  contractAddress)
-            dgcBalance = await contract.methods.balanceOf(account).call()
-
-            showAccount.innerHTML = "Current account: "+account
-            showAccount.style.visibility = "visible"
-            showBalance.innerHTML = "Balance: " + parseFloat(web3.utils.fromWei(ethBalance, 'ether')).toFixed(4) + ' ETH, ' + web3.utils.fromWei(dgcBalance, 'ether') + ' DGC'
-            showBalance.style.visibility = "visible"
         } 
         catch (error) {
             statusBar.innerHTML = error.message
@@ -62,5 +52,6 @@ connectWallet.addEventListener('click', async () => {
     else {
         statusBar.innerHTML = ("Non-Ethereum browser detected. Please consider trying <a href='https://metamask.io/download' target='window'>MetaMask</a>!")
     }
+    location.reload();
 })
 
