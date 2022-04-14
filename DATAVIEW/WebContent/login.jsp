@@ -29,8 +29,7 @@
 <link href="./Style/loginMenu.css" rel="Stylesheet" type="text/css"/>
 <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
-<script src="./viewJS/connectMetamask.js" async type="text/javascript" ></script>
-<script src="./viewJS/checkMetamask.js" defer type="text/javascript" ></script>
+<script src="./viewJS/loginUpdate.js" async type="text/javascript" ></script>
 
 <style type="text/css">
 .wsite-elements.wsite-not-footer div.paragraph, .wsite-elements.wsite-not-footer p, .wsite-elements.wsite-not-footer .product-block .product-title, .wsite-elements.wsite-not-footer .product-description, .wsite-elements.wsite-not-footer .wsite-form-field label, .wsite-elements.wsite-not-footer .wsite-form-field label, #wsite-content div.paragraph, #wsite-content p, #wsite-content .product-block .product-title, #wsite-content .product-description, #wsite-content .wsite-form-field label, #wsite-content .wsite-form-field label, .blog-sidebar div.paragraph, .blog-sidebar p, .blog-sidebar .wsite-form-field label, .blog-sidebar .wsite-form-field label {}
@@ -225,8 +224,8 @@ function noenter() {
 					<img src="./Style/images/accountImage.png">
 				</div>
 				<div class = "dropdown-content">
-					<a href="#" id="connectWallet">Profile</a>
-					<a href="#" >Webench</a>
+					<a href="#" id="profile">Profile</a>
+					<a href="webench" id="webench">Webench</a>
 					<a href="login.jsp" id="logout">Logout</a>
 				</div>
 	</div>
