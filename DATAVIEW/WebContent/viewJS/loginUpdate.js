@@ -30,17 +30,21 @@ window.addEventListener('load', async () => {
 */
 
 window.addEventListener('load', async () => {
-	if(window.ethereum) {
-		var connected = sessionStorage.getItem("connectedLoginUpdate");
-		if (connected && connected == "true") {
-			logout.style.display = "block";
-			webench.href = "webench"
-			return
+	var connected = sessionStorage.getItem("connected");
+	
+	if (connected && connected == "true") {
+		logout.style.display = "block";
+		webench.href = "webench"
+		return
 	}
-		logout.style.display = "none";
-    	webench.href = "connectWallet"
-	} else {
-		alert("No ETH browser extension detected");
-	}
+	
+	logout.style.display = "none";
+    webench.href = "connectWallet"
 
+})
+
+//to logout, just make connected false in session storage
+logout.addEventListener('click', () => {
+	sessionStorage.setItem("connected", "false");
+	location.reload();
 })
