@@ -36,7 +36,6 @@ connectWallet.addEventListener('click', async () => {
 
 
 getWallet.addEventListener('click', () => {
-	console.log("Inside click");
 	window.open("https://metamask.io/download/");
 });
 

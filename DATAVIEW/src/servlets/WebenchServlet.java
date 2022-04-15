@@ -1,5 +1,6 @@
 package servlets;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -8,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import dataview.models.User;
 
 @WebServlet(urlPatterns={"/webench/*"})
 public class WebenchServlet extends HttpServlet{
@@ -32,9 +35,13 @@ public class WebenchServlet extends HttpServlet{
 		
 		// TODO Auto-generated method stub
 		try{
-			request.setAttribute("userId","123@gmail.com");
-			HttpSession session = request.getSession(true);
- 			session.setAttribute("UserID", "123@gmail.com");
+			String userId = (String)request.getParameter("userId");
+			String tableLocation = getServletContext().getRealPath(request.getServletPath()).replace("UserReg", "") + "WEB-INF" + File.separator + "systemFiles" + File.separator + "users.table";
+			User user = new User(userId, tableLocation);
+			if(!user.doesUserExist()) {
+				user.signup();
+			}
+			request.setAttribute("userId", userId);
      		getServletConfig().getServletContext().getRequestDispatcher(
  			        "/workflow.jsp").forward(request,response);
   

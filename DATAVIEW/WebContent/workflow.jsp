@@ -32,6 +32,7 @@
 <link href="./Style/menu.css" rel="Stylesheet" type="text/css"/>
 <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
+<script src="./viewJS/loginUpdate.js" async type="text/javascript" ></script>
 
 
 <script type="text/javascript"
@@ -347,8 +348,10 @@ H2 {
 						<img src="./Style/images/accountImage.png">
 					</div>
 					<div class = "dropdown-content">
-						<a href="#" id="connectWallet">Connect Metamask</a>
-						<a href="login.jsp">Logout</a>
+					<!-- add link to profile here -->
+						<a href="#" id="profile">Profile</a>
+						<a href="webench" id="webench">Webench</a>
+						<a href="login.jsp" id="logout">Logout</a>
 					</div>
 						
 			</div>
@@ -365,7 +368,6 @@ H2 {
 	
 	<script src="./viewJS/dhtmlxTree/codebase/dhtmlxtree.js"></script>
 	<script type="text/javascript" src="./viewJS/fromMxGraph.js"></script>
-	<script type="text/javascript" src="./viewJS/connectMetamask.js"></script>
 	<script type="text/javascript" src="./viewJS/initWebbench.js"></script>
 	<script type="text/javascript" src="./viewJS/useWebbench.js"></script>
 	<script type="text/javascript" src="./viewJS/mxGraphRelatedCode.js"></script>
