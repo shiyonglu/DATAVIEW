@@ -2,7 +2,7 @@ var connectWallet = document.getElementById('connectWallet');
 var getWallet = document.getElementById('getWallet');
 var getMessage = document.getElementById('getMessage');
 
-//this will help in hiding or display 2 buttons
+//this will help in hide or display 2 buttons
 window.addEventListener('load', () => {
 	if(!window.ethereum) {
 		getWallet.style.display = "block";
