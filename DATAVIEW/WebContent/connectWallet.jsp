@@ -5,8 +5,10 @@
 <head>
 <meta charset="UTF-8">
 <title>Connect Wallet</title>
+<script src="./viewJS/connectMetamask.js" type="text/javascript" ></script>
 </head>
 <body>
 <h1>Connect your wallet</h1>
+<button id="getWallet">Get Wallet</button>
 </body>
 </html>
