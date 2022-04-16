@@ -36,7 +36,7 @@ public class WebenchServlet extends HttpServlet{
 		// TODO Auto-generated method stub
 		try{
 			String userId = (String)request.getParameter("userId");
-			String tableLocation = getServletContext().getRealPath(request.getServletPath()).replace("UserReg", "") + "WEB-INF" + File.separator + "systemFiles" + File.separator + "users.table";
+			String tableLocation = getServletContext().getRealPath(request.getServletPath()).replace("webench", "") + "WEB-INF" + File.separator + "systemFiles" + File.separator + "users.table";
 			User user = new User(userId, tableLocation);
 			if(!user.doesUserExist()) {
 				user.signup();
