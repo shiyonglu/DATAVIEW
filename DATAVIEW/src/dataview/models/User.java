@@ -244,7 +244,7 @@ public class User {
 		} catch (IOException e) {
 			e.printStackTrace();
 			Dataview.debugger.logException(e);
-		}
+		} 
 		return exists;
 
 	}

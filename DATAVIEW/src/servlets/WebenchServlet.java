@@ -31,17 +31,20 @@ public class WebenchServlet extends HttpServlet{
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		// TODO Auto-generated method stub
 		try{
 			String userId = (String)request.getParameter("userId");
+			System.out.println("userId is " + userId);
 			String tableLocation = getServletContext().getRealPath(request.getServletPath()).replace("webench", "") + "WEB-INF" + File.separator + "systemFiles" + File.separator + "users.table";
 			User user = new User(userId, tableLocation);
 			if(!user.doesUserExist()) {
 				user.signup();
 			}
 			request.setAttribute("userId", userId);
+			HttpSession session = request.getSession(true);
+ 			session.setAttribute("UserID", userId);
      		getServletConfig().getServletContext().getRequestDispatcher(
  			        "/workflow.jsp").forward(request,response);
   

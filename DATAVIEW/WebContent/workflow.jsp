@@ -350,7 +350,7 @@ H2 {
 					<div class = "dropdown-content">
 					<!-- add link to profile here -->
 						<a href="#" id="profile">Profile</a>
-						<a href="webench" id="webench">Webench</a>
+						<p id="webench">Webench</p>
 						<a href="login.jsp" id="logout">Logout</a>
 					</div>
 						
