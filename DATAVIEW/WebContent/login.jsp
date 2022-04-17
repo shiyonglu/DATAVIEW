@@ -223,9 +223,9 @@ function noenter() {
 					<img src="./Style/images/accountImage.png" id="userLogo">
 				</div>
 				<div class = "dropdown-content">
-					<a href="#" id="profile">Profile</a>
-					<p id="webench">Webench</p>
-					<a href="login.jsp" id="logout">Logout</a>
+					<a href="#" id="profile" class="profile">Profile</a>
+					<p id="webench" class="webench">Webench</p>
+					<a href="login.jsp" id="logout" class="logout">Logout</a>
 				</div>
 	</div>
       </div>
