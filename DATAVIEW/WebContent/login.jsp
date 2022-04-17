@@ -25,6 +25,11 @@
 -->
 <link rel="stylesheet" type="text/css" href="./Web_Files/main_style.css" title="wsite-theme-css">
 <link href="./Web_Files/css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="./viewJS/dropdown/menu.css" type="text/css">
+<link href="./Style/loginMenu.css" rel="Stylesheet" type="text/css"/>
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
+<script src="./viewJS/loginUpdate.js" async type="text/javascript" ></script>
 
 <style type="text/css">
 .wsite-elements.wsite-not-footer div.paragraph, .wsite-elements.wsite-not-footer p, .wsite-elements.wsite-not-footer .product-block .product-title, .wsite-elements.wsite-not-footer .product-description, .wsite-elements.wsite-not-footer .wsite-form-field label, .wsite-elements.wsite-not-footer .wsite-form-field label, #wsite-content div.paragraph, #wsite-content p, #wsite-content .product-block .product-title, #wsite-content .product-description, #wsite-content .wsite-form-field label, #wsite-content .wsite-form-field label, .blog-sidebar div.paragraph, .blog-sidebar p, .blog-sidebar .wsite-form-field label, .blog-sidebar .wsite-form-field label {}
@@ -142,7 +147,6 @@ function noenter() {
   return !(window.event && window.event.keyCode == 13); }
 
 </script>
-
   <link href="./Web_Files/sites.css" rel="stylesheet"></head>
   <body class="wsite-theme-light no-header-page  wsite-page-new-page">
   <form id="frmMain" method="post" action="UserLogin" onsubmit="return validateForm()">
@@ -172,6 +176,7 @@ function noenter() {
           </td>
         </tr>
       </tbody></table>
+      <div class="menuContainer">
       <div id="topnav">
         <ul class="wsite-menu-default">
             <li id="active" class="wsite-menu-item-wrap   wsite-nav-1" style="position: relative;">
@@ -211,7 +216,19 @@ function noenter() {
               
             </li>
         </ul>
+        
         <div style="clear:both"></div>
+      </div>
+      <div class="dropdown">
+				<div class = "icon">
+					<img src="./Style/images/accountImage.png">
+				</div>
+				<div class = "dropdown-content">
+					<a href="#" id="profile">Profile</a>
+					<p id="webench">Webench</p>
+					<a href="login.jsp" id="logout">Logout</a>
+				</div>
+	</div>
       </div>
     </div>
   </div>

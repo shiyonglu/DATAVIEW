@@ -71,6 +71,11 @@ public class User {
 		this.usertable = tableLocation;
 	}
 	
+	public User(String email, String tableLocation){
+		this.email = email;
+		this.usertable = tableLocation;
+	}
+	
 	
 	public User(String username, String email, String organization,String jobtitle, String country, String password,String usertable){
 		this.username = username;
@@ -239,8 +244,28 @@ public class User {
 		} catch (IOException e) {
 			e.printStackTrace();
 			Dataview.debugger.logException(e);
-		}
+		} 
 		return exists;
+
+	}
+	
+	public boolean doesUserExist() {
+		FileInputStream in = null;
+		try {
+			in = new FileInputStream(usertable);
+			return existsUser(this.email, in);
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+		return false;
 
 	}
 
