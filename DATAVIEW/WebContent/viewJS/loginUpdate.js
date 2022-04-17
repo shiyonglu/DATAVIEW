@@ -55,7 +55,7 @@ window.addEventListener('load', async () => {
 	logout.style.display = "none";
 	userIcon.src="./Style/images/accountImage.png"
 	webench.addEventListener('click', () => {
-			get('connectWallet');
+			postConnectWallet('connectWallet');
 })	
 
 })
@@ -82,11 +82,11 @@ function post(action, value) {
   form.submit();
 }
 
-function get(action) {
+function postConnectWallet(action) {
 
 
   const form = document.createElement('form');
-  form.method = 'get';
+  form.method = 'post';
   form.action = action;
 
   document.body.appendChild(form);
