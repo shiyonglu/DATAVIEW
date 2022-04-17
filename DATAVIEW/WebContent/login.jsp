@@ -965,7 +965,4 @@ labels:"l0,u51275705.u51275705s632811976679423967"
             <button class='wsite-button' style="border:0px;" type="Cancel" onClick="$('#dialog-1').dialog( 'close' );return false"><span class='wsite-button-inner'>Cancel</span></button>
           </form>
 </div>
-<form id="web3Login" style="display:none;" action="webench" method="post">
-	<input type="text" id="userId" name="userId">
-</form>
 </body></html>
