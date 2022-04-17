@@ -30,7 +30,6 @@
 <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
 <script src="./viewJS/loginUpdate.js" async type="text/javascript" ></script>
-
 <style type="text/css">
 .wsite-elements.wsite-not-footer div.paragraph, .wsite-elements.wsite-not-footer p, .wsite-elements.wsite-not-footer .product-block .product-title, .wsite-elements.wsite-not-footer .product-description, .wsite-elements.wsite-not-footer .wsite-form-field label, .wsite-elements.wsite-not-footer .wsite-form-field label, #wsite-content div.paragraph, #wsite-content p, #wsite-content .product-block .product-title, #wsite-content .product-description, #wsite-content .wsite-form-field label, #wsite-content .wsite-form-field label, .blog-sidebar div.paragraph, .blog-sidebar p, .blog-sidebar .wsite-form-field label, .blog-sidebar .wsite-form-field label {}
 #wsite-content div.paragraph, #wsite-content p, #wsite-content .product-block .product-title, #wsite-content .product-description, #wsite-content .wsite-form-field label, #wsite-content .wsite-form-field label, .blog-sidebar div.paragraph, .blog-sidebar p, .blog-sidebar .wsite-form-field label, .blog-sidebar .wsite-form-field label {}
@@ -221,7 +220,7 @@ function noenter() {
       </div>
       <div class="dropdown">
 				<div class = "icon">
-					<img src="./Style/images/accountImage.png">
+					<img src="./Style/images/accountImage.png" id="userLogo">
 				</div>
 				<div class = "dropdown-content">
 					<a href="#" id="profile">Profile</a>

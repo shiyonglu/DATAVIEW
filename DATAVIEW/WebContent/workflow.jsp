@@ -345,7 +345,7 @@ H2 {
 			</ul>
 			<div class="dropdown">
 					<div class = "icon">
-						<img src="./Style/images/accountImage.png">
+						<img src="./Style/images/accountImage.png" id="userLogo">
 					</div>
 					<div class = "dropdown-content">
 					<!-- add link to profile here -->

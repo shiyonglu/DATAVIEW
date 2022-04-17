@@ -14,6 +14,7 @@
 <div class="flex w-screen h-screen justify-center iterms-center">
 
 <div class="flex flex-col space-y-6 justify-center content-center items-center space-x-4">
+	<img src="./Style/images/metamaskFox.png" id="metamaskFox" class="object-cover h-48 w-96">
 	<button id="connectWallet" class="rounded bg-orange-500 hover:bg-orange-700 py-2 px-4 text-white">Connect Wallet</button>
 	<h1 id="getMessage" class="text-2xl">You need an Ethereum Wallet to use Dataview</h1>
 	<button id="getWallet" class="rounded bg-orange-500 hover:bg-orange-700 py-2 px-4 text-white">Get Metamask</button>

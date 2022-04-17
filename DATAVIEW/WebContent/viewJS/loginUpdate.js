@@ -5,6 +5,7 @@ var webench = document.getElementById('webench');
 var profile = document.getElementById('profile');
 var logout = document.getElementById('logout');
 var web3LoginForm = document.getElementById('web3Login');
+var userIcon = document.getElementById('userLogo');
 
 /**
 window.addEventListener('load', async () => {
@@ -47,10 +48,12 @@ window.addEventListener('load', async () => {
 		webench.addEventListener('click', () => {
 			post('webench', account);
 		})	
+		userIcon.src="./Style/images/loginImage.png"
 		return
 	}
 	
 	logout.style.display = "none";
+	userIcon.src="./Style/images/accountImage.png"
 	webench.addEventListener('click', () => {
 			get('connectWallet');
 })	
@@ -89,5 +92,4 @@ function get(action) {
   document.body.appendChild(form);
   form.submit();
 }
-
 
