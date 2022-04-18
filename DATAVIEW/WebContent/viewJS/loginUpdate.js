@@ -48,7 +48,10 @@ window.addEventListener('load', async () => {
 		webench.addEventListener('click', () => {
 			post('webench', account);
 		})	
-		userIcon.src="./Style/images/loginImage.png"
+		profile.addEventListener('click', () => {
+			post('profile', account);
+		})	
+		userIcon.src="./Style/images/metamaskFox.png"
 		return
 	}
 	
@@ -56,7 +59,10 @@ window.addEventListener('load', async () => {
 	userIcon.src="./Style/images/accountImage.png"
 	webench.addEventListener('click', () => {
 			postConnectWallet('connectWallet');
-})	
+})
+	profile.addEventListener('click', () => {
+			postConnectWallet('connectWallet');
+		})		
 
 })
 
