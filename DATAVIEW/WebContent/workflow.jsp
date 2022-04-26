@@ -345,13 +345,13 @@ H2 {
 			</ul>
 			<div class="dropdown">
 					<div class = "icon">
-						<img src="./Style/images/accountImage.png">
+						<img src="./Style/images/accountImage.png" id="userLogo">
 					</div>
 					<div class = "dropdown-content">
 					<!-- add link to profile here -->
-						<a href="#" id="profile">Profile</a>
-						<p id="webench">Webench</p>
-						<a href="login.jsp" id="logout">Logout</a>
+						<a href="#" id="profile" class="profile">Profile</a>
+						<p id="webench" class="webench">Webench</p>
+						<a href="login.jsp" id="logout" class="logout">Logout</a>
 					</div>
 						
 			</div>

@@ -1,5 +1,6 @@
 package servlets;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -11,18 +12,19 @@ import javax.servlet.http.HttpSession;
 
 import dataview.models.User;
 
-@WebServlet(urlPatterns={"/connectWallet/*"})
-public class ConnectWalletServlet extends HttpServlet{
+@WebServlet(urlPatterns={"/profile/*"})
+public class ProfileServlet extends HttpServlet{
+	
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	  /**
+	 /**
      * @see HttpServlet#HttpServlet()
      */
-    public ConnectWalletServlet() {
+    public ProfileServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -34,8 +36,10 @@ public class ConnectWalletServlet extends HttpServlet{
 		
 		// TODO Auto-generated method stub
 		try{
+			String userId = (String)request.getParameter("userId");
+			request.setAttribute("userId", userId);
      		getServletConfig().getServletContext().getRequestDispatcher(
- 			        "/connectWallet.jsp").forward(request,response);
+ 			        "/profile.jsp").forward(request,response);
   
      	}
      	catch(Exception e)
@@ -44,4 +48,5 @@ public class ConnectWalletServlet extends HttpServlet{
      	}
      	
 	}
+
 }

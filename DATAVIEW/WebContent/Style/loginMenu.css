@@ -13,7 +13,8 @@
 
 
 .icon img{
-	height: 30px;
+	height: 40px;
+	margin-bottom: 10px;
 }
 
 .dropdown-content {
@@ -21,11 +22,11 @@
   background-color: white;
   font-weight: bold;
   position: absolute;
-  min-width: 100px;
+  min-width: 200px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
   flex-direction: column;
-  margin-top: 30px;
+  margin-top: 40px;
 }
 
 .dropdown-content a {
@@ -45,3 +46,15 @@
 
 .dropdown:hover .dropdown-content {display: flex;}
 
+
+.profile:hover{
+	box-shadow: 0 0 11px rgba(33,33,33,.2);
+}
+
+.webench:hover{
+	box-shadow: 0 0 11px rgba(33,33,33,.2);
+}
+
+.logout:hover{
+	box-shadow: 0 0 11px rgba(33,33,33,.2);
+}

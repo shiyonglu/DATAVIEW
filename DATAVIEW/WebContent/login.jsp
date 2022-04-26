@@ -30,7 +30,6 @@
 <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
 <script src="./viewJS/loginUpdate.js" async type="text/javascript" ></script>
-
 <style type="text/css">
 .wsite-elements.wsite-not-footer div.paragraph, .wsite-elements.wsite-not-footer p, .wsite-elements.wsite-not-footer .product-block .product-title, .wsite-elements.wsite-not-footer .product-description, .wsite-elements.wsite-not-footer .wsite-form-field label, .wsite-elements.wsite-not-footer .wsite-form-field label, #wsite-content div.paragraph, #wsite-content p, #wsite-content .product-block .product-title, #wsite-content .product-description, #wsite-content .wsite-form-field label, #wsite-content .wsite-form-field label, .blog-sidebar div.paragraph, .blog-sidebar p, .blog-sidebar .wsite-form-field label, .blog-sidebar .wsite-form-field label {}
 #wsite-content div.paragraph, #wsite-content p, #wsite-content .product-block .product-title, #wsite-content .product-description, #wsite-content .wsite-form-field label, #wsite-content .wsite-form-field label, .blog-sidebar div.paragraph, .blog-sidebar p, .blog-sidebar .wsite-form-field label, .blog-sidebar .wsite-form-field label {}
@@ -221,12 +220,12 @@ function noenter() {
       </div>
       <div class="dropdown">
 				<div class = "icon">
-					<img src="./Style/images/accountImage.png">
+					<img src="./Style/images/accountImage.png" id="userLogo">
 				</div>
 				<div class = "dropdown-content">
-					<a href="#" id="profile">Profile</a>
-					<p id="webench">Webench</p>
-					<a href="login.jsp" id="logout">Logout</a>
+					<a href="#" id="profile" class="profile">Profile</a>
+					<p id="webench" class="webench">Webench</p>
+					<a href="login.jsp" id="logout" class="logout">Logout</a>
 				</div>
 	</div>
       </div>
@@ -266,7 +265,7 @@ function noenter() {
           
             
 
-<div><div id="533165323902803737" align="left" style="width: 100%; overflow-y: hidden;" class="wcustomhtml"><table cellpadding="2px" cellspacing="1px" bgcolor="#F4F5F7" width="400px" class="tableBorder" align="right">
+<div style="display: none;"><div id="533165323902803737" align="left" style="width: 100%; overflow-y: hidden;" class="wcustomhtml"><table cellpadding="2px" cellspacing="1px" bgcolor="#F4F5F7" width="400px" class="tableBorder" align="right">
       <tbody><tr>
                                <!--
         <td colspan="2" bgcolor="#0066FF">&nbsp;</td>

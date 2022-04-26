@@ -5,6 +5,7 @@ var webench = document.getElementById('webench');
 var profile = document.getElementById('profile');
 var logout = document.getElementById('logout');
 var web3LoginForm = document.getElementById('web3Login');
+var userIcon = document.getElementById('userLogo');
 
 /**
 window.addEventListener('load', async () => {
@@ -47,13 +48,21 @@ window.addEventListener('load', async () => {
 		webench.addEventListener('click', () => {
 			post('webench', account);
 		})	
+		profile.addEventListener('click', () => {
+			post('profile', account);
+		})	
+		userIcon.src="./Style/images/metamaskFox.png"
 		return
 	}
 	
 	logout.style.display = "none";
+	userIcon.src="./Style/images/accountImage.png"
 	webench.addEventListener('click', () => {
-			get('connectWallet');
-})	
+			postConnectWallet('connectWallet');
+})
+	profile.addEventListener('click', () => {
+			postConnectWallet('connectWallet');
+		})		
 
 })
 
@@ -79,15 +88,14 @@ function post(action, value) {
   form.submit();
 }
 
-function get(action) {
+function postConnectWallet(action) {
 
 
   const form = document.createElement('form');
-  form.method = 'get';
+  form.method = 'post';
   form.action = action;
 
   document.body.appendChild(form);
   form.submit();
 }
-
 
