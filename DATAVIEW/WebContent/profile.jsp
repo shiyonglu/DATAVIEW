@@ -36,18 +36,26 @@
     <div class="w-full border-t border-gray-300"></div>
 </div>
 
+  <div class="uploadImageContainer">
+  	<img class="uploadImage" src="./Style/images/accountImage.png" id="upload" width="150" onError="this.onerror=null;this.src='./Style/images/metamaskFox.png';">
+  </div>
+  <br>
+  <br>
+  
 <div class="content text-center text-orange-900 text-3xl">
             <div class="statusBar" >
                 <p id="showAccount" style="visibility: hidden"></p>
+                <br>
                 <p id="showBalance" style="visibility: hidden"></p>
             </div>
 </div>
 
- <form method="post" action="profileImageUpload" enctype="multipart/form-data">
+ <form id="imageUploadForm" method="post" action="profileImageUpload" enctype="multipart/form-data">
 	<input type="hidden" name="userId" id="userId" value="<%=userId%>" />
-    <input type="file" name="image" />
-    <input type="submit" value="Upload" />
+    <input style="display:none;" id="uploadImage" type="file" name="image" accept="image/png" />
   </form>
+
+  
   
 </body>
 </html>

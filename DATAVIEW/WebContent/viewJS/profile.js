@@ -1,5 +1,7 @@
 var showAccount = document.getElementById('showAccount')
 var showBalance = document.getElementById('showBalance')
+var upload = document.getElementById('upload')
+var uploadImageForm = document.getElementById('imageUploadForm');
 
 
 var account 
@@ -18,7 +20,22 @@ window.addEventListener('load', async () => {
             showAccount.style.visibility = "visible"
             showBalance.innerHTML = "Balance: " + parseFloat(web3.utils.fromWei(ethBalance, 'ether')).toFixed(4) + ' ETH'
             showBalance.style.visibility = "visible"
+      
         }
     }
+    if(upload && uploadImageForm ) {
+		upload.src= "profileImage?id="+account;
+		upload.addEventListener('click', () => {
+		uploadImageForm.elements["image"].click();
+	})
+}
+
+	if(uploadImageForm) {
+		uploadImageForm.elements["image"].onchange = function() {
+			uploadImageForm.submit();
+		}
+	}
+
+    
 })
 
