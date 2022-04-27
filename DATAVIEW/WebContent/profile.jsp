@@ -14,6 +14,12 @@
 </head>
 <body>
 
+<%
+		String userId = request.getAttribute("userId").toString();
+		
+	%>
+	
+
 <div class="menuContainer">
    <div class="dropdown">
 				<div class = "icon">
@@ -36,5 +42,12 @@
                 <p id="showBalance" style="visibility: hidden"></p>
             </div>
 </div>
+
+ <form method="post" action="profileImageUpload" enctype="multipart/form-data">
+	<input type="hidden" name="userId" id="userId" value="<%=userId%>" />
+    <input type="file" name="image" />
+    <input type="submit" value="Upload" />
+  </form>
+  
 </body>
 </html>
