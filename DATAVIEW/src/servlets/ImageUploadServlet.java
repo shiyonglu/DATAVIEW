@@ -49,6 +49,7 @@ public class ImageUploadServlet extends HttpServlet{
 		      part.write(path + fileName);
 		    }
 		    response.getWriter().print("The file uploaded sucessfully.");
+		    request.setAttribute("userId", account);
 		    getServletConfig().getServletContext().getRequestDispatcher(
  			        "/profile.jsp").forward(request,response);
 		  }
