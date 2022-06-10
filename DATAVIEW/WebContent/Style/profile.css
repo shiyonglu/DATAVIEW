@@ -75,3 +75,15 @@ hr {
 .logout:hover{
 	box-shadow: 0 0 11px rgba(33,33,33,.2);
 }
+
+.uploadImage{
+	cursor: pointer;
+	border-radius: 50%;
+}
+
+.uploadImageContainer{
+	display:flex;
+	justify-content:center;
+}
+      
+   

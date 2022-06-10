@@ -345,7 +345,7 @@ H2 {
 			</ul>
 			<div class="dropdown">
 					<div class = "icon">
-						<img src="./Style/images/accountImage.png" id="userLogo">
+						<img src="./Style/images/accountImage.png" id="userLogo" onError="this.onerror=null;this.src='./Style/images/metamaskFox.png';">
 					</div>
 					<div class = "dropdown-content">
 					<!-- add link to profile here -->

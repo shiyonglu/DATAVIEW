@@ -148,34 +148,7 @@ function noenter() {
 </script>
   <link href="./Web_Files/sites.css" rel="stylesheet"></head>
   <body class="wsite-theme-light no-header-page  wsite-page-new-page">
-  <form id="frmMain" method="post" action="UserLogin" onsubmit="return validateForm()">
-  <div id="header-wrap">
-  <div id="page">
-    <div id="header-container">
-      <table id="header">
-        <tbody><tr>
-          <td id="logo"><span class="wsite-logo">
-
-  <a href="http://www.cs.wayne.edu/">
-    <img src="./Web_Files/dataviewlogo.png">
-  </a>
-
-</span></td>
-          <td id="header-right">
-            <table>
-              <tbody><tr>
-                <td class="phone-number"><span class="wsite-text wsite-phone">
-  <span>&nbsp;</span>
-  <input type="button" style="background-color:#F4F5F7;color:#8F8F8F" id="btnSubmit1" value="Download DATAVIEW" onclick="return downloadFun();">
-</span></td>
-                <td class="social"></td>
-              </tr>
-            </tbody></table>
-            <div class="search"></div>
-          </td>
-        </tr>
-      </tbody></table>
-      <div class="menuContainer">
+  <div class="menuContainer">
       <div id="topnav">
         <ul class="wsite-menu-default">
             <li id="active" class="wsite-menu-item-wrap   wsite-nav-1" style="position: relative;">
@@ -220,7 +193,7 @@ function noenter() {
       </div>
       <div class="dropdown">
 				<div class = "icon">
-					<img src="./Style/images/accountImage.png" id="userLogo">
+					<img src="./Style/images/accountImage.png" id="userLogo" onError="this.onerror=null;this.src='./Style/images/metamaskFox.png';">
 				</div>
 				<div class = "dropdown-content">
 					<a href="#" id="profile" class="profile">Profile</a>
@@ -229,6 +202,99 @@ function noenter() {
 				</div>
 	</div>
       </div>
+ <!--  <div class="iconContainer">
+  	<div class="dropdown">
+				<div class = "icon">
+					<img src="./Style/images/accountImage.png" id="userLogo" onError="this.onerror=null;this.src='./Style/images/metamaskFox.png';">
+				</div>
+				<div class = "dropdown-content">
+					<a href="#" id="profile" class="profile">Profile</a>
+					<p id="webench" class="webench">Webench</p>
+					<a href="login.jsp" id="logout" class="logout">Logout</a>
+				</div>
+	</div>
+  </div> -->
+  <form id="frmMain" method="post" action="UserLogin" onsubmit="return validateForm()">
+  <div id="header-wrap">
+  <div id="page">
+    <div id="header-container">
+      <table id="header">
+        <tbody><tr>
+          <td id="logo"><span class="wsite-logo">
+
+  <a href="http://www.cs.wayne.edu/">
+    <img src="./Web_Files/dataviewlogo.png">
+  </a>
+
+</span></td>
+          <td id="header-right">
+            <table>
+              <tbody><tr>
+                <td class="phone-number"><span class="wsite-text wsite-phone">
+  <span>&nbsp;</span>
+  <input type="button" style="background-color:#F4F5F7;color:#8F8F8F" id="btnSubmit1" value="Download DATAVIEW" onclick="return downloadFun();">
+</span></td>
+                <td class="social"></td>
+              </tr>
+            </tbody></table>
+            <div class="search"></div>
+          </td>
+        </tr>
+      </tbody></table>
+<!--       <div class="menuContainer">
+      <div id="topnav">
+        <ul class="wsite-menu-default">
+            <li id="active" class="wsite-menu-item-wrap   wsite-nav-1" style="position: relative;">
+              <a href="http://dataview.org/" class="wsite-menu-item" style="position: relative;">
+                Home
+              </a>
+              
+            </li>
+            <li id="pg889730839970818043" class="wsite-menu-item-wrap   wsite-nav-2" style="position: relative;">
+              <a href="http://bigdataworkflow.weebly.com/projects.html" class="wsite-menu-item" style="position: relative;">
+                Projects
+              </a>
+              
+            </li>
+            <li id="pg437858188312795895" class="wsite-menu-item-wrap   wsite-nav-3" style="position: relative;">
+              <a href="http://www.cs.wayne.edu/~shiyong/pubs.htm" target="_blank" class="wsite-menu-item" style="position: relative;">
+                Publications
+              </a>
+              
+            </li>
+            <li id="pg469551346302134232" class="wsite-menu-item-wrap   wsite-nav-4" style="position: relative;">
+              <a href="http://bigdataworkflow.weebly.com/alumni.html" class="wsite-menu-item" style="position: relative;">
+                Alumni
+              </a>
+              
+            </li>
+            <li id="pg389786541452826855" class="wsite-menu-item-wrap   wsite-nav-5" style="position: relative;">
+              <a href="https://sites.google.com/site/swfwikicopy/" target="_blank" class="wsite-menu-item" style="position: relative;">
+                Wiki
+              </a>
+              
+            </li>
+            <li id="pg161242430389340639" class="wsite-menu-item-wrap   wsite-nav-6" style="position: relative;">
+              <a href="http://bigdataworkflow.weebly.com/contact.html" class="wsite-menu-item" style="position: relative;">
+                Contact
+              </a>
+              
+            </li>
+        </ul>
+        
+        <div style="clear:both"></div>
+      </div>
+      <div class="dropdown">
+				<div class = "icon">
+					<img src="./Style/images/accountImage.png" id="userLogo" onError="this.onerror=null;this.src='./Style/images/metamaskFox.png';">
+				</div>
+				<div class = "dropdown-content">
+					<a href="#" id="profile" class="profile">Profile</a>
+					<p id="webench" class="webench">Webench</p>
+					<a href="login.jsp" id="logout" class="logout">Logout</a>
+				</div>
+	</div>
+      </div> -->
     </div>
   </div>
 </div>

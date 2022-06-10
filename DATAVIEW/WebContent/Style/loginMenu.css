@@ -2,13 +2,21 @@
 
 .menuContainer{
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-end;
+	margin-top: 10px;
+}
+
+.iconConatiner{
+	display: flex;
+	justify-content: flex-end;
 }
 
 .dropdown {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-end;
+	margin-right: 30px;
+	margin-left: 60px;
 	}
 
 

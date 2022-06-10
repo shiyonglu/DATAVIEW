@@ -31,8 +31,14 @@ window.addEventListener('load', async () => {
 })
 */
 
+
+
+
 window.addEventListener('load', async () => {
 	var connected = sessionStorage.getItem("connected");
+	//var path = sessionStorage.getItem("path");
+	var path = "Users/ramandeepsingh/eclipse-workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/DATAVIEW/WEB-INF/systemFiles/";
+	var separator = sessionStorage.getItem("separator");
 	
 	if (connected && connected == "true") {
 		window.web3 = new Web3(window.ethereum);
@@ -51,17 +57,18 @@ window.addEventListener('load', async () => {
 		profile.addEventListener('click', () => {
 			post('profile', account);
 		})	
-		userIcon.src="./Style/images/metamaskFox.png"
+		console.log(path);
+		userIcon.src= "profileImage?id="+account;
 		return
 	}
 	
 	logout.style.display = "none";
 	userIcon.src="./Style/images/accountImage.png"
 	webench.addEventListener('click', () => {
-			postConnectWallet('connectWallet');
+			postSimpleAction('connectWallet');
 })
 	profile.addEventListener('click', () => {
-			postConnectWallet('connectWallet');
+			postSimpleAction('connectWallet');
 		})		
 
 })
@@ -88,7 +95,7 @@ function post(action, value) {
   form.submit();
 }
 
-function postConnectWallet(action) {
+function postSimpleAction(action) {
 
 
   const form = document.createElement('form');
