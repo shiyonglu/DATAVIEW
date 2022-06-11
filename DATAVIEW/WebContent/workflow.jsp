@@ -29,7 +29,10 @@
 <script type="text/javascript" src="./Script/DemoScript.js"></script>
 <link href="./Style/jquery-ui-1.8.17.custom.css" rel="Stylesheet"
 	type="text/css" />
-
+<link href="./Style/menu.css" rel="Stylesheet" type="text/css"/>
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
+<script src="./viewJS/loginUpdate.js" async type="text/javascript" ></script>
 
 
 <script type="text/javascript"
@@ -306,22 +309,22 @@ H2 {
 	<input type="hidden" name="usrId" id="usrId" value="<%=userID%>" />
 	<input type="hidden" name="runIDInput" id="runIDInput" value="" />
 
-	<div id="bannerid"
+<!-- 	<div id="bannerid"
 		style="margin: 0 auto; text-align: right; width: 1000px;">
 		<table width="100%" border="0">
 			<tr>
 				<th>
-					<ul id="menu">
+					<ul class="menuContainer">
+						<li><a href="#" id="connectWallet">Connect Metamask</a></li>
 						<li><a href="https://github.com/shiyonglu/DATAVIEW">Documentation</a></li>
 						<li><a href="#" onclick="connectDropbox();return false;">Dropbox</a></li>
 						<li><a href="#" onclick="cloudVMConfigure();return false;">Cloud</a></li>
 						<li><a href="#" onclick="stopAvailableVMs();return false;"> ResetVM </a></li>
-						<!-- 
+						
 						<li><a
 							href="downloadmain.jsp?fileName=dataview.war&filePath=/home/amohan/Software">Download</a></li>
-							-->
-						<li><a
-							href="https://github.com/shiyonglu/DATAVIEW">Download</a></li>
+							
+						<li><a href="https://github.com/shiyonglu/DATAVIEW">Download</a></li>
 						<li><a href="login.jsp">Logout</a></li>
 					</ul>
 				</th>
@@ -329,6 +332,29 @@ H2 {
 			</tr>
 		</table>
 
+	</div> -->
+			
+	<div class="menuContainer">
+			<ul class="menuItems">
+					<li></li>
+					<li><a href="https://github.com/shiyonglu/DATAVIEW">Documentation</a></li>
+					<li><a href="#" onclick="connectDropbox();return false;">Dropbox</a></li>
+					<li><a href="#" onclick="cloudVMConfigure();return false;">Cloud</a></li>
+					<li><a href="#" onclick="stopAvailableVMs();return false;"> ResetVM </a></li>
+					<li><a href="https://github.com/shiyonglu/DATAVIEW">Download</a></li>
+			</ul>
+			<div class="dropdown">
+					<div class = "icon">
+						<img src="./Style/images/accountImage.png" id="userLogo" onError="this.onerror=null;this.src='./Style/images/metamaskFox.png';">
+					</div>
+					<div class = "dropdown-content">
+					<!-- add link to profile here -->
+						<a href="#" id="profile" class="profile">Profile</a>
+						<p id="webench" class="webench">Webench</p>
+						<a href="login.jsp" id="logout" class="logout">Logout</a>
+					</div>
+						
+			</div>
 	</div>
 
 	<!--  
